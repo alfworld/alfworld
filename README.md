@@ -17,7 +17,11 @@ This work requires dependencies include the libraries listed in "requirements.tx
 
 ```
 # Download data
-cd data ; wget https://aka.ms/twkg/rl.0.1.zip ; unzip 'json_2.1.1_*.zip' ; cd ../
+cd data
+wget https://bit.ly/3cIEx9R
+wget https://bit.ly/3mZsrhf
+wget https://bit.ly/2S8lexl 
+unzip 'json_2.1.1_*.zip' ; cd ../
 
 # Set ALFRED_ROOT
 export ALFRED_ROOT=$$(pwd)
