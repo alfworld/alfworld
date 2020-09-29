@@ -36,8 +36,8 @@ def train():
             ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_ood_eval_game = alfred_env.num_games
 
-    output_dir = os.getenv('PT_OUTPUT_DIR', '/tmp') if agent.philly else config["general"]["save_path"]
-    data_dir = os.environ['PT_DATA_DIR'] if agent.philly else config["general"]["save_path"]
+    output_dir =  config["general"]["save_path"]
+    data_dir = config["general"]["save_path"]
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
