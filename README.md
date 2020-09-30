@@ -4,7 +4,7 @@ Code for anonymous ICLR 2021 submission *BUTLER: Building Understanding in Textw
 
 This code base is developed based on the [official Alfred codebase](https://github.com/askforalfred/alfred).
 
-Note this is a quick cleanup of our code (basically just anonymizing the code), we will release a more clear version in the near future.
+Note this is a quick cleanup of our code (basically just anonymizing the code), we will release a cleaner version in the near future.
 
 
 ### Dependencies
