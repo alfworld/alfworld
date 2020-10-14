@@ -141,7 +141,8 @@ class PickCleanThenPlaceInRecepThorPolicy(PickCleanThenPlaceInRecepPolicy):
 
 
 class HandCodedThorAgent(HandCodedTWAgent):
-    """ Agent that simply follows a list of commands. """
+    """ Textworld instance of handcoded expert.
+        Uses predicates from THOR metadata for making decisions."""
 
     def __init__(self, env, max_steps=150):
         self.env = env
