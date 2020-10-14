@@ -104,7 +104,6 @@ celerybeat.pid
 # Environments
 .env
 .venv
-env/
 venv/
 ENV/
 env.bak/
@@ -129,4 +128,4 @@ dmypy.json
 .pyre/
 
 # TW-Alfred
-data/json_2.1.0
+data/json_2.1.1*
