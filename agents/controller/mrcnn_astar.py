@@ -11,12 +11,16 @@ class MaskRCNNAStarAgent(MaskRCNNAgent):
     def __init__(self, env, traj_data, traj_root,
                  pretrained_model=None,
                  load_receps=False, debug=False,
-                 goal_desc_human_anns_prob=0.0):
+                 goal_desc_human_anns_prob=0.0,
+                 classes=constants.OBJECTS_DETECTOR,
+                 save_detections_to_disk=False, save_detections_path='./'):
 
         super().__init__(env, traj_data, traj_root,
                          pretrained_model=pretrained_model,
                          load_receps=load_receps, debug=debug,
-                         goal_desc_human_anns_prob=goal_desc_human_anns_prob)
+                         goal_desc_human_anns_prob=goal_desc_human_anns_prob,
+                         classes=classes,
+                         save_detections_to_disk=save_detections_to_disk, save_detections_path=save_detections_path)
 
     def setup_navigator(self):
         game_state = TaskGameStateFullKnowledge(self.env)
@@ -39,7 +43,7 @@ class MaskRCNNAStarAgent(MaskRCNNAgent):
             openable_object_to_point = json.load(f)
         game_state.openable_object_to_point = openable_object_to_point
 
-        game_state.update_receptacle_nearest_points()
+        game_state.update_receptacle_nearest_points() # TODO: save to desk
         game_state.planner.process_pool.terminate()
 
         self.navigator = DeterministicPlannerAgent(thread_id=0, game_state=game_state)

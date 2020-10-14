@@ -107,7 +107,7 @@ class AlfredThorEnv(object):
 
             # setup task for reward
             class args: pass
-            args.reward_config = os.path.join(os.environ['ALFRED_ROOT'], 'models/config/rewards.json')
+            args.reward_config = os.path.join(os.environ['ALFRED_ROOT'], 'agents/config/rewards.json')
             self.env.set_task(self.traj_data, args, reward_type='dense')
 
             # set controller
