@@ -10,9 +10,8 @@ import numpy as np
 
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from agents.agent import DAggerAgent
+from agents.agent import TextDAggerAgent
 import modules.generic as generic
-from environment import AlfredTWEnv, AlfredThorEnv
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 task_types = [1]
 train_or_eval = "train"
@@ -34,7 +33,7 @@ def train():
     else:
         config['dataset']['data_path'] = "../../data/json_2.1.1/valid_seen"
 
-    agent = DAggerAgent(config)
+    agent = TextDAggerAgent(config)
     alfred_env = getattr(importlib.import_module("environment"), config["env"]["type"])(config, train_eval="train")
     env = alfred_env.init_env(batch_size=agent.batch_size)
     num_game = alfred_env.num_games

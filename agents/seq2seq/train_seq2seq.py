@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from agents.agent import DAggerAgent
+from agents.agent import TextDAggerAgent
 import modules.generic as generic
 import eval.evaluate as evaluate
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
@@ -26,7 +26,7 @@ def train():
 
     time_1 = datetime.datetime.now()
     config = generic.load_config()
-    agent = DAggerAgent(config)
+    agent = TextDAggerAgent(config)
 
     id_eval_env, num_id_eval_game = None, 0
     ood_eval_env, num_ood_eval_game = None, 0
