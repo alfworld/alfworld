@@ -13,7 +13,7 @@ sys.path.append(os.environ['ALFRED_ROOT'])
 from agent.agent import DAggerAgent
 import modules.generic as generic
 import eval.evaluate as evaluate
-from environment.environment import AlfredTWEnv, AlfredThorEnv
+from environment import AlfredTWEnv, AlfredThorEnv
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 

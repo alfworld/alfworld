@@ -4,7 +4,7 @@ import gen.constants as constants
 from gen.game_states.task_game_state_full_knowledge import TaskGameStateFullKnowledge
 from gen.agents.deterministic_planner_agent import DeterministicPlannerAgent
 from gen.graph import graph_obj
-from models.embodied.mrcnn import MaskRCNNAgent
+from agents.embodied.mrcnn import MaskRCNNAgent
 
 class MaskRCNNAStarAgent(MaskRCNNAgent):
 
@@ -39,7 +39,7 @@ class MaskRCNNAStarAgent(MaskRCNNAgent):
             openable_object_to_point = json.load(f)
         game_state.openable_object_to_point = openable_object_to_point
 
-        game_state.update_receptacle_nearest_points() # TODO: save to desk
+        game_state.update_receptacle_nearest_points()
         game_state.planner.process_pool.terminate()
 
         self.navigator = DeterministicPlannerAgent(thread_id=0, game_state=game_state)
