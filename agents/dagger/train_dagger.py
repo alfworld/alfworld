@@ -12,7 +12,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import modules.generic as generic
 import eval.evaluate as evaluate
 from agent.agent import DAggerAgent
-from utils.misc import extract_admissible_commands
+from agents.utils.misc import extract_admissible_commands
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
 
 
