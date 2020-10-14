@@ -11,11 +11,11 @@ from tqdm import tqdm
 
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from agent import DAggerAgent
-import generic
-import evaluate
-from generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
-from environment import AlfredTWEnv, AlfredThorEnv
+from agents.agent import DAggerAgent
+import modules.generic as generic
+import eval.evaluate as evaluate
+from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
+from environment.environment import AlfredTWEnv, AlfredThorEnv
 from utils.misc import extract_admissible_commands
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 MAX_TRAIN_STEP = 50000
