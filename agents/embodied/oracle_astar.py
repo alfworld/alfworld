@@ -3,7 +3,7 @@ import gen.constants as constants
 from gen.game_states.task_game_state_full_knowledge import TaskGameStateFullKnowledge
 from gen.agents.deterministic_planner_agent import DeterministicPlannerAgent
 from gen.graph import graph_obj
-from models.embodied.oracle import OracleAgent
+from agents.embodied.oracle import OracleAgent
 import os
 
 class OracleAStarAgent(OracleAgent):
