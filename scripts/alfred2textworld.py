@@ -181,7 +181,7 @@ def main():
     import glob
     logic = GameLogic()
     logic.load_domain(args.domain)
-    for f in glob.glob("textworld_data/logic/*.twl2"):
+    for f in glob.glob("data/textworld_data/logic/*.twl2"):
         logic.import_twl2(f)
 
     state = State.from_pddl(logic, args.problem)
