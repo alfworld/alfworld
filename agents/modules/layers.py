@@ -2,7 +2,6 @@ import torch
 import math
 import numpy as np
 import h5py
-import copy
 import torch.nn.functional as F
 
 
@@ -1602,9 +1601,9 @@ class ObservationDiscriminator(torch.nn.Module):
         return logits
 
 
-class MaskRCNNBoxFeaturesFC(torch.nn.Module):
+class BoxFeaturesFC(torch.nn.Module):
     def __init__(self, in_features=1024, out_features=64):
-        super(MaskRCNNBoxFeaturesFC, self).__init__()
+        super(BoxFeaturesFC, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.linear1 = torch.nn.Linear(in_features=self.in_features, out_features=256)

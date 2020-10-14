@@ -7,7 +7,7 @@ import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
 from utils.misc import extract_admissible_commands
 
-def evaluate_dqn(env, agent, num_games):
+def evaluate_dqn(env, agent, num_games, debug=False):
 
     env.seed(42)
     agent.eval()
@@ -52,6 +52,10 @@ def evaluate_dqn(env, agent, num_games):
             print_actions = []
             report = agent.report_frequency > 0 and (episode_no % agent.report_frequency <= (episode_no - batch_size) % agent.report_frequency)
 
+            if debug:
+                print(first_sight_strings[0])
+                print(task_desc_strings[0])
+
             for step_no in range(agent.max_nb_steps_per_episode):
                 # push obs into observation pool
                 agent.observation_pool.push_batch(observation_strings)
@@ -72,6 +76,10 @@ def evaluate_dqn(env, agent, num_games):
                 scores = [float(item) for item in infos["won"]]
                 dones = [float(item) for item in dones]
                 gcs = [float(item) for item in infos["goal_condition_success_rate"]] if "goal_condition_success_rate" in infos else [0.0]*batch_size
+
+                if debug:
+                    print(chosen_actions[0])
+                    print(obs[0])
 
                 observation_strings = list(obs)
                 observation_strings = agent.preprocess_observation(observation_strings)
@@ -117,7 +125,7 @@ def evaluate_dqn(env, agent, num_games):
 
             if not report:
                 continue
-            print("Eval Episode: {:3d} | {:s} |  game points: {:2.3f} | game goal-condition points: {:2.3f} | game steps: {:2.3f}".format(episode_no, game_names[0], np.mean(res_points), np.mean(res_gcs), np.mean(res_steps)))
+            print("Episode: {:3d} | {:s} |  game points: {:2.3f} | game goal-condition points: {:2.3f} | game steps: {:2.3f}".format(episode_no, game_names[0], np.mean(res_points), np.mean(res_gcs), np.mean(res_steps)))
             # print(game_id + ":    " + " | ".join(print_actions))
             print(" | ".join(print_actions))
 
@@ -138,7 +146,7 @@ def evaluate_dqn(env, agent, num_games):
         }
 
 
-def evaluate_dagger(env, agent, num_games):
+def evaluate_dagger(env, agent, num_games, debug=False):
 
     env.seed(42)
     agent.eval()
@@ -184,6 +192,10 @@ def evaluate_dagger(env, agent, num_games):
             print_actions = []
             report = agent.report_frequency > 0 and (episode_no % agent.report_frequency <= (episode_no - batch_size) % agent.report_frequency)
 
+            if debug:
+                print(first_sight_strings[0])
+                print(task_desc_strings[0])
+
             for step_no in range(agent.max_nb_steps_per_episode):
                 # push obs into observation pool
                 agent.observation_pool.push_batch(observation_strings)
@@ -225,6 +237,10 @@ def evaluate_dagger(env, agent, num_games):
                 scores = [float(item) for item in infos["won"]]
                 gcs =[float(item) for item in infos["goal_condition_success_rate"]] if "goal_condition_success_rate" in infos else [0.0]*batch_size
                 dones = [float(item) for item in dones]
+
+                if debug:
+                    print(execute_actions[0])
+                    print(obs[0])
 
                 observation_strings = list(obs)
                 observation_strings = agent.preprocess_observation(observation_strings)
@@ -270,7 +286,7 @@ def evaluate_dagger(env, agent, num_games):
 
             if not report:
                 continue
-            print("Eval Episode: {:3d} | {:s} |  game points: {:2.3f} | game goal-condition points: {:2.3f} | game steps: {:2.3f}".format(episode_no, game_names[0], np.mean(res_points), np.mean(res_gcs), np.mean(res_steps)))
+            print("Model: {:s} | Episode: {:3d} | {:s} |  game points: {:2.3f} | game goal-condition points: {:2.3f} | game steps: {:2.3f}".format(agent.experiment_tag, episode_no, game_names[0], np.mean(res_points), np.mean(res_gcs), np.mean(res_steps)))
             # print(game_id + ":    " + " | ".join(print_actions))
             print(" | ".join(print_actions))
 
@@ -292,7 +308,7 @@ def evaluate_dagger(env, agent, num_games):
         }
 
 
-def evaluate_vision_dagger(env, agent, num_games):
+def evaluate_vision_dagger(env, agent, num_games, debug=False):
 
     env.seed(42)
     agent.eval()
@@ -329,8 +345,14 @@ def evaluate_vision_dagger(env, agent, num_games):
             action_candidate_list = agent.preprocess_action_candidates(action_candidate_list)
             # observation_strings = [item + " [SEP] " + a for item, a in zip(observation_strings, execute_actions)]  # appending the chosen action at previous step into the observation
 
-            # print(first_sight_strings[0])
-            # print(task_desc_strings[0])
+            # extract exploration frame features
+            if agent.use_exploration_frame_feats:
+                exploration_frames = env.get_exploration_frames()
+                exploration_frame_feats = agent.extract_exploration_frame_feats(exploration_frames)
+
+            if debug:
+                print(first_sight_strings[0])
+                print(task_desc_strings[0])
 
             still_running_mask = []
             sequence_game_points = []
@@ -345,8 +367,12 @@ def evaluate_vision_dagger(env, agent, num_games):
                 # most_recent_observation_strings = agent.observation_pool.get()
 
                 # get visual features
-                images = env.get_frames()
-                observation_feats = agent.extract_visual_features(images)
+                current_frames = env.get_frames()
+                observation_feats = agent.extract_visual_features(current_frames)
+
+                # add exploration features if specified
+                if agent.use_exploration_frame_feats:
+                    observation_feats = [torch.cat([ef, obs], dim=0) for ef, obs in zip(exploration_frame_feats, observation_feats)]
 
                 # predict actions
                 if agent.action_space == "generation":
@@ -359,8 +385,9 @@ def evaluate_vision_dagger(env, agent, num_games):
                 gcs =[float(item) for item in infos["goal_condition_success_rate"]] if "goal_condition_success_rate" in infos else [0.0]*batch_size
                 dones = [float(item) for item in dones]
 
-                # print(execute_actions[0])
-                # print(obs[0])
+                if debug:
+                    print(execute_actions[0])
+                    print(obs[0])
 
                 # observation_strings = list(obs)
                 # observation_strings = agent.preprocess_observation(observation_strings)
@@ -406,7 +433,7 @@ def evaluate_vision_dagger(env, agent, num_games):
 
             if not report:
                 continue
-            print("Eval Episode: {:3d} | {:s} |  game points: {:2.3f} | game goal-condition points: {:2.3f} | game steps: {:2.3f}".format(episode_no, game_names[0], np.mean(res_points), np.mean(res_gcs), np.mean(res_steps)))
+            print("Model: {:s} | Episode: {:3d} | {:s} |  game points: {:2.3f} | game goal-condition points: {:2.3f} | game steps: {:2.3f}".format(agent.experiment_tag, episode_no, game_names[0], np.mean(res_points), np.mean(res_gcs), np.mean(res_steps)))
             # print(game_id + ":    " + " | ".join(print_actions))
             print(" | ".join(print_actions))
 

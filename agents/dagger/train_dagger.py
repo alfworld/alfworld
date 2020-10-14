@@ -1,54 +1,52 @@
 import datetime
 import os
-import random
-import time
 import copy
 import json
-import glob
 import importlib
 import numpy as np
 
 import sys
-sys.path.append(os.environ['ALFRED_ROOT'])
-from agent import DAggerAgent
-import generic
-import evaluate
-from generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
-from environment import AlfredTWEnv, AlfredThorEnv
-from utils.misc import extract_admissible_commands
+sys.path.insert(0, os.environ['ALFRED_ROOT'])
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+import modules.generic as generic
+import eval.evaluate as evaluate
+from agent.agent import DAggerAgent
+from utils.misc import extract_admissible_commands
+from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
 
 
 def train():
 
     time_1 = datetime.datetime.now()
+    step_time = []
     config = generic.load_config()
     agent = DAggerAgent(config)
-    alfred_env = getattr(importlib.import_module("environment"), config["env"]["type"])(config, train_eval="train")
+    alfred_env = getattr(importlib.import_module("environment.environment"), config["env"]["type"])(config, train_eval="train")
     env = alfred_env.init_env(batch_size=agent.batch_size)
-
+    
     id_eval_env, num_id_eval_game = None, 0
     ood_eval_env, num_ood_eval_game = None, 0
     if agent.run_eval:
         # in distribution
         if config['dataset']['eval_id_data_path'] is not None:
-            alfred_env = getattr(importlib.import_module("environment"), config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_in_distribution")
+            alfred_env = getattr(importlib.import_module("environment.environment"), config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_in_distribution")
             id_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_id_eval_game = alfred_env.num_games
         # out of distribution
         if config['dataset']['eval_ood_data_path'] is not None:
-            alfred_env = getattr(importlib.import_module("environment"), config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
+            alfred_env = getattr(importlib.import_module("environment.environment"), config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
             ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_ood_eval_game = alfred_env.num_games
 
-    output_dir = config["general"]["save_path"]
-    data_dir = config["general"]["save_path"]
+    output_dir = os.getenv('PT_OUTPUT_DIR', '/tmp') if agent.philly else config["general"]["save_path"]
+    data_dir = os.environ['PT_DATA_DIR'] if agent.philly else config["general"]["save_path"]
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     # visdom
-    if config["general"]["visdom"]:
+    if config["general"]["visdom"] and not agent.philly:
         import visdom
         viz = visdom.Visdom()
         reward_win, step_win = None, None
@@ -155,7 +153,12 @@ def train():
 
             replay_info = [most_recent_observation_strings, task_desc_strings, action_candidate_list, expert_actions, expert_indices]
             transition_cache.append(replay_info)
+
+            env_step_start_time = datetime.datetime.now()
             obs, _, dones, infos = env.step(execute_actions)
+            env_step_stop_time = datetime.datetime.now()
+            step_time.append((env_step_stop_time-env_step_start_time).microseconds / (float(batch_size)))
+
             scores = [float(item) for item in infos["won"]]
             dones = [float(item) for item in dones]
 
@@ -221,7 +224,10 @@ def train():
         if not report:
             continue
         time_2 = datetime.datetime.now()
-        print("Episode: {:3d} | {:s} | time spent: {:s} | loss: {:2.3f} | game points: {:2.3f} | used steps: {:2.3f} | student points: {:2.3f} | student steps: {:2.3f} | fraction assist: {:2.3f} | fraction random: {:2.3f}".format(episode_no, game_names[0], str(time_2 - time_1).rsplit(".")[0], running_avg_dagger_loss.get_avg(), running_avg_game_points.get_avg(), running_avg_game_steps.get_avg(), running_avg_student_points.get_avg(), running_avg_student_steps.get_avg(), agent.fraction_assist, agent.fraction_random))
+        time_spent_seconds = (time_2-time_1).seconds
+        eps_per_sec = float(episode_no) / time_spent_seconds
+        avg_step_time = np.mean(np.array(step_time))
+        print("Model: {:s} | Episode: {:3d} | {:s} | time spent: {:s} | eps/sec : {:2.3f} | avg step time: {:2.10f} | loss: {:2.3f} | game points: {:2.3f} | used steps: {:2.3f} | student points: {:2.3f} | student steps: {:2.3f} | fraction assist: {:2.3f} | fraction random: {:2.3f}".format(agent.experiment_tag, episode_no, game_names[0], str(time_2 - time_1).rsplit(".")[0], eps_per_sec, avg_step_time, running_avg_dagger_loss.get_avg(), running_avg_game_points.get_avg(), running_avg_game_steps.get_avg(), running_avg_student_points.get_avg(), running_avg_student_steps.get_avg(), agent.fraction_assist, agent.fraction_random))
         # print(game_id + ":    " + " | ".join(print_actions))
         print(" | ".join(print_actions))
 
@@ -247,7 +253,7 @@ def train():
                 agent.save_model_to_path(output_dir + "/" + agent.experiment_tag + ".pt")
 
         # plot using visdom
-        if config["general"]["visdom"]:
+        if config["general"]["visdom"] and not agent.philly:
             viz_game_points.append(running_avg_game_points.get_avg())
             viz_game_step.append(running_avg_game_steps.get_avg())
             viz_student_points.append(running_avg_student_points.get_avg())
@@ -333,8 +339,9 @@ def train():
 
         # write accuracies down into file
         _s = json.dumps({"time spent": str(time_2 - time_1).rsplit(".")[0],
-                         "time spent seconds": (time_2 - time_1).seconds,
+                         "time spent seconds":  time_spent_seconds,
                          "episodes": episode_no,
+                         "episodes per second": eps_per_sec,
                          "loss": str(running_avg_dagger_loss.get_avg()),
                          "train game points": str(running_avg_game_points.get_avg()),
                          "train game steps": str(running_avg_game_steps.get_avg()),

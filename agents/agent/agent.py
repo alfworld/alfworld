@@ -14,10 +14,10 @@ import torch.nn.functional as F
 from transformers import DistilBertModel, DistilBertTokenizer
 logging.getLogger("transformers.tokenization_utils").setLevel(logging.ERROR)
 
-import memory
-from model import Policy
-from generic import to_np, to_pt, _words_to_ids, pad_sequences, preproc, max_len, ez_gather_dim_1, LinearSchedule, BeamSearchNode
-from layers import NegativeLogLoss, masked_mean, compute_mask, GetGenerationQValue
+import modules.memory as memory
+from modules.model import Policy
+from modules.generic import to_np, to_pt, _words_to_ids, pad_sequences, preproc, max_len, ez_gather_dim_1, LinearSchedule, BeamSearchNode
+from modules.layers import NegativeLogLoss, masked_mean, compute_mask, GetGenerationQValue
 
 
 class ObservationPool(object):
@@ -124,6 +124,7 @@ class Agent:
 
     def load_config(self):
         self.task = self.config['general']['task']
+        self.philly = self.config['general']['philly']
         self.observation_pool_capacity = self.config['general']['observation_pool_capacity']
         self.observation_pool = ObservationPool(capacity=self.observation_pool_capacity)
         self.hide_init_receptacles = self.config['general']['hide_init_receptacles']

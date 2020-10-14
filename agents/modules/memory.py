@@ -3,8 +3,6 @@ import random
 from collections import namedtuple
 import numpy as np
 import torch
-from generic import to_np
-from segment_tree import SumSegmentTree, MinSegmentTree
 
 
 # a snapshot of state to be stored in replay memory

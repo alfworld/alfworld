@@ -10,12 +10,11 @@ import numpy as np
 
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from vision_agent import VisionAgent
-import generic
+from agent.vision_agent import VisionAgent
+import modules.generic as generic
 import torch
-import evaluate
-from generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
-from environment import AlfredTWEnv, AlfredThorEnv
+import eval.evaluate as evaluate
+from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
 from utils.misc import extract_admissible_commands
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -43,15 +42,15 @@ def train():
             ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_ood_eval_game = alfred_env.num_games
 
-    output_dir = config["general"]["save_path"]
-    data_dir = config["general"]["save_path"]
+    output_dir = os.getenv('PT_OUTPUT_DIR', '/tmp') if agent.philly else config["general"]["save_path"]
+    data_dir = os.environ['PT_DATA_DIR'] if agent.philly else config["general"]["save_path"]
     action_space = config["dagger"]["action_space"]
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     # visdom
-    if config["general"]["visdom"]:
+    if config["general"]["visdom"] and not agent.philly:
         import visdom
         viz = visdom.Visdom()
         reward_win, step_win = None, None
@@ -105,8 +104,7 @@ def train():
         agent.observation_pool.push_first_sight(first_sight_strings)
 
         # extract exploration frame features
-        use_exploration_frame_feats = config['vision_dagger']['use_exploration_frame_feats']
-        if use_exploration_frame_feats:
+        if agent.use_exploration_frame_feats:
             exploration_frames = env.get_exploration_frames()
             exploration_frame_feats = agent.extract_exploration_frame_feats(exploration_frames)
 
@@ -138,7 +136,7 @@ def train():
             observation_feats = agent.extract_visual_features(current_frames)
 
             # add exploration features if specified
-            if use_exploration_frame_feats:
+            if agent.use_exploration_frame_feats:
                 observation_feats = [torch.cat([ef, obs], dim=0) for ef, obs in zip(exploration_frame_feats, observation_feats)]
 
             # predict actions
@@ -238,7 +236,9 @@ def train():
         if not report:
             continue
         time_2 = datetime.datetime.now()
-        print("Episode: {:3d} | {:s} | time spent: {:s} | loss: {:2.3f} | game points: {:2.3f} | used steps: {:2.3f} | student points: {:2.3f} | student steps: {:2.3f} | fraction assist: {:2.3f} | fraction random: {:2.3f}".format(episode_no, game_names[0], str(time_2 - time_1).rsplit(".")[0], running_avg_dagger_loss.get_avg(), running_avg_game_points.get_avg(), running_avg_game_steps.get_avg(), running_avg_student_points.get_avg(), running_avg_student_steps.get_avg(), agent.fraction_assist, agent.fraction_random))
+        time_spent_seconds = (time_2-time_1).seconds
+        eps_per_sec = float(episode_no) / time_spent_seconds
+        print("Name: {:s} | Episode: {:3d} | {:s} | time spent: {:s} | eps/sec : {:2.3f} | loss: {:2.3f} | game points: {:2.3f} | used steps: {:2.3f} | student points: {:2.3f} | student steps: {:2.3f} | fraction assist: {:2.3f} | fraction random: {:2.3f}".format(agent.experiment_tag, episode_no, game_names[0], str(time_2 - time_1).rsplit(".")[0], eps_per_sec, running_avg_dagger_loss.get_avg(), running_avg_game_points.get_avg(), running_avg_game_steps.get_avg(), running_avg_student_points.get_avg(), running_avg_student_steps.get_avg(), agent.fraction_assist, agent.fraction_random))
         # print(game_id + ":    " + " | ".join(print_actions))
         print(" | ".join(print_actions))
 
@@ -261,7 +261,7 @@ def train():
                 agent.save_model_to_path(output_dir + "/" + agent.experiment_tag + ".pt")
 
         # plot using visdom
-        if config["general"]["visdom"]:
+        if config["general"]["visdom"] and not agent.philly:
             viz_game_points.append(running_avg_game_points.get_avg())
             viz_game_step.append(running_avg_game_steps.get_avg())
             viz_student_points.append(running_avg_student_points.get_avg())
@@ -347,8 +347,9 @@ def train():
 
         # write accuracies down into file
         _s = json.dumps({"time spent": str(time_2 - time_1).rsplit(".")[0],
-                         "time spent seconds": (time_2 - time_1).seconds,
+                         "time spent seconds": time_spent_seconds,
                          "episodes": episode_no,
+                         "episodes per second": eps_per_sec,
                          "loss": str(running_avg_dagger_loss.get_avg()),
                          "train game points": str(running_avg_game_points.get_avg()),
                          "train game steps": str(running_avg_game_steps.get_avg()),

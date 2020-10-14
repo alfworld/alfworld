@@ -42,14 +42,14 @@ def train():
             ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_ood_eval_game = alfred_env.num_games
 
-    output_dir = config["general"]["save_path"]
-    data_dir = config["general"]["save_path"]
+    output_dir = os.getenv('PT_OUTPUT_DIR', '/tmp') if agent.philly else config["general"]["save_path"]
+    data_dir = os.environ['PT_DATA_DIR'] if agent.philly else config["general"]["save_path"]
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     # visdom
-    if config["general"]["visdom"]:
+    if config["general"]["visdom"] and not agent.philly:
         import visdom
         viz = visdom.Visdom()
         reward_win, step_win = None, None
@@ -127,7 +127,7 @@ def train():
                 agent.save_model_to_path(output_dir + "/" + agent.experiment_tag + ".pt")
 
         # plot using visdom
-        if config["general"]["visdom"]:
+        if config["general"]["visdom"] and not agent.philly:
             viz_loss.append(running_avg_dagger_loss.get_avg())
             viz_id_eval_game_points.append(id_eval_game_points)
             viz_id_eval_step.append(id_eval_game_step)
