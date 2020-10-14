@@ -1,2 +1,4 @@
-from agents.agent.dagger_agent import DAggerAgent
-from agents.agent.dqn_agent import DQNAgent
+from agents.agent.base_agent import BaseAgent
+from agents.agent.text_dagger_agent import TextDAggerAgent
+from agents.agent.text_dqn_agent import TextDQNAgent
+from agents.agent.vision_dagger_agent import VisionDAggerAgent
