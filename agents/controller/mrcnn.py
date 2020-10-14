@@ -12,7 +12,7 @@ import gen.constants as constants
 from collections import Counter
 from PIL import Image
 
-from agents.embodied.base import BaseAgent
+from agents.controller.base import BaseAgent
 from utils.misc import extract_admissible_commands_with_heuristics
 
 import torchvision.transforms as T
