@@ -12,13 +12,13 @@ import numpy as np
 import torch
 logging.getLogger("transformers.tokenization_utils").setLevel(logging.ERROR)
 
-from agents.agent.base_agent import BaseAgent
+from agents.agent import BaseAgent
 import modules.memory as memory
 from modules.generic import to_np, to_pt, _words_to_ids, pad_sequences, preproc, max_len, ez_gather_dim_1, LinearSchedule, BeamSearchNode
 from modules.layers import NegativeLogLoss, masked_mean, compute_mask, GetGenerationQValue
 
 
-class DAggerAgent(BaseAgent):
+class TextDAggerAgent(BaseAgent):
     # dagger stuff
 
     def __init__(self, *args, **kwargs):

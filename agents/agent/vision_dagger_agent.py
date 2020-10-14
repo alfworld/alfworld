@@ -8,7 +8,7 @@ import torch
 import torch.nn.functional as F
 
 import modules.memory as memory
-from agents.dagger_agent import DAggerAgent
+from agents.agent import TextDAggerAgent
 from modules.generic import to_np, to_pt, _words_to_ids, pad_sequences, preproc, max_len, ez_gather_dim_1, LinearSchedule
 from modules.layers import NegativeLogLoss, masked_mean, compute_mask
 
@@ -20,7 +20,7 @@ from torchvision import models
 from torchvision.ops import boxes as box_ops
 
 
-class VisionDAggerAgent(DAggerAgent):
+class VisionDAggerAgent(TextDAggerAgent):
     def __init__(self, config):
         super().__init__(config)
 

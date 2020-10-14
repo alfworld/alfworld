@@ -8,7 +8,7 @@ import glob
 import importlib
 import numpy as np
 
-from agent.agent import DQNAgent
+from agents.agent import TextDQNAgent
 import modules.generic as generic
 import eval.evaluate as evaluate
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
@@ -21,7 +21,7 @@ def train():
 
     time_1 = datetime.datetime.now()
     config = generic.load_config()
-    agent = DQNAgent(config)
+    agent = TextDQNAgent(config)
 
     env_type = config["env"]["type"]        
     id_eval_env, num_id_eval_game = None, 0
