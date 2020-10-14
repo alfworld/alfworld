@@ -5,7 +5,7 @@ import torch
 import os
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from utils.misc import extract_admissible_commands
+from agents.utils.misc import extract_admissible_commands
 
 def evaluate_dqn(env, agent, num_games, debug=False):
 

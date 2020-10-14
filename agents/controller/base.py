@@ -9,7 +9,7 @@ import copy
 import random
 import gen.constants as constants
 from gen.utils.image_util import compress_mask, decompress_mask
-from utils.misc import get_templated_task_desc, get_human_anns_task_desc, NumpyArrayEncoder
+from agents.utils.misc import get_templated_task_desc, get_human_anns_task_desc, NumpyArrayEncoder
 from enum import Enum
 
 from gen.game_states.task_game_state_full_knowledge import TaskGameStateFullKnowledge
