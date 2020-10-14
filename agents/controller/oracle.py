@@ -9,7 +9,7 @@ import traceback
 import numpy as np
 import gen.constants as constants
 from collections import Counter
-from agents.embodied.base import BaseAgent
+from agents.controller.base import BaseAgent
 
 from utils.misc import extract_admissible_commands_with_heuristics
 

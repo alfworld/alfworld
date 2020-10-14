@@ -15,7 +15,7 @@ from utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
 from env.thor_env import ThorEnv
 from agents.expert import HandCodedThorAgent, HandCodedAgentTimeout
 from detector.mrcnn import load_pretrained_model
-from agents.embodied import OracleAgent, OracleAStarAgent, MaskRCNNAgent, MaskRCNNAStarAgent
+from agents.controller import OracleAgent, OracleAStarAgent, MaskRCNNAgent, MaskRCNNAStarAgent
 
 TASK_TYPES = {1: "pick_and_place_simple",
               2: "look_at_obj_in_light",
