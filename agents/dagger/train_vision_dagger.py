@@ -10,7 +10,7 @@ import numpy as np
 
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from agent.vision_agent import VisionAgent
+from agent.vision_dagger_agent import VisionDAggerAgent
 import modules.generic as generic
 import torch
 import eval.evaluate as evaluate
@@ -23,7 +23,7 @@ def train():
 
     time_1 = datetime.datetime.now()
     config = generic.load_config()
-    agent = VisionAgent(config)
+    agent = VisionDAggerAgent(config)
     env_type = "AlfredThorEnv"
     alfred_env = getattr(importlib.import_module("environment"), env_type)(config, train_eval="train")
     env = alfred_env.init_env(batch_size=agent.batch_size)
