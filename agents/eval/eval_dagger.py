@@ -10,10 +10,10 @@ import numpy as np
 
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from agent import DAggerAgent
-import generic
-import evaluate
-from environment import AlfredTWEnv, AlfredThorEnv
+from agent.agent import DAggerAgent
+import modules.generic as generic
+import eval.evaluate as evaluate
+from environment.environment import AlfredTWEnv, AlfredThorEnv
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
@@ -36,8 +36,8 @@ def train():
             ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_ood_eval_game = alfred_env.num_games
 
-    output_dir =  config["general"]["save_path"]
-    data_dir = config["general"]["save_path"]
+    output_dir = os.getenv('PT_OUTPUT_DIR', '/tmp') if agent.philly else config["general"]["save_path"]
+    data_dir = os.environ['PT_DATA_DIR'] if agent.philly else config["general"]["save_path"]
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
