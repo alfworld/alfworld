@@ -11,7 +11,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 import modules.generic as generic
 import eval.evaluate as evaluate
-from agent.agent import DAggerAgent
+from agents.agent import TextDAggerAgent
 from agents.utils.misc import extract_admissible_commands
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
 
@@ -21,7 +21,7 @@ def train():
     time_1 = datetime.datetime.now()
     step_time = []
     config = generic.load_config()
-    agent = DAggerAgent(config)
+    agent = TextDAggerAgent(config)
     alfred_env = getattr(importlib.import_module("environment"), config["env"]["type"])(config, train_eval="train")
     env = alfred_env.init_env(batch_size=agent.batch_size)
     
