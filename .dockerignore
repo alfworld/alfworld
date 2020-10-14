@@ -2,5 +2,5 @@
 **
 
 # Except scripts
-!/scripts
+!/docker
 !/requirements.txt
