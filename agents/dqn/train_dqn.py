@@ -13,7 +13,7 @@ import modules.generic as generic
 import eval.evaluate as evaluate
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
 from environement.environment import AlfredTWEnv, AlfredThorEnv
-from utils.misc import extract_admissible_commands
+from agents.utils.misc import extract_admissible_commands
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 

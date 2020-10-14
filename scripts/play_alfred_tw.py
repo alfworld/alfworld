@@ -14,9 +14,17 @@ import textworld.gym
 
 import sys
 sys.path.append(os.environ["ALFRED_ROOT"])
-from utils.misc import Demangler, get_templated_task_desc, clean_alfred_facts, add_task_to_grammar
-from eval_tw_agent import AlfredDemangler
+from agents.utils.misc import Demangler, get_templated_task_desc, clean_alfred_facts, add_task_to_grammar
 
+
+class AlfredDemangler(textworld.core.Wrapper):
+
+    def load(self, *args, **kwargs):
+        super().load(*args, **kwargs)
+
+        demangler = Demangler(game_infos=self._game.infos)
+        for info in self._game.infos.values():
+            info.name = demangler.demangle_alfred_name(info.id)
 
 def main(args):
     GAME_LOGIC = {
@@ -50,9 +58,6 @@ def main(args):
     agent = HumanAgent(True)
     agent.reset(env)
 
-    # Interact with the ALFRED environment.
-    # obs += "\n\nYour task is to: %s\n" % task_desc
-
     while True:
         print(obs)
         cmd = agent.act(infos, 0, False)
@@ -75,7 +80,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("problem", help="Path to a folder contain initial state PDDL and traj_info.")
+    parser.add_argument("problem", help="Path to folder containing pddl and traj_data files")
     parser.add_argument("--domain",
                         default=os.environ.get("ALFRED_ROOT", ".") + "/gen/planner/domains/PutTaskExtended_domain.pddl",
                         help="Path to a PDDL file describing the domain."

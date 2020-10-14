@@ -13,7 +13,7 @@ from collections import Counter
 from PIL import Image
 
 from agents.controller.base import BaseAgent
-from utils.misc import extract_admissible_commands_with_heuristics
+from agents.utils.misc import extract_admissible_commands_with_heuristics
 
 import torchvision.transforms as T
 
