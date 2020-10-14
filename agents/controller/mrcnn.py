@@ -26,7 +26,9 @@ class MaskRCNNAgent(BaseAgent):
     def __init__(self, env, traj_data, traj_root,
                  pretrained_model=None,
                  load_receps=False, debug=False,
-                 goal_desc_human_anns_prob=0.0):
+                 goal_desc_human_anns_prob=0.0,
+                 classes=constants.OBJECTS_DETECTOR,
+                 save_detections_to_disk=False, save_detections_path='./'):
 
         self.openable_points = self.get_openable_points(traj_data)
 
@@ -36,11 +38,16 @@ class MaskRCNNAgent(BaseAgent):
         self.mask_rcnn.eval()
         self.mask_rcnn.cuda()
         self.transform = T.Compose([T.ToTensor()])
+        self.classes = classes
 
         # object state tracking
         self.cleaned_objects = set()
         self.cooled_objects = set()
         self.heated_objects = set()
+
+        # recording settings
+        self.save_detections_to_disk = save_detections_to_disk
+        self.save_detections_path = save_detections_path
 
         super().__init__(env, traj_data, traj_root,
                          load_receps=load_receps, debug=debug,
@@ -77,7 +84,7 @@ class MaskRCNNAgent(BaseAgent):
                 color_count = Counter()
                 for x in range(instance_segs.shape[0]):
                     for y in range(instance_segs.shape[1]):
-                        color = instance_segs[y, x]
+                        color = instance_segs[x, y]
                         color_count[tuple(color)] += 1
 
                 for color, num_pixels in color_count.most_common():
@@ -101,6 +108,8 @@ class MaskRCNNAgent(BaseAgent):
                             elif object_id in self.receptacles and num_pixels > self.receptacles[object_id]['num_pixels']:
                                 self.receptacles[object_id]['locs'] = action  # .append(action)
                                 self.receptacles[object_id]['num_pixels'] = num_pixels
+
+        # self.save_receps()
 
     # def explore_scene(self):
     #     '''
@@ -143,7 +152,7 @@ class MaskRCNNAgent(BaseAgent):
     #                         self.receptacles[recep_id]['locs'] = action  # .append(action)
     #                         self.receptacles[recep_id]['num_pixels'] = num_pixels
     #
-    #     self.save_receps()
+    #     # self.save_receps()
 
     def explore_scene_exhaustively(self):
         event = self.env.step(dict(action='GetReachablePositions',
@@ -216,7 +225,7 @@ class MaskRCNNAgent(BaseAgent):
                                             self.receptacles[recep_id]['locs'] = action  # .append(action)
                                             self.receptacles[recep_id]['num_pixels'] = num_pixels
 
-        self.save_receps()
+        # self.save_receps()
 
     def print_frame(self, recep, loc):
         visible_objects = self.update_detection(recep, loc)
@@ -261,6 +270,14 @@ class MaskRCNNAgent(BaseAgent):
                 if self.objects[object_id]['num_id'] not in self.inventory:
                     visible_objects.append(self.objects[object_id]['num_id'])
         return visible_objects
+
+    def update_gt_receptacle_mask(self, recep):
+        instance_segs = self.env.last_event.instance_segmentation_frame
+        object_id_to_color = self.env.last_event.object_id_to_color
+        recep_id = recep['object_id']
+        if recep_id in object_id_to_color:
+            recep_instance_color = object_id_to_color[recep_id]
+            recep['mask'] = np.array(np.all(instance_segs == np.array(recep_instance_color), axis=-1), dtype=int)
 
     def get_most_visible_object_of_type(self, otype, obj_dict):
         max_pixels, best_view_obj = 0, None
@@ -317,7 +334,7 @@ class MaskRCNNAgent(BaseAgent):
         if len(pred_pruned) > 0:
             pred_t = pred_pruned[-1]
             masks = (pred[0]['masks']>0.5).squeeze().detach().cpu().numpy()
-            pred_class = [constants.OBJECTS_WSLICED[i] for i in list(pred[0]['labels'].detach().cpu().numpy())]
+            pred_class = [self.classes[i] for i in list(pred[0]['labels'].detach().cpu().numpy())]
             pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().cpu().numpy())]
             masks = masks[:pred_t+1]
             pred_boxes = pred_boxes[:pred_t+1] if len(pred_pruned) > 1 else pred_boxes
@@ -347,6 +364,13 @@ class MaskRCNNAgent(BaseAgent):
             cv2.imshow("MaskRCNN", img)
             cv2.waitKey(1)
 
+            if self.save_detections_to_disk:
+                if not os.path.exists(self.save_detections_path):
+                    os.makedirs(self.save_detections_path)
+                for _ in range(10): # save 10 frames
+                    img_idx = len(glob.glob(self.save_detections_path + '/*.png'))
+                    cv2.imwrite(self.save_detections_path + '/%09d.png' % img_idx, img)
+
         return masks, boxes, pred_cls
 
     def get_object_state(self, object_id):
@@ -363,8 +387,8 @@ class MaskRCNNAgent(BaseAgent):
     def interact(self, action, object_name):
         # exception: pass actions
         if action == 'Pass':
-            _, event, _, _, _ = self.env.va_interact(action=action)
-            return event, None
+            self.env.va_interact(action=action)
+            return self.env.last_event, None
 
         # extract context
         object_type = object_name.split()[0]
@@ -372,6 +396,7 @@ class MaskRCNNAgent(BaseAgent):
 
         # update MaskRCNN detections
         _ = self.update_detection(recep, self.curr_loc)
+        self.update_gt_receptacle_mask(recep)
 
         # choose which dictionary to look at
         recep_classes = [c.lower() for c in list(self.STATIC_RECEPTACLES)]
@@ -566,6 +591,7 @@ class MaskRCNNAgent(BaseAgent):
         # if self.debug:
         #     print(self.feedback)
         return self.feedback
+
 
 
 
