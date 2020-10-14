@@ -3,7 +3,7 @@
 set -euxo pipefail
 
 apt-get update
-apt install --no-install-recommends \
+DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends \
   curl \
   terminator \
   tmux \
@@ -12,7 +12,6 @@ apt install --no-install-recommends \
   libxext6 \
   libxrender-dev \
   gedit \
-  git \
   openssh-client \
   unzip \
   htop \
@@ -38,8 +37,6 @@ apt install --no-install-recommends \
   git \
   wget \
   module-init-tools \
-  pciutils
-#  libxrender1 \
-#  xserver-xorg-core \
-#  xorg \
-#  pciutils \
+  xserver-xorg \
+  xserver-xorg-video-fbdev \
+  xauth
