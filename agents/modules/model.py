@@ -4,8 +4,7 @@ import logging
 import numpy as np
 
 import torch
-from layers import EncoderBlock, DecoderBlock, NoisyLinear, CQAttention, compute_mask, PointerSoftmax, masked_softmax, SelfAttention, MaskRCNNBoxFeaturesFC
-from generic import to_pt
+from modules.layers import EncoderBlock, DecoderBlock, NoisyLinear, CQAttention, compute_mask, PointerSoftmax, masked_softmax, SelfAttention, BoxFeaturesFC
 BERT_EMBEDDING_SIZE = 768
 
 logger = logging.getLogger(__name__)
@@ -48,9 +47,15 @@ class Policy(torch.nn.Module):
 
         self.noisy_net = self.config['rl']['epsilon_greedy']['noisy_net']
 
-        self.vision_model_type = self.config['vision_dagger']['model_type']
-        self.vision_input_dim = 1024 if self.vision_model_type == "maskrcnn" else 1000
         self.resnet_fc_dim = self.config['vision_dagger']['resnet_fc_dim']
+        self.vision_model_type = self.config['vision_dagger']['model_type']
+        if self.vision_model_type == "maskrcnn_whole":
+            self.vision_input_dim = 256
+        elif self.vision_model_type == "maskrcnn":
+            self.vision_input_dim = 1024
+        else:
+            self.vision_input_dim = 1000
+
 
     def _def_layers(self):
 
@@ -79,11 +84,9 @@ class Policy(torch.nn.Module):
         self.action_scorer_extra_self_attention = SelfAttention(self.block_hidden_dim, self.n_heads, self.dropout)
         self.action_scorer_extra_linear = linear_function(self.block_hidden_dim, self.block_hidden_dim)
 
-        # vision fc
-        self.vision_fc = MaskRCNNBoxFeaturesFC(in_features=self.vision_input_dim, out_features=self.resnet_fc_dim)
-
-        self.action_scorer_extra_self_attention = SelfAttention(self.block_hidden_dim, self.n_heads, self.dropout)
-        self.action_scorer_extra_linear = linear_function(self.block_hidden_dim, self.block_hidden_dim)
+        # vision modules
+        self.vision_fc = BoxFeaturesFC(in_features=self.vision_input_dim, out_features=self.resnet_fc_dim)
+        self.vision_feat_seq_rnn = torch.nn.GRU(self.vision_input_dim, int(self.vision_input_dim/2), 1, bidirectional=True)
 
     def get_bert_embeddings(self, _input_words, _input_masks):
         # _input_words: batch x time
@@ -213,7 +216,7 @@ class Policy(torch.nn.Module):
 
         trg_decoder_output = trg_embeddings
         for i in range(self.decoder_layers):
-            trg_decoder_output, _, _, _ = self.decoder[i](trg_decoder_output, trg_mask, trg_mask_square, h_obs, obs_mask_square, i * 3 + 1, self.decoder_layers)  # batch x time x hid
+            trg_decoder_output, target_target_representations, target_source_representations, target_source_attention = self.decoder[i](trg_decoder_output, trg_mask, trg_mask_square, h_obs, obs_mask_square, i * 3 + 1, self.decoder_layers)  # batch x time x hid
 
         trg_decoder_output = self.decoding_to_embedding(trg_decoder_output)  # batch x time x emb
         trg_decoder_output = torch.tanh(trg_decoder_output)

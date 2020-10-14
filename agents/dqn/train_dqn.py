@@ -8,11 +8,11 @@ import glob
 import importlib
 import numpy as np
 
-from agent import DQNAgent
-import generic
-import evaluate
-from generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
-from environment import AlfredTWEnv, AlfredThorEnv
+from agent.agent import DQNAgent
+import modules.generic as generic
+import eval.evaluate as evaluate
+from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
+from environement.environment import AlfredTWEnv, AlfredThorEnv
 from utils.misc import extract_admissible_commands
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -48,14 +48,14 @@ def train():
                 ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
                 num_ood_eval_game = alfred_env.num_games
 
-    output_dir = config["general"]["save_path"]
-    data_dir = config["general"]["save_path"]
+    output_dir = os.getenv('PT_OUTPUT_DIR', '/tmp') if agent.philly else config["general"]["save_path"]
+    data_dir = os.environ['PT_DATA_DIR'] if agent.philly else config["general"]["save_path"]
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     # visdom
-    if config["general"]["visdom"]:
+    if config["general"]["visdom"] and not agent.philly:
         import visdom
         viz = visdom.Visdom()
         reward_win, step_win = None, None
@@ -287,7 +287,7 @@ def train():
                 agent.save_model_to_path(output_dir + "/" + agent.experiment_tag + ".pt")
 
         # plot using visdom
-        if config["general"]["visdom"]:
+        if config["general"]["visdom"] and not agent.philly:
             viz_game_points.append(running_avg_game_points.get_avg())
             viz_overall_rewards.append(running_avg_overall_rewards.get_avg())
             viz_step.append(running_avg_game_steps.get_avg())

@@ -14,7 +14,8 @@ import importlib
 
 sys.path.append(os.environ['ALFRED_ROOT'])
 from utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
-from models.expert import HandCodedThorAgent, HandCodedAgentTimeout
+from env.thor_env import ThorEnv
+from agents.expert import HandCodedThorAgent, HandCodedAgentTimeout
 from detector.mrcnn import load_pretrained_model
 
 import textworld
@@ -69,10 +70,6 @@ class AlfredTWEnv(object):
         self.goal_desc_human_anns_prob = self.config['env']['goal_desc_human_anns_prob']
         self.get_game_logic()
         self.gen_game_files(regen_game_files=self.config['env']['regen_game_files'])
-        self.training_size = self.config["env"]["training_size"]
-        if train_eval == "train" and self.training_size > 0:
-            self.game_files = self.game_files[:self.training_size]
-        self.num_games = len(self.game_files)
 
         self.random_seed = 42
 
@@ -146,7 +143,8 @@ class AlfredTWEnv(object):
                         else:
                             # write task desc to tw.game-pddl file
                             gamedata['grammar'] = grammar
-                            json.dump(gamedata, open(game_file_path, 'w'))
+                            if self.goal_desc_human_anns_prob > 0:
+                                json.dump(gamedata, open(game_file_path, 'w'))
                             self.game_files.append(game_file_path)
                             continue
 
@@ -175,6 +173,18 @@ class AlfredTWEnv(object):
                 log("%s (%d steps), %d/%d solvable games" % (game_file_path, expert_steps, len(self.game_files), count))
 
         print("Overall we have %s games" % (str(len(self.game_files))))
+        self.num_games = len(self.game_files)
+
+        if self.train_eval == "train":
+            num_train_games = self.config['dataset']['num_train_games'] if 'num_train_games' in self.config['dataset'] else len(self.game_files)
+            self.game_files = self.game_files[:num_train_games]
+            self.num_games = len(self.game_files)
+            print("Training with %d games" % (len(self.game_files)))
+        else:
+            num_eval_games = self.config['dataset']['num_eval_games'] if 'num_eval_games' in self.config['dataset'] else len(self.game_files)
+            self.game_files = self.game_files[:num_eval_games]
+            self.num_games = len(self.game_files)
+            print("Evaluating with %d games" % (len(self.game_files)))
 
     def get_game_logic(self):
         self.game_logic = {"pddl_domain": open(self.config['pddl']['domain']).read(),
@@ -258,9 +268,17 @@ class AlfredThorEnv(object):
 
         def init_env(self, config):
             self.config = config
+
+            screen_height = config['env']['thor']['screen_height']
+            screen_width = config['env']['thor']['screen_width']
+            smooth_nav = config['env']['thor']['smooth_nav']
+            save_frames_to_disk = config['env']['thor']['save_frames_to_disk']
+
             if not self.env:
-                from env.thor_env import ThorEnv
-                self.env = ThorEnv()
+                self.env = ThorEnv(player_screen_height=screen_height,
+                                   player_screen_width=screen_width,
+                                   smooth_nav=smooth_nav,
+                                   save_frames_to_disk=save_frames_to_disk)
             self.controller_type = self.config['controller']['type']
             self._done = False
             self._res = ()
@@ -297,6 +315,10 @@ class AlfredThorEnv(object):
             self.env.reset(scene_name)
             self.env.restore_scene(object_poses, object_toggles, dirty_and_empty)
 
+            # recording
+            save_frames_path = self.config['env']['thor']['save_frames_path']
+            self.env.save_frames_path = os.path.join(save_frames_path, self.traj_root.replace('../', ''))
+
             # initialize to start position
             self.env.step(dict(self.traj_data['scene']['init_action']))            # print goal instr
             task_desc = get_templated_task_desc(self.traj_data)
@@ -329,13 +351,15 @@ class AlfredThorEnv(object):
                 self.controller = MaskRCNNAgent(self.env, self.traj_data, self.traj_root,
                                                 pretrained_model=self.mask_rcnn,
                                                 load_receps=load_receps, debug=debug,
-                                                goal_desc_human_anns_prob=self.goal_desc_human_anns_prob)
+                                                goal_desc_human_anns_prob=self.goal_desc_human_anns_prob,
+                                                save_detections_to_disk=self.env.save_frames_to_disk, save_detections_path=self.env.save_frames_path)
             elif self.controller_type == 'mrcnn_astar':
                 from models.embodied.mrcnn_astar import MaskRCNNAStarAgent
                 self.controller = MaskRCNNAStarAgent(self.env, self.traj_data, self.traj_root,
                                                      pretrained_model=self.mask_rcnn,
                                                      load_receps=load_receps, debug=debug,
-                                                     goal_desc_human_anns_prob=self.goal_desc_human_anns_prob)
+                                                     goal_desc_human_anns_prob=self.goal_desc_human_anns_prob,
+                                                     save_detections_to_disk=self.env.save_frames_to_disk, save_detections_path=self.env.save_frames_path)
             else:
                 raise NotImplementedError()
 
@@ -358,10 +382,17 @@ class AlfredThorEnv(object):
                 self.prev_command = str(action)
                 self._feedback = self.controller.step(action)
                 self._res = self.get_info()
+                if self.env.save_frames_to_disk:
+                    self.record_action(action)
             self.steps += 1
 
         def get_results(self):
             return self._res
+
+        def record_action(self, action):
+            txt_file = os.path.join(self.env.save_frames_path, 'action.txt')
+            with open(txt_file, 'a+') as f:
+                f.write("%s\r\n" % str(action))
 
         def get_info(self):
             won = self.env.get_goal_satisfied()
@@ -417,7 +448,6 @@ class AlfredThorEnv(object):
         self.envs = []
         self.action_queues = []
         self.get_env_paths()
-        self.num_games = len(self.json_file_list)
 
     def close(self):
         for env in self.envs:
@@ -463,19 +493,32 @@ class AlfredThorEnv(object):
                 if not traj_data['task_type'] in task_types:
                     continue
 
-                # Only add solvable games
-                if os.path.exists(game_file_path):
-                    with open(game_file_path, 'r') as f:
-                        gamedata = json.load(f)
+                self.json_file_list.append(json_path)
 
-                    if 'solvable' in gamedata and gamedata['solvable']:
-                        self.json_file_list.append(json_path)
+                # # Only add solvable games
+                # if os.path.exists(game_file_path):
+                #     with open(game_file_path, 'r') as f:
+                #         gamedata = json.load(f)
+                #
+                #     if 'solvable' in gamedata and gamedata['solvable']:
+                #         self.json_file_list.append(json_path)
 
         print("Overall we have %s games..." % (str(len(self.json_file_list))))
+        self.num_games = len(self.json_file_list)
+
+        if self.train_eval == "train":
+            num_train_games = self.config['dataset']['num_train_games'] if 'num_train_games' in self.config['dataset'] else len(self.json_file_list)
+            self.json_file_list = self.json_file_list[:num_train_games]
+            self.num_games = len(self.json_file_list)
+            print("Training with %d games" % (len(self.json_file_list)))
+        else:
+            num_eval_games = self.config['dataset']['num_eval_games'] if 'num_eval_games' in self.config['dataset'] else len(self.json_file_list)
+            self.json_file_list = self.json_file_list[:num_eval_games]
+            self.num_games = len(self.json_file_list)
+            print("Evaluating with %d games" % (len(self.json_file_list)))
 
     def init_env(self, batch_size):
         self.get_env_paths()
-        self.num_games = len(self.json_file_list)
         self.batch_size = batch_size
         self.action_queues = []
         self.task_order = [""] * self.batch_size
@@ -501,6 +544,7 @@ class AlfredThorEnv(object):
                 tasks = [self.json_file_list.pop(random.randrange(len(self.json_file_list))) for _ in range(batch_size)]
             else:
                 tasks = random.sample(self.json_file_list, k=batch_size)
+                self.get_env_paths()
 
         for n in range(batch_size):
             self.action_queues[n].put((None, True, tasks[n]))
@@ -598,6 +642,8 @@ class AlfredHybrid(object):
         else:
             if self.num_resets >= self.hybrid_start_eps:
                 self.curr_env = "thor" if random.random() < self.hybrid_thor_prob else "tw"
+            else:
+                self.curr_env = "tw"
         env = self.choose_env()
         obs, infos = env.reset()
         self.num_resets += self.batch_size

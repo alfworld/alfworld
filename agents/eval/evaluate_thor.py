@@ -2,15 +2,15 @@ import os
 import json
 import importlib
 
-from agent import Agent
-import generic
-import evaluate
+from agents.agent import DAggerAgent
+import modules.generic as generic
+import eval.evaluate as evaluate
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def evaluate_thor():
     config = generic.load_config()
-    agent = Agent(config)
+    agent = DAggerAgent(config)
 
     output_dir = config["general"]["save_path"]
     if not os.path.exists(output_dir):
@@ -28,23 +28,24 @@ def evaluate_thor():
     eval_paths = config["general"]["evaluate"]["eval_paths"]
     eval_envs = config["general"]["evaluate"]["envs"]
     controllers = config["general"]["evaluate"]["controllers"]
+    repeats = config["general"]["evaluate"]["repeats"]
     for eval_env_type in eval_envs:
         for controller_type in (controllers if eval_env_type == "AlfredThorEnv" else ["tw"]):
             print("Setting controller: %s" % controller_type)
             for eval_path in eval_paths:
                 print("Evaluating: %s" % eval_path)
-                config["evaluate"]["env"]["type"] = eval_env_type
+                config["general"]["evaluate"]["env"]["type"] = eval_env_type
                 config["dataset"]["eval_ood_data_path"] = eval_path
                 config["controller"]["type"] = controller_type
 
-                alfred_env = getattr(importlib.import_module("environment"), config["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
+                alfred_env = getattr(importlib.import_module("environment"), config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
                 eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
 
                 # evaluate
                 if training_method == "dagger":
-                    results = evaluate.evaluate_dagger(eval_env, agent, alfred_env.num_games)
+                    results = evaluate.evaluate_dagger(eval_env, agent, alfred_env.num_games*repeats)
                 elif training_method == "dqn":
-                    results = evaluate.evaluate_dqn(eval_env, agent, alfred_env.num_games)
+                    results = evaluate.evaluate_dqn(eval_env, agent, alfred_env.num_games*repeats)
                 else:
                     raise NotImplementedError()
 

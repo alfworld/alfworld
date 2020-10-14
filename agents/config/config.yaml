@@ -1,7 +1,14 @@
 dataset:
+  # data_path: '../../data/json_2.1.0/valid_unseen'
+  # data_path: '../../data/json_2.1.0/valid_unseen/look_at_obj_in_light-Pencil-None-DeskLamp-308/trial_T20190908_220604_010430'
+  # data_path: '../../data/tasks/look_pick_6x3'
+  # eval_id_data_path: '../../data/tasks/look_pick_6x3_eval'  # None to disable
+  # eval_ood_data_path: '../../data/tasks/look_pick_6x3_eval'  # None to disable
   data_path: '../../data/json_2.1.1/train'
   eval_id_data_path: '../../data/json_2.1.1/valid_seen'  # None to disable
   eval_ood_data_path: '../../data/json_2.1.1/valid_unseen'  # None to disable
+  num_train_games: 1000000
+  num_eval_games: 1000000
 
 pddl:
   domain: '../../data/alfred.pddl'
@@ -14,12 +21,18 @@ env:
   expert_timeout_steps: 150
   expert_type: "handcoded"
   goal_desc_human_anns_prob: 0.0
-  training_size: 0  # 0 means all
 
   hybrid:
     start_eps: 100000
     thor_prob: 0.5
     eval_mode: "tw" # "tw" or "thor"
+
+  thor:
+    screen_width: 300
+    screen_height: 300
+    smooth_nav: False
+    save_frames_to_disk: False
+    save_frames_path: '../../videos/'
 
 controller:
   type: 'oracle'
@@ -33,6 +46,7 @@ general:
   random_seed: 42
   use_cuda: False  # disable this when running on machine without cuda
   visdom: False
+  philly: False
   task: 'alfred'
   training_method: 'dagger'  # 'dqn' or 'dagger'
   save_path: '.'
@@ -129,7 +143,7 @@ dagger:
     replay_sample_update_from: 2
 
 vision_dagger:
-  model_type: "resnet" # "resnet" whole image features or "maskrcnn" top k box features
+  model_type: "resnet" # "resnet" whole image features or "maskrcnn" top k box features or "no_vision" for zero vision input
   resnet_fc_dim: 64
   maskrcnn_top_k_boxes: 10 # top k box features
   use_exploration_frame_feats: False # save feats from exploration (memory intensive!)
