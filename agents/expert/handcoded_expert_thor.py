@@ -37,7 +37,7 @@ class PickTwoObjAndPlaceThorPolicy(PickTwoObjAndPlacePolicy):
         admissible_commands_wo_num_ids = [self.remove_num_ids(ac) for ac in admissible_commands]
         metadata = self.env.last_event.metadata
 
-        relevant_receptacles = [r.split("|")[0].lower() for o in metadata['objects'] if o['objectType'].lower() in obj and o['parentReceptacles'] for r in o['parentReceptacles']]
+        relevant_receptacles = [r.split("|")[0].lower() for o in metadata['objects'] if o['objectType'].lower() in obj and o['parentReceptacles'] for r in o['parentReceptacles'] if r is not None]
         is_one_object_already_inside_receptacle = any(parent in r for r in relevant_receptacles)
         trying_to_take_the_same_object = "take {} from {}".format(obj, parent) in admissible_commands_wo_num_ids
         self.is_agent_holding_right_object = any(obj in o for o in self.inventory)
@@ -79,7 +79,6 @@ class PickHeatThenPlaceInRecepThorPolicy(PickHeatThenPlaceInRecepPolicy):
         admissible_commands_wo_num_ids = [self.remove_num_ids(ac) for ac in admissible_commands]
         metadata = self.env.last_event.metadata
 
-        inventory = self.inventory
         self.is_agent_holding_right_object = any(obj in o for o in self.inventory)
         hot_objects = [o.split("|")[0].lower() for o in list(self.env.heated_objects) if o in [io['objectId'] for io in metadata['inventoryObjects']]]
         is_the_object_agent_holding_hot = len(hot_objects) > 0
@@ -103,7 +102,6 @@ class PickCoolThenPlaceInRecepThorPolicy(PickCoolThenPlaceInRecepPolicy):
         admissible_commands_wo_num_ids = [self.remove_num_ids(ac) for ac in admissible_commands]
         metadata = self.env.last_event.metadata
 
-        inventory = self.inventory
         self.is_agent_holding_right_object = any(obj in o for o in self.inventory)
         cool_objects = [o.split("|")[0].lower() for o in list(self.env.cooled_objects) if o in [io['objectId'] for io in metadata['inventoryObjects']]]
         is_the_object_agent_holding_cool = len(cool_objects) > 0
@@ -127,7 +125,6 @@ class PickCleanThenPlaceInRecepThorPolicy(PickCleanThenPlaceInRecepPolicy):
         admissible_commands_wo_num_ids = [self.remove_num_ids(ac) for ac in admissible_commands]
         metadata = self.env.last_event.metadata
 
-        inventory = self.inventory
         self.is_agent_holding_right_object = any(obj in o for o in self.inventory)
         clean_objects = [o.split("|")[0].lower() for o in list(self.env.cleaned_objects) if o in [io['objectId'] for io in metadata['inventoryObjects']]]
         is_the_object_agent_holding_isclean = len(clean_objects) > 0

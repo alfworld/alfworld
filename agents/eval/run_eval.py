@@ -8,7 +8,7 @@ import eval.evaluate as evaluate
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-def evaluate_thor():
+def run_eval():
     config = generic.load_config()
     agent = DAggerAgent(config)
 
@@ -61,4 +61,4 @@ def evaluate_thor():
 
 
 if __name__ == '__main__':
-    evaluate_thor()
+    run_eval()
