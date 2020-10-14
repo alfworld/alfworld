@@ -96,7 +96,7 @@ class OracleAgent(BaseAgent):
                                 self.receptacles[object_id]['locs'] = action  # .append(action)
                                 self.receptacles[object_id]['num_pixels'] = num_pixels
 
-        self.save_receps()
+        # self.save_receps()
 
     def get_instance_seg(self):
         '''
@@ -224,9 +224,9 @@ class OracleAgent(BaseAgent):
                 obj, rel, tar = cmd['obj'], cmd['rel'], cmd['tar']
                 recep = self.get_object(tar, self.receptacles)
                 event = self.env.step({'action': "PutObject",
-                               'objectId': self.env.last_event.metadata['inventoryObjects'][0]['objectId'],
-                               'receptacleObjectId': recep['object_id'],
-                               'forceAction': True})
+                                       'objectId': self.env.last_event.metadata['inventoryObjects'][0]['objectId'],
+                                       'receptacleObjectId': recep['object_id'],
+                                       'forceAction': True})
                 if event.metadata['lastActionSuccess']:
                     self.inventory.pop()
                     self.feedback = "You put the %s %s the %s." % (obj, rel, tar)
@@ -321,7 +321,7 @@ class OracleAgent(BaseAgent):
                 inventory_objects = self.env.last_event.metadata['inventoryObjects']
                 if 'Knife' in inventory_objects[0]['objectType']:
                     event = self.env.step({'action': "SliceObject",
-                                   'objectId': object['object_id']})
+                                           'objectId': object['object_id']})
                 self.feedback = "You slice %s with the %s" % (obj, tar)
 
             elif cmd['action'] == self.Action.INVENTORY:
@@ -358,6 +358,4 @@ class OracleAgent(BaseAgent):
         if self.debug:
             print(self.feedback)
         return self.feedback
-
-
 
