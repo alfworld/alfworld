@@ -1,8 +1,6 @@
 import os
 import random
 import copy
-import codecs
-import spacy
 import operator
 import logging
 from os.path import join as pjoin

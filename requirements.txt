@@ -25,3 +25,6 @@ pipreqs
 h5py
 pyyaml
 pytz
+visdom
+https://github.com/MarcCote/downward/archive/faster_replan.zip
+https://github.com/MohitShridhar/TextWorld/archive/handcoded_expert_integration.zip
