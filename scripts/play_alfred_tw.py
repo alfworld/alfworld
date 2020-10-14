@@ -29,7 +29,7 @@ class AlfredDemangler(textworld.core.Wrapper):
 def main(args):
     GAME_LOGIC = {
         "pddl_domain": open(args.domain).read(),
-        "grammar": "\n".join(open(f).read() for f in glob.glob("textworld_data/logic/*.twl2")),
+        "grammar": "\n".join(open(f).read() for f in glob.glob("data/textworld_data/logic/*.twl2")),
     }
 
     # Load state and trajectory files
@@ -70,8 +70,6 @@ def main(args):
             continue
 
         obs, score, done, infos = env.step(cmd)
-        if args.verbose:
-            print(colored("\n".join(sorted(map(str, clean_alfred_facts(obs.effects)))), "yellow"))
 
         if done:
             print("You won!")
@@ -85,6 +83,5 @@ if __name__ == "__main__":
                         default=os.environ.get("ALFRED_ROOT", ".") + "/gen/planner/domains/PutTaskExtended_domain.pddl",
                         help="Path to a PDDL file describing the domain."
                              " Default: `%(default)s`.")
-    parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
     main(args)

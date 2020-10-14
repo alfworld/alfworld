@@ -178,7 +178,7 @@ class AlfredTWEnv(object):
 
     def get_game_logic(self):
         self.game_logic = {"pddl_domain": open(self.config['pddl']['domain']).read(),
-                           "grammar": "\n".join(open(f).read() for f in glob.glob(os.path.join(os.environ['ALFRED_ROOT'], "textworld_data/logic/*.twl2")))}
+                           "grammar": "\n".join(open(f).read() for f in glob.glob(os.path.join(os.environ['ALFRED_ROOT'], "data/textworld_data/logic/*.twl2")))}
 
     def is_solvable(self, env, game_file_path,
                     random_perturb=True, random_start=10, random_prob_after_state=0.15):
