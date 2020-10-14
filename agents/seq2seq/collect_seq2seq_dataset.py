@@ -12,7 +12,7 @@ import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
 from agents.agent import DAggerAgent
 import modules.generic as generic
-from environment.environment import AlfredTWEnv, AlfredThorEnv
+from environment import AlfredTWEnv, AlfredThorEnv
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 task_types = [1]
 train_or_eval = "train"
