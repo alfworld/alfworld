@@ -74,10 +74,10 @@ general:
     eval_experiment_tag: "eval_run_001"                     # save results json with this prefix
 
   checkpoint:
-    report_frequency: 1000                                  # report every N episode
+    report_frequency: 10                                    # report every N episode
     experiment_tag: 'test'                                  # name of experiment
-    load_pretrained: False                                  # during test, enable this so that the agent load your pretrained model
-    load_from_tag: 'not loading anything'                   # name of pre-trained model to load in save_path
+    load_pretrained: True                                   # during test, enable this so that the agent load your pretrained model
+    load_from_tag: 'pretrained_agent'                       # name of pre-trained model to load in save_path
 
   model:
     encoder_layers: 1
