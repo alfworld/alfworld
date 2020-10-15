@@ -140,15 +140,15 @@ Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/
 If you find the dataset or code useful, please cite:
 
 ```
-@inproceedings{ALFRED20,
-  title ={{ALFRED: A Benchmark for Interpreting Grounded
-           Instructions for Everyday Tasks}},
-  author={Mohit Shridhar and Jesse Thomason and Daniel Gordon and Yonatan Bisk and
-          Winson Han and Roozbeh Mottaghi and Luke Zettlemoyer and Dieter Fox},
-  booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-  year = {2020},
-  url  = {https://arxiv.org/abs/1912.01734}
-}
+@inproceedings{ALFWorld20,
+               title ={{ALFWorld: Aligning Text and Embodied
+               Environments for Interactive Learning}},
+               author={Mohit Shridhar and Xingdi Yuan and
+               Marc-Alexandre C\^ot\'e and Yonatan Bisk and
+               Adam Trischler and Matthew Hausknecht},
+               booktitle = {arXiv},
+               year = {2020},
+               url = {https://arxiv.org/abs/2010.03768}}
 ```
 
 ## License
