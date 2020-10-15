@@ -2,7 +2,7 @@ import os
 import json
 import importlib
 
-from agents.agent import DAggerAgent
+from agent import TextDAggerAgent
 import modules.generic as generic
 import eval.evaluate as evaluate
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -10,7 +10,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 def run_eval():
     config = generic.load_config()
-    agent = DAggerAgent(config)
+    agent = TextDAggerAgent(config)
 
     output_dir = config["general"]["save_path"]
     if not os.path.exists(output_dir):

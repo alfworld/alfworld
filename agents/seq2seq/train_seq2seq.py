@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from agents.agent import TextDAggerAgent
+from agent import TextDAggerAgent
 import modules.generic as generic
 import eval.evaluate as evaluate
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
