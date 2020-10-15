@@ -40,7 +40,7 @@ controller:
   load_receps: True # load receptacle locations from precomputed dict (if available)
 
 mask_rcnn:
-  pretrained_model_path: './detector/data/400_scenes/mcrnn_alfred_004.pth'
+  pretrained_model_path: './detector/models/mcrnn_alfred_004.pth'
 
 general:
   random_seed: 42
