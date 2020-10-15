@@ -19,10 +19,10 @@ RUN groupmod -g $USER_GID $USER_NAME
 WORKDIR /home/$USER_NAME
 
 # install system dependencies
-COPY ./scripts/install_deps.sh /tmp/install_deps.sh
+COPY ./docker/install_deps.sh /tmp/install_deps.sh
 RUN yes "Y" | /tmp/install_deps.sh
 
-COPY ./scripts/install_nvidia.sh /tmp/install_nvidia.sh
+COPY ./docker/install_nvidia.sh /tmp/install_nvidia.sh
 RUN yes "Y" | /tmp/install_nvidia.sh
 
 # setup python environment
