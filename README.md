@@ -16,38 +16,34 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
 
 Clone repo:
 ```bash
-$ git clone https://github.com/askforalfred/alfred.git alfred
-$ export ALFRED_ROOT=$(pwd)/alfred
+$ git clone https://github.com/alfworld/alfworld.git alfworld
+$ export ALFRED_ROOT=$(pwd)/alfworld
 ```
 
 Install requirements:
 ```bash
-$ virtualenv -p $(which python3) --system-site-packages alfred_env # or whichever package manager you prefer
-$ source alfred_env/bin/activate
+$ virtualenv -p $(which python3) --system-site-packages alfworld_env # or whichever package manager you prefer
+$ source alfworld_env/bin/activate
 
 $ cd $ALFRED_ROOT
 $ pip install --upgrade pip
 $ pip install -r requirements.txt
 ```
 
-Download Trajectory JSONs and Resnet feats (~17GB):
+Download PDDL & Game Files and pre-trained MaskRCNN detector:
 ```bash
-$ cd $ALFRED_ROOT/data
-$ sh download_data.sh json_feat
+$ sh data/download_data.sh
 ```
 
 Train models:
 ```bash
-$ cd $ALFRED_ROOT
-$ python models/train/train_seq2seq.py --data data/json_feat_2.1.0 --model seq2seq_im_mask --dout exp/model:{model},name:pm_and_subgoals_01 --splits data/splits/oct21.json --gpu --batch 8 --pm_aux_loss_wt 0.1 --subgoal_aux_loss_wt 0.1
+$ cd $ALFRED_ROOT/agents
+$ python dagger/train_dagger.py config/base_config.yaml
 ```
 
 ## More Info 
 
 - [**Dataset**](data/): Downloading full dataset, Folder structure, JSON structure.
-- [**Models**](models/): Training and Evaluation, File structure, Pre-trained models.
-- [**Data Generation**](gen/): Generation, Replay Checks, Data Augmentation (high-res, depth, segementation masks etc).
-- [**FAQ**](doc/FAQ.md): Frequently Asked Questions. 
 
 ## Prerequisites
 
@@ -78,7 +74,7 @@ Modify [docker_build.py](scripts/docker_build.py) and [docker_run.py](scripts/do
 Build the image:
 
 ```bash
-$ python scripts/docker_build.py 
+$ python docker/docker_build.py 
 ```
 
 #### Run (Local)
@@ -86,9 +82,9 @@ $ python scripts/docker_build.py
 For local machines:
 
 ```bash
-$ python scripts/docker_run.py
+$ python docker/docker_run.py
  
-  source ~/alfred_env/bin/activate
+  source ~/alfworld_env/bin/activate
   cd $ALFRED_ROOT
 ```
 
@@ -97,7 +93,7 @@ $ python scripts/docker_run.py
 For headless VMs and Cloud-Instances:
 
 ```bash
-$ python scripts/docker_run.py --headless 
+$ python docker/docker_run.py --headless 
 
   # inside docker
   tmux new -s startx  # start a new tmux session
@@ -107,20 +103,20 @@ $ python scripts/docker_run.py --headless
   sudo nvidia-xconfig -a --use-display-device=None --virtual=1280x1024
 
   # start X server on DISPLAY 0
-  sudo python ~/alfred/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
+  sudo python ~/alfworld/docker/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
   # detach from tmux shell
   # Ctrl+b then d
 
   # source env
-  source ~/alfred_env/bin/activate
+  source ~/alfworld_env/bin/activate
   
   # set DISPLAY variable to match X server
   export DISPLAY=:0
 
   # check THOR
   cd $ALFRED_ROOT
-  python scripts/check_thor.py
+  python docker/check_thor.py
 
   ###############
   ## (300, 300, 3)
