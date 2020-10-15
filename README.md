@@ -8,10 +8,6 @@
 
 For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io)
 
-<p align="left">
-    <img width="500" alt="portfolio_view" src="media/alfworld_teaser.png">
-</p>
-
 ## Quickstart
 
 Clone repo:
@@ -142,14 +138,15 @@ Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/
 **ALFWorld**
 ```
 @inproceedings{ALFWorld20,
-               title ={{ALFWorld: Aligning Text and Embodied
-               Environments for Interactive Learning}},
-               author={Mohit Shridhar and Xingdi Yuan and
-               Marc-Alexandre C\^ot\'e and Yonatan Bisk and
-               Adam Trischler and Matthew Hausknecht},
-               booktitle = {arXiv},
-               year = {2020}
-               url = {https://arxiv.org/abs/2010.03768}}
+  title ={{ALFWorld: Aligning Text and Embodied
+           Environments for Interactive Learning}},
+  author={Mohit Shridhar and Xingdi Yuan and
+          Marc-Alexandre C\^ot\'e and Yonatan Bisk and
+          Adam Trischler and Matthew Hausknecht},
+  booktitle = {arXiv},
+  year = {2020},
+  url = {https://arxiv.org/abs/2010.03768}
+}
 ```  
 
 **ALFRED**
