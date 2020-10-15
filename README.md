@@ -32,7 +32,7 @@ $ pip install -r requirements.txt
 
 Download PDDL & Game Files and pre-trained MaskRCNN detector:
 ```bash
-$ sh data/download_data.sh
+$ sh $ALFRED_ROOT/data/download_data.sh
 ```
 
 Train models:
@@ -43,12 +43,14 @@ $ python dagger/train_dagger.py config/base_config.yaml
 
 ## More Info 
 
-- [**Dataset**](data/): Downloading full dataset, Folder structure, JSON structure.
+- [**Dataset**](data/): PDDL and Game Files of ALFRED Tasks.
+- [**Agents**](agents/): Training and evaluating TextDAgger, TextDQN, VisionDAgger agents.
+- [**Explore**](scripts/): TextWorld and Embodied demos.
 
 ## Prerequisites
 
 - Python 3
-- PyTorch 1.1.0
+- PyTorch 1.4.0
 - Torchvision 0.3.0
 - AI2THOR 2.1.0
 
