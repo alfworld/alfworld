@@ -21,5 +21,3 @@ wget https://bit.ly/2S8lexl
 mv 2S8lexl 2S8lexl.zip
 unzip 2S8lexl.zip
 rm 2S8lexl.zip
-
-sh unpackage.sh
