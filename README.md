@@ -142,7 +142,7 @@ $ export DISPLAY=:0
 
 # check THOR
 $ cd $ALFRED_ROOT
-$ python scripts/check_thor.py
+$ python docker/check_thor.py
 
 ###############
 ## (300, 300, 3)

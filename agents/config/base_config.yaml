@@ -1,30 +1,25 @@
 dataset:
-  # data_path: '../../data/json_2.1.0/valid_unseen'
-  # data_path: '../../data/json_2.1.0/valid_unseen/look_at_obj_in_light-Pencil-None-DeskLamp-308/trial_T20190908_220604_010430'
-  # data_path: '../../data/tasks/look_pick_6x3'
-  # eval_id_data_path: '../../data/tasks/look_pick_6x3_eval'  # None to disable
-  # eval_ood_data_path: '../../data/tasks/look_pick_6x3_eval'  # None to disable
   data_path: '../../data/json_2.1.1/train'
-  eval_id_data_path: '../../data/json_2.1.1/valid_seen'  # None to disable
-  eval_ood_data_path: '../../data/json_2.1.1/valid_unseen'  # None to disable
-  num_train_games: 1000000
-  num_eval_games: 1000000
+  eval_id_data_path: '../../data/json_2.1.1/valid_seen'     # null/None to disable
+  eval_ood_data_path: '../../data/json_2.1.1/valid_unseen'  # null/None to disable
+  num_train_games: -1                                       # max training games (<=0 indicates full dataset)
+  num_eval_games: -1                                        # max evaluation games (<=0 indicates full dataset)
 
 pddl:
-  domain: '../../data/alfred.pddl'
+  domain: '../../data/alfred.pddl'                          # PDDL domain file that defines world dynamics
 
 env:
-  type: 'AlfredTWEnv' # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
-  regen_game_files: False # check if game is solvable and save to game.tw-pddl file
-  domain_randomization: False # shuffle print order and object id nums
-  task_types: [1, 2, 3, 4, 5, 6]  # task type ids
-  expert_timeout_steps: 150
-  expert_type: "handcoded"
-  goal_desc_human_anns_prob: 0.0
+  type: 'AlfredTWEnv'                                       # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
+  regen_game_files: False                                   # check if game is solvable by expert and save to game.tw-pddl file
+  domain_randomization: False                               # shuffle Textworld print order and object id nums
+  task_types: [1, 2, 3, 4, 5, 6]                            # task-type ids: 1 - Pick & Place, 2 - Examine in Light, 3 - Clean & Place, 4 - Heat & Place, 5 - Cool & Place, 6 - Pick Two & Place
+  expert_timeout_steps: 150                                 # max steps before timeout for expert to solve the task
+  expert_type: "handcoded"                                  # 'handcoded' or 'downward'. Note: the downward planner is very slow for real-time use
+  goal_desc_human_anns_prob: 0.0                            # prob of using human-annotated goal language instead of templated goals (1.0 indicates all human annotations from ALFRED)
 
   hybrid:
-    start_eps: 100000
-    thor_prob: 0.5
+    start_eps: 100000                                       # starting episode of hybrid training, tw-only training upto this point
+    thor_prob: 0.5                                          #
     eval_mode: "tw" # "tw" or "thor"
 
   thor:
@@ -46,7 +41,6 @@ general:
   random_seed: 42
   use_cuda: False  # disable this when running on machine without cuda
   visdom: False
-  philly: False
   task: 'alfred'
   training_method: 'dagger'  # 'dqn' or 'dagger'
   save_path: '.'
