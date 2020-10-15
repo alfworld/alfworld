@@ -175,14 +175,41 @@ rl:
 
 ## Evaluation
 
-Run various ablations:
+The training script runs the evaluation every `report_frequency` episodes. But additionally, you can also evaluate pre-trained agents seperately:
 
 ```bash
 $ cd $ALFRED_ROOT/agents
 $ python eval/run_eval.py config/eval_config.yaml
 ```
 
-Eval Settings:
+Modify [eval_config.yaml](config/eval_config.yaml) to your needs:
+```yaml
+general:
+...
+  evaluate:
+    run_eval: True
+    batch_size: 3                                           # number of parallel eval threads
+    repeats: 1                                              # number of times to loop over eval games (we used 3 in paper experiments)
+    controllers:                                            # different controllers to evaluate with
+      - 'oracle'
+      - 'mrcnn_astar'
+    envs:                                                   # different environments to evaluate in
+      - 'AlfredTWEnv'
+      - 'AlfredThorEnv'
+    env:
+      type:
+       'AlfredThorEnv'
+    eval_paths:                                             # different splits to evaluate on
+      - '../data/json_2.1.1/valid_seen'
+      - '../data/json_2.1.1/valid_unseen'
+    eval_experiment_tag: "eval_run_001"                     # save results json with this prefix
+
+  checkpoint:
+    report_frequency: 10                                    # report eval results every N episode
+    load_pretrained: True                                  
+    load_from_tag: 'pretrained agent'                       # name of pre-trained model to load in save_path
+
+```
 
 
 ## Folder Structure
