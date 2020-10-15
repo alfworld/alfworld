@@ -22,6 +22,8 @@ if __name__=="__main__":
 
     parser.add_argument("-d", "--data", type=str, default="data/", help="(optional) external data directory")
 
+    parser.add_argument("-hl", "--headless",  action='store_true', help="(optional) run in headless mode")
+
     parser.add_argument("-g", "--gpus", type=str, default="all", help="(optional) gpus for nvidia docker")
 
     parser.add_argument("-dr", "--dry_run", action='store_true', help="(optional) perform a dry_run, print the command that would have been executed but don't execute it.")
@@ -35,13 +37,21 @@ if __name__=="__main__":
     image_name = args.image
     home_directory = '/home/' + user_name
 
-    cmd = "xhost +local:root \n"
+    cmd = "xhost +local:root \n" if not args.headless else ""
     cmd += "docker run "
     if args.container:
         cmd += " --name %(container_name)s " % {'container_name': args.container}
 
+    # gpus
     cmd += " --gpus %s" % (args.gpus)
-    cmd += " -e DISPLAY -e QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix:rw "        # enable graphics
+
+    # display
+    if args.headless:
+        cmd += " -v /usr/bin/nvidia-xconfig:/usr/bin/nvidia-xconfig "
+    else:
+        cmd += " -e DISPLAY -e QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix:rw "    # enable graphics
+
+    # bindings
     cmd += " -v %(source_dir)s:%(home_directory)s/alfworld " \
            % {'source_dir': source_dir, 'home_directory': home_directory}                  # mount source
     cmd += " -v ~/.ssh:%(home_directory)s/.ssh " % {'home_directory': home_directory}      # mount ssh keys
@@ -80,7 +90,8 @@ if __name__=="__main__":
         print("executing shell command")
         code = os.system(cmd)
         print("Executed with code ", code)
-        os.system(cmd_endxhost)
+        if not args.headless:
+            os.system(cmd_endxhost)
         # Squash return code to 0/1, as
         # Docker's very large return codes
         # were tricking Jenkins' failure
