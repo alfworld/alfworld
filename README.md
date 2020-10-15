@@ -127,8 +127,8 @@ You might have to modify `X_DISPLAY` in [gen/constants.py](gen/constants.py) dep
 
 ## Cloud Instance
 
-ALFRED can be setup on headless machines like AWS or GoogleCloud instances. 
-The main requirement is that you have access to a GPU machine that supports OpenGL rendering. Run the [startx.py](scripts/startx.py) script
+ALFWorld can be setup on headless machines like AWS or GoogleCloud instances. 
+The main requirement is that you have access to a GPU machine that supports OpenGL rendering. Run the [startx.py](scripts/startx.py) script like above
 to examine the GPU devices on the host, generate a xorg.conf file, and then start X. You should be able to run AI2THOR normally for evaluation purposes. 
 By default, the `:0.0` display will be used, but if you are running on a machine with more than one GPU, you can address 
 these by modifying the screen component of the display. So `:0.0` refers to the first device, `:0.1` the second and so on.
