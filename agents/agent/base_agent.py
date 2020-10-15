@@ -122,7 +122,6 @@ class BaseAgent:
 
     def load_config(self):
         self.task = self.config['general']['task']
-        self.philly = self.config['general']['philly']
         self.observation_pool_capacity = self.config['general']['observation_pool_capacity']
         self.observation_pool = ObservationPool(capacity=self.observation_pool_capacity)
         self.hide_init_receptacles = self.config['general']['hide_init_receptacles']

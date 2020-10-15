@@ -40,8 +40,8 @@ def train():
     env.seed(42)
     np.random.seed(42)
 
-    output_dir = os.getenv('PT_OUTPUT_DIR', '/tmp') if agent.philly else config["general"]["save_path"]
-    data_dir = os.environ['PT_DATA_DIR'] if agent.philly else config["general"]["save_path"]
+    output_dir = config["general"]["save_path"]
+    data_dir = config["general"]["save_path"]
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
