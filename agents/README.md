@@ -172,3 +172,53 @@ rl:
     epsilon_anneal_from: 0.3
     epsilon_anneal_to: 0.1
 ```
+
+## Evaluation
+
+Run various ablations:
+
+```bash
+$ cd $ALFRED_ROOT/agents
+$ python eval/run_eval.py config/eval_config.yaml
+```
+
+Eval Settings:
+
+
+## Folder Structure
+
+```
+/agent
+    base_agent.py              (base class for agents)
+    text_dagger_agent.py       (TextDAgger agent used for BUTLER)
+    text_dqn_agent.py          (TextDQN agent not reported in the paper)
+    vision_dagger_agent.py     (VisionDAgger agent used for unimodal baselines)
+/config
+    base_config.yaml           (basic settings for all experiments)
+    eval_config.yaml           (settings for batch evaluations)
+    rewards.json            
+/environment
+    alfred_tw_env.py           (ALFRED TextWorld environment)
+    alfred_thor_env.py         (ALFRED embodied environment with THOR)
+    alfred_hybrid.py           (hybrid training manager)
+/dagger
+    train_dagger.py            (training script for TextDAgger agents)
+    train_vision_dagger.py     (training script for VisionDAgger agents)
+/dqn
+    train_dqn.py               (training script for TextDQN agents)
+/seq2seq
+    collect_seq2seq_dataset.py (data collection script for expert demonstrations)
+    train_seq2seq.py           (training script for TextSeq2seq agents)
+/detector
+    mrcnn.py                   (MaskRCNN state-estimator)
+    train_mrcnn.py             (training script for MaskRCNN state-estimator)
+/controller
+    base.py                    (base class for controllers)
+    oracle.py                  (GT object detections and teleport navigation)
+    oracle_astar.py            (GT object detections and A* navigator)
+    mrcnn.py                   (MaskRCNN object detections and teleport navigation)
+    mrcnn_astar.py             (MaskRCNN object detections and A* navigator aka BUTLER)
+/eval
+    evaluate.py                (evaluation loops for various agents)
+    run_eval.py                (evaluation script for batch evals)
+```
