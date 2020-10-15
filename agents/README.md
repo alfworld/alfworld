@@ -43,7 +43,7 @@ env:
     screen_height: 300                                      # height of THOR window
     smooth_nav: False                                       # smooth rotations, looks, and translations during navigation (very slow)
     save_frames_to_disk: False                              # save frame PNGs to disk (useful for making videos of agent interactions)
-    save_frames_path: '../videos/'                       # path to save frame PNGs
+    save_frames_path: '../videos/'                          # path to save frame PNGs
 ```
 
 Controller:
@@ -175,7 +175,7 @@ rl:
 
 ## Evaluation
 
-The training script runs eval every `report_frequency` episodes. But additionally, you can also independently evaluate pre-trained agents:
+The training script evaluates every `report_frequency` episodes. But additionally, you can also independently evaluate pre-trained agents:
 
 ```bash
 $ cd $ALFRED_ROOT/agents

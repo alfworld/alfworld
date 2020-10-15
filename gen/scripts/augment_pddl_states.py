@@ -459,43 +459,6 @@ def augment_traj(env, json_file):
     print(scene_name)
 
     env.step(dict(traj_data['scene']['init_action']))
-    if args.interactive and args.num_threads == 1:
-        from env.utils import _Getch
-        while True:
-            try:
-                input_key = _Getch()
-                key = input_key()
-
-                if key == '\x1b[A':
-                    action = {"action": "LookUp"}
-                elif key == '\x1b[B':
-                    action = {"action": "LookDown"}
-                elif key == '\x1b[C':
-                    action = {"action": "MoveRight"}
-                elif key == '\x1b[D':
-                    action = {"action": "MoveLeft"}
-                elif key == 'w':
-                    action = {"action": "MoveAhead"}
-                elif key == 's':
-                    action = {"action": "MoveBack"}
-                elif key == 'a':
-                    action = {"action": "RotateLeft", "degrees": 30}
-                elif key == 'd':
-                    action = {"action": "RotateRight", "degrees": 30}
-
-                else:
-                    cmd = input(">")
-                    if cmd == "exit":
-                        break
-
-                    action = dict(e.split("=") for e in cmd.split(","))
-
-                env.step(action, smooth_nav=True)
-            except KeyboardInterrupt:
-                break
-            except Exception:
-                pass
-
     print("Task: %s" % (traj_data['turk_annotations']['anns'][0]['task_desc']))
 
     # setup task
@@ -555,7 +518,6 @@ def run():
         print ("Augmenting PDDL: " + json_file)
         try:
             augment_traj(env, json_file)
-        #except Exception as e:
         except ValueError as e:
             import traceback
             traceback.print_exc()
@@ -578,10 +540,7 @@ lock = threading.Lock()
 # parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_path', type=str, default="data/2.1.0")
-# parser.add_argument('--smooth_nav', dest='smooth_nav', action='store_true')
-# parser.add_argument('--time_delays', dest='time_delays', action='store_true')
 parser.add_argument('--shuffle', dest='shuffle', action='store_true')
-parser.add_argument('--num_threads', type=int, default=1)
 parser.add_argument('--reward_config', type=str, default='models/config/rewards.json')
 parser.add_argument('--interactive', action="store_true",
                     help='enable simplistic interactive navigation within the environment')
@@ -600,13 +559,4 @@ for dir_name, _, file_list in os.walk(args.data_path, topdown=False):
 if args.shuffle:
     random.shuffle(traj_list)
 
-# # start threads
-# threads = []
-# for n in range(args.num_threads):
-#     thread = threading.Thread(target=run)
-#     threads.append(thread)
-#     thread.start()
-#     time.sleep(1)
-
-# traj_list = traj_list[:5]
 run()

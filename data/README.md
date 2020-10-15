@@ -1,44 +1,22 @@
 # Dataset
 
-The ALFRED dataset contains 8k+ expert demostrations with 3 or more language annotations each. A trajectory consists of a sequence of expert actions, the corresponding image observations, and language annotations describing segments of the trajectory.
-
-![](../media/tasks.png)
+The ALFWorld dataset contains 3,553 training games, 140 seen and 134 unseen validation games.
 
 ## Download
 
-We provide a download script with three options:
-
-**1.** [Lite](https://ai2-vision-alfred.s3-us-west-2.amazonaws.com/json_2.1.0.7z) (35MB): Trajectory JSONs. Images need to be generated with [augment_trajectories.py](../gen/README.md#data-augmentation) and Resnet feats with [extract_resnet.py](../data#extracting-resnet-features):
+PDDL, Game Files and MaskRCNN detector:
 
 ```bash
-$ cd $ALFRED_ROOT/data
-$ sh download_data.sh json
+$ sh $ALFRED_ROOT/data/download_data.sh
 ```
-
-**2.** [Modeling Quickstart](https://ai2-vision-alfred.s3-us-west-2.amazonaws.com/json_feat_2.1.0.7z) (~17GB) - **Recommended**: Trajectory JSONs and Resnet Features
-```bash
-$ sh download_data.sh json_feat
-```
-
-**3.** [Full Dataset](https://ai2-vision-alfred.s3-us-west-2.amazonaws.com/full_2.1.0.7z) (~109GB) - Trajectory JSONs, Raw Images, PDDL States, Videos, Full Resnet Features
-
-```bash
-$ sh download_data.sh full
-```
-
-Alternatively, if prefer to use something other than `wget`, you can directly use the download links in [download_data.sh](download_data.sh).  
-
-**Note**: You need double the amount of storage space while unzipping the files.
 
 ## File Structure
 
 ```
-data/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/                  (trajectory root)
-data/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/traj_data.json    (trajectory metadata)
-data/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/feat_conv.pt      (Resnet18 features)
-data/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/problem_x.pddl    (pddl state)
-data/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/video.mp4         (video sequence)
-data/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/raw_images/       (images from trajectory)
+data/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/                   (trajectory root)
+data/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/traj_data.json     (trajectory metadata)
+data/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/initial_state.pddl (PDDL description of the initial state)
+data/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/game.tw-pddl       (textworld game file)
 ```
 
 ## JSON Structure
@@ -109,17 +87,23 @@ Images:
              ...]
 ```
 
-**Note**: The [Full Dataset](https://ai2-vision-alfred.s3-us-west-2.amazonaws.com/full_2.1.0.7z) contains extracted Resnet features for each frame in `['images']
-`, whereas [Modeling Quickstart](https://ai2-vision-alfred.s3-us-west-2.amazonaws.com/json_feat_2.1.0.7z) only contains features for each `low_idx`. The indexes of `['turk_annotations']['anns']['high_descs']` are aligned with `high_idx`.
+## Generation
 
-## Extracting Resnet Features
+#### PDDL states from ALFRED
 
-To extract Resnet features from raw image sequences:
+To generate `initial_state.pddl` from ALFRED `traj_data.json` files:
 
 ```bash
-$ python models/utils/extract_resnet.py --data data/full_2.1.0 --batch 32 --gpu --visual_model resnet18 --filename feat_conv.pt
+$ cd $ALFRED_ROOT
+$ python gen/scripts/augment_pddl_trajectories.py --data_path data/json_2.1.1/train
 ```
 
-This will save `feat_conv.pt` files insides each trajectory root folder.  
 
-**Note**: Data generator saved PNG files, which were later converted into JPGs. 
+#### MaskRCNN training images from ALFRED
+
+To generate image and instance-segmentation pairs from ALFRED training scenes:
+
+```bash
+$ cd $ALFRED_ROOT
+$ python gen/scripts/augment_trajectories.py --data_path data/json_2.1.1/train --save_path detector/data/test --num_threads 4 
+```
