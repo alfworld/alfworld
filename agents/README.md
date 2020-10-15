@@ -1,13 +1,21 @@
+# Agents
+
+## Training
+
+Edit [`base_config.yaml`](base_config.yaml) to your needs:
+
+Dataset:
+```yaml
 dataset:
   data_path: '../../data/json_2.1.1/train'
   eval_id_data_path: '../../data/json_2.1.1/valid_seen'     # null/None to disable
   eval_ood_data_path: '../../data/json_2.1.1/valid_unseen'  # null/None to disable
   num_train_games: -1                                       # max training games (<=0 indicates full dataset)
   num_eval_games: -1                                        # max evaluation games (<=0 indicates full dataset)
+```
 
-pddl:
-  domain: '../../data/alfred.pddl'                          # PDDL domain file that defines world dynamics
-
+Environment:
+```yaml
 env:
   type: 'AlfredTWEnv'                                       # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
   regen_game_files: False                                   # check if game is solvable by expert and save to game.tw-pddl file
@@ -28,18 +36,22 @@ env:
     smooth_nav: False                                       # smooth rotations, looks, and translations during navigation (very slow)
     save_frames_to_disk: False                              # save frame PNGs to disk (useful for making videos of agent interactions)
     save_frames_path: '../../videos/'                       # path to save frame PNGs
+```
 
+Controller:
+```yaml
 controller:
   type: 'oracle'                                            # 'oracle' or 'oracle_astar' or 'mrcnn' or 'mrcnn_astar' (aka BUTLER)
   debug: False
   load_receps: True                                         # load receptacle locations from precomputed dict (if available)
+```
+`mrcnn_astar` corresponds to **BUTLER**.
 
-mask_rcnn:
-  pretrained_model_path: './detector/models/mcrnn_alfred_004.pth'
-
+General:
+```yaml
 general:
   random_seed: 42
-  use_cuda: True                                            # disable this when running on machine without cuda
+  use_cuda: False                                           # disable this when running on machine without cuda
   visdom: False                                             # plot training/eval curves, run with visdom server
   task: 'alfred'
   training_method: 'dagger'                                 # 'dqn' or 'dagger'
@@ -76,7 +88,50 @@ general:
     dropout: 0.1
     block_dropout: 0.1
     recurrent: True
+```
 
+General DAgger:
+```yaml
+dagger:
+  action_space: "generation"                                # 'admissible' (candidates from text engine) or 'generation' (seq2seq-style generation) or 'exhaustive' (not working)
+  max_target_length: 20                                     # max token length for seq2seq generation
+  beam_width: 10                                            # 1 means greedy
+  generate_top_k: 5
+  unstick_by_beam_search: False                             # use beam-search for failed actions, set True during evaluation
+
+  training:
+    max_nb_steps_per_episode: 50                            # terminate after this many steps
+
+  fraction_assist:
+    fraction_assist_anneal_episodes: 50000
+    fraction_assist_anneal_from: 1.0
+    fraction_assist_anneal_to: 0.01
+
+  fraction_random:
+    fraction_random_anneal_episodes: 0
+    fraction_random_anneal_from: 0.0
+    fraction_random_anneal_to: 0.0
+
+  replay:
+    replay_memory_capacity: 500000
+    update_per_k_game_steps: 5
+    replay_batch_size: 64
+    replay_sample_history_length: 4
+    replay_sample_update_from: 2
+```
+
+Vision DAgger:
+```yaml
+vision_dagger:
+  model_type: "resnet"                                      # 'resnet' (whole image features) or 'maskrcnn_whole' (whole image MaskRCNN feats) or 'maskrcnn' (top k MaskRCNN detection feats) or 'no_vision' (zero vision input)
+  resnet_fc_dim: 64
+  maskrcnn_top_k_boxes: 10                                  # top k box features
+  use_exploration_frame_feats: False                        # append feats from initial exploration (memory intensive!)
+  sequence_aggregation_method: "average"                    # 'sum' or 'average' or 'rnn'
+```
+
+General DQN:
+```yaml
 rl:
   action_space: "admissible"                                # 'admissible' (candidates from text engine) or 'generation' (seq2seq-style generation) or 'beam_search_choice' or 'exhaustive' (not working)
   max_target_length: 20                                     # max token length for seq2seq generation
@@ -108,37 +163,4 @@ rl:
     epsilon_anneal_episodes: 1000                           # -1 if not annealing
     epsilon_anneal_from: 0.3
     epsilon_anneal_to: 0.1
-
-dagger:
-  action_space: "generation"                                # 'admissible' (candidates from text engine) or 'generation' (seq2seq-style generation) or 'exhaustive' (not working)
-  max_target_length: 20                                     # max token length for seq2seq generation
-  beam_width: 10                                            # 1 means greedy
-  generate_top_k: 5
-  unstick_by_beam_search: False                             # use beam-search for failed actions, set True during evaluation
-
-  training:
-    max_nb_steps_per_episode: 50                            # terminate after this many steps
-
-  fraction_assist:
-    fraction_assist_anneal_episodes: 50000
-    fraction_assist_anneal_from: 1.0
-    fraction_assist_anneal_to: 0.01
-
-  fraction_random:
-    fraction_random_anneal_episodes: 0
-    fraction_random_anneal_from: 0.0
-    fraction_random_anneal_to: 0.0
-
-  replay:
-    replay_memory_capacity: 500000
-    update_per_k_game_steps: 5
-    replay_batch_size: 64
-    replay_sample_history_length: 4
-    replay_sample_update_from: 2
-
-vision_dagger:
-  model_type: "resnet"                                      # 'resnet' (whole image features) or 'maskrcnn_whole' (whole image MaskRCNN feats) or 'maskrcnn' (top k MaskRCNN detection feats) or 'no_vision' (zero vision input)
-  resnet_fc_dim: 64
-  maskrcnn_top_k_boxes: 10                                  # top k box features
-  use_exploration_frame_feats: False                        # append feats from initial exploration (memory intensive!)
-  sequence_aggregation_method: "average"                    # 'sum' or 'average' or 'rnn'
+```
