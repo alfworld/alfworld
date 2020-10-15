@@ -195,8 +195,7 @@ Eval Settings:
     vision_dagger_agent.py     (VisionDAgger agent used for unimodal baselines)
 /config
     base_config.yaml           (basic settings for all experiments)
-    eval_config.yaml           (settings for batch evaluations)
-    rewards.json            
+    eval_config.yaml           (settings for batch evaluations) 
 /environment
     alfred_tw_env.py           (ALFRED TextWorld environment)
     alfred_thor_env.py         (ALFRED embodied environment with THOR)

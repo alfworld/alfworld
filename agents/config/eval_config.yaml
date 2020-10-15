@@ -56,10 +56,22 @@ general:
       clip_grad_norm: 5
 
   evaluate:
-    run_eval: False
-    batch_size: 40
+    run_eval: True
+    batch_size: 3                                           # number of parallel eval threads
+    repeats: 1                                              # number of times to loop over eval games (we used 3 in paper experiments)
+    controllers:                                            # different controllers to evaluate with
+      - 'oracle'
+      - 'mrcnn_astar'
+    envs:                                                   # different environments to evaluate in
+      - 'AlfredTWEnv'
+      - 'AlfredThorEnv'
     env:
-      type: "AlfredTWEnv"
+      type:
+       'AlfredThorEnv'
+    eval_paths:                                             # different splits to evaluate on
+      - '../data/json_2.1.1/valid_seen'
+      - '../data/json_2.1.1/valid_unseen'
+    eval_experiment_tag: "eval_run_001"                     # save results json with this prefix
 
   checkpoint:
     report_frequency: 1000                                  # report every N episode

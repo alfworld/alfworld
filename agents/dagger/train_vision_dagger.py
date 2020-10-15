@@ -10,7 +10,7 @@ import numpy as np
 
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from agents.agent import VisionDAggerAgent
+from agent import VisionDAggerAgent
 import modules.generic as generic
 import torch
 import eval.evaluate as evaluate
