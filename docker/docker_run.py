@@ -13,12 +13,12 @@ import yaml
 
 if __name__=="__main__":
     user_name = getpass.getuser()
-    default_image_name = user_name + '-alfred'
+    default_image_name = user_name + '-alfworld'
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--image", type=str,
                         help="(required) name of the image that this container is derived from", default=default_image_name)
 
-    parser.add_argument("-c", "--container", type=str, default="alfred", help="(optional) name of the container")
+    parser.add_argument("-c", "--container", type=str, default="alfworld", help="(optional) name of the container")
 
     parser.add_argument("-d", "--data", type=str, default="data/", help="(optional) external data directory")
 
@@ -42,7 +42,7 @@ if __name__=="__main__":
 
     cmd += " --gpus %s" % (args.gpus)
     cmd += " -e DISPLAY -e QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix:rw "        # enable graphics
-    cmd += " -v %(source_dir)s:%(home_directory)s/alfred_tw " \
+    cmd += " -v %(source_dir)s:%(home_directory)s/alfworld " \
            % {'source_dir': source_dir, 'home_directory': home_directory}                  # mount source
     cmd += " -v ~/.ssh:%(home_directory)s/.ssh " % {'home_directory': home_directory}      # mount ssh keys
     cmd += " -v ~/.torch:%(home_directory)s/.torch " % {'home_directory': home_directory}  # mount torch folder

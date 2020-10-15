@@ -14,7 +14,7 @@ if __name__=="__main__":
 
     print("building docker container . . . ")
     user_name = getpass.getuser()
-    default_image_name = user_name + "-alfred"
+    default_image_name = user_name + "-alfworld"
 
 
     parser = argparse.ArgumentParser()
