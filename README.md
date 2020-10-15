@@ -6,7 +6,7 @@
 
 **ALFWorld** contains interactive TextWorld environments (Côté et. al) that parallel embodied worlds in the ALFRED dataset (Shridhar et. al). The aligned environments allow agents to reason and learn high-level policies in an abstract space before solving embodied tasks through low-level actuation.  
 
-For the latest updates, see: [**alfworld.github.io**](https://askforalfred.com)
+For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io)
 
 <p align="left">
     <img width="500" alt="portfolio_view" src="media/alfworld_teaser.png">
@@ -66,17 +66,6 @@ Tested on:
 - **RAM** - 16GB
 - **OS** - Ubuntu 16.04
 
-
-## Leaderboard
-
-Run your model on test seen and unseen sets, and create an action-sequence dump of your agent:
-
-```bash
-$ cd $ALFRED_ROOT
-$ python models/eval/leaderboard.py --model_path <model_path>/model.pth --model models.model.seq2seq_im_mask --data data/json_feat_2.1.0 --gpu --num_threads 5
-```
-
-This will create a JSON file, e.g. `task_results_20191218_081448_662435.json`, inside the `<model_path>` folder. Submit this JSON here: [AI2 ALFRED Leaderboard](https://leaderboard.allenai.org/alfred/submissions/public). For rules and restrictions, see the [getting started page](https://leaderboard.allenai.org/alfred/submissions/get-started).
 
 ## Docker Setup
 
@@ -170,16 +159,6 @@ If you find the dataset or code useful, please cite:
 
 MIT License
 
-## Change Log
-
-07/04/2020:
-- Updated download links. Switched from Google Cloud to AWS. Old download links will be deactivated.
-
-
-28/03/2020:
-- Updated the mask-interaction API to use IoU scores instead of max pixel count for selecting objects.
-- Results table in the paper will be updated with new numbers.
-
 ## Contact
 
-Questions or issues? Contact [askforalfred@googlegroups.com](askforalfred@googlegroups.com)
+Questions or issues? Contact [Mohit Shridhar](https://mohitshridhar.com)
