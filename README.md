@@ -37,11 +37,11 @@ $ cd $ALFRED_ROOT/agents
 $ python dagger/train_dagger.py config/base_config.yaml
 ```
 
-Play around with TextWorld and THOR [demos](scripts/).
+Play around with [TextWorld and THOR demos](scripts/).
 
 ## More Info 
 
-- [**Dataset**](data/): PDDL and Game Files of ALFRED Tasks. Generating PDDL states and detection training images.
+- [**Data**](data/): PDDL and Game Files of ALFRED Tasks. Generating PDDL states and detection training images.
 - [**Agents**](agents/): Training and evaluating TextDAgger, TextDQN, VisionDAgger agents.
 - [**Explore**](scripts/): Play around with ALFWorld TextWorld and THOR environments.
 

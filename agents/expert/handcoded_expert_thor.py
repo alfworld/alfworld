@@ -2,7 +2,7 @@ import os
 import sys
 import json
 
-sys.path.append(os.environ['ALFRED_ROOT'])
+sys.path.insert(0, os.environ['ALFRED_ROOT'])
 import gen.constants as constants
 from agents.expert.handcoded_expert_tw import HandCodedTWAgent, PickAndPlaceSimplePolicy, PickTwoObjAndPlacePolicy, LookAtObjInLightPolicy, PickHeatThenPlaceInRecepPolicy, PickCoolThenPlaceInRecepPolicy, PickCleanThenPlaceInRecepPolicy
 

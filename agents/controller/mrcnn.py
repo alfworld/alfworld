@@ -588,8 +588,8 @@ class MaskRCNNAgent(BaseAgent):
             # self.feedback = "Failed! Error: %s" % event.metadata['errorMessage']
             self.feedback = "Nothing happens."
 
-        # if self.debug:
-        #     print(self.feedback)
+        if self.debug:
+            print(self.feedback)
         return self.feedback
 
 
