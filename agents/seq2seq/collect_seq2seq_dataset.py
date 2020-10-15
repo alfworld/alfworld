@@ -10,7 +10,7 @@ import numpy as np
 
 import sys
 sys.path.append(os.environ['ALFRED_ROOT'])
-from agents.agent import TextDAggerAgent
+from agent import TextDAggerAgent
 import modules.generic as generic
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 task_types = [1]

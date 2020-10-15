@@ -8,7 +8,7 @@ import glob
 import importlib
 import numpy as np
 
-from agents.agent import TextDQNAgent
+from agent import TextDQNAgent
 import modules.generic as generic
 import eval.evaluate as evaluate
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory

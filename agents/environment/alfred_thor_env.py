@@ -9,8 +9,8 @@ from queue import Queue
 from threading import Thread
 import sys
 import random
+sys.path.insert(0, os.environ['ALFRED_ROOT'])
 
-sys.path.append(os.environ['ALFRED_ROOT'])
 from agents.utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
 from env.thor_env import ThorEnv
 from agents.expert import HandCodedThorAgent, HandCodedAgentTimeout
