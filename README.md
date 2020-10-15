@@ -8,8 +8,9 @@
 
 For the latest updates, see: [**alfworld.github.io**](https://askforalfred.com)
 
-<img width="300" alt="portfolio_view" src="media/alfworld_teaser.png">
-
+<p align="center">
+    <img width="500" alt="portfolio_view" src="media/alfworld_teaser.png">
+</p>
 
 ## Quickstart
 
