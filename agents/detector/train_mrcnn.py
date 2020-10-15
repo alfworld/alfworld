@@ -18,7 +18,7 @@ import transforms as T
 from mrcnn import get_model_instance_segmentation, load_pretrained_model
 
 import sys
-sys.path.append(os.environ["ALFRED_ROOT"])
+sys.path.insert(0, os.environ["ALFRED_ROOT"])
 import gen.constants as constants
 
 MIN_PIXELS = 100

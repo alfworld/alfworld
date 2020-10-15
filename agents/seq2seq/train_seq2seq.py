@@ -10,7 +10,7 @@ import numpy as np
 from tqdm import tqdm
 
 import sys
-sys.path.append(os.environ['ALFRED_ROOT'])
+sys.path.insert(0, os.environ['ALFRED_ROOT'])
 from agent import TextDAggerAgent
 import modules.generic as generic
 import eval.evaluate as evaluate

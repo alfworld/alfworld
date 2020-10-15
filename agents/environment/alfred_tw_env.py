@@ -4,7 +4,7 @@ import json
 import glob
 import random
 
-sys.path.append(os.environ['ALFRED_ROOT'])
+sys.path.insert(0, os.environ['ALFRED_ROOT'])
 from agents.utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
 
 import textworld

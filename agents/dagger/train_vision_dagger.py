@@ -9,7 +9,7 @@ import importlib
 import numpy as np
 
 import sys
-sys.path.append(os.environ['ALFRED_ROOT'])
+sys.path.insert(0, os.environ['ALFRED_ROOT'])
 from agent import VisionDAggerAgent
 import modules.generic as generic
 import torch

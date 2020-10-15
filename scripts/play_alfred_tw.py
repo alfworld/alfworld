@@ -32,29 +32,29 @@ def main(args):
         "grammar": "\n".join(open(f).read() for f in glob.glob("data/textworld_data/logic/*.twl2")),
     }
 
-    # Load state and trajectory files
+    # load state and trajectory files
     pddl_file = os.path.join(args.problem, 'initial_state.pddl')
     json_file = os.path.join(args.problem, 'traj_data.json')
     with open(json_file, 'r') as f:
         traj_data = json.load(f)
     GAME_LOGIC['grammar'] = add_task_to_grammar(GAME_LOGIC['grammar'], traj_data)
 
-    gamefiles = []
+    # dump game file
     gamedata = dict(**GAME_LOGIC, pddl_problem=open(pddl_file).read())
     gamefile = os.path.join(os.path.dirname(pddl_file), 'game.tw-pddl')
     json.dump(gamedata, open(gamefile, "w"))
-    gamefiles.append(gamefile)
 
-    # Register a new Gym environment.
+    # register a new Gym environment.
     infos = textworld.EnvInfos(won=True, admissible_commands=True)
     env_id = textworld.gym.register_game(gamefile, infos,
                                          max_episode_steps=1000000,
                                          wrappers=[AlfredDemangler])
 
+    # reset env
     env = gym.make(env_id)
     obs, infos = env.reset()
 
-
+    # human agent3
     agent = HumanAgent(True)
     agent.reset(env)
 

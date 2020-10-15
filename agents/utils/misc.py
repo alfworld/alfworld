@@ -7,7 +7,7 @@ from textworld.logic import Proposition, Variable
 
 import os
 import sys
-sys.path.append(os.environ["ALFRED_ROOT"])
+sys.path.insert(0, os.environ["ALFRED_ROOT"])
 import gen.goal_library as glib
 import gen.constants as constants
 
