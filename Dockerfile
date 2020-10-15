@@ -27,7 +27,7 @@ RUN yes "Y" | /tmp/install_nvidia.sh
 
 # setup python environment
 RUN cd $WORKDIR
-ENV VIRTUAL_ENV=/home/$USER_NAME/alfworld
+ENV VIRTUAL_ENV=/home/$USER_NAME/alfworld_env
 RUN python3 -m virtualenv --python=/usr/bin/python3 $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
