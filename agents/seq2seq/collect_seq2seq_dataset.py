@@ -9,7 +9,7 @@ import importlib
 import numpy as np
 
 import sys
-sys.path.append(os.environ['ALFRED_ROOT'])
+sys.path.insert(0, os.environ['ALFRED_ROOT'])
 from agent import TextDAggerAgent
 import modules.generic as generic
 os.environ["TOKENIZERS_PARALLELISM"] = "false"

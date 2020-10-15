@@ -6,7 +6,7 @@ from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 
 import os
 import sys
-sys.path.append(os.environ["ALFRED_ROOT"])
+sys.path.insert(0, os.environ["ALFRED_ROOT"])
 import gen.constants as constants
 
 

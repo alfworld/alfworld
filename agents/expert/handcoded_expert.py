@@ -5,7 +5,7 @@ import json
 import random
 from textworld import Agent
 
-sys.path.append(os.environ['ALFRED_ROOT'])
+sys.path.insert(0, os.environ['ALFRED_ROOT'])
 import gen.constants as constants
 
 class HandCodedAgentTimeout(NameError):
