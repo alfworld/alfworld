@@ -126,10 +126,28 @@ You might have to modify `X_DISPLAY` in [gen/constants.py](gen/constants.py) dep
 ## Cloud Instance
 
 ALFWorld can be setup on headless machines like AWS or GoogleCloud instances. 
-The main requirement is that you have access to a GPU machine that supports OpenGL rendering. Run the [startx.py](scripts/startx.py) script like above
-to examine the GPU devices on the host, generate a xorg.conf file, and then start X. You should be able to run AI2THOR normally for evaluation purposes. 
-By default, the `:0.0` display will be used, but if you are running on a machine with more than one GPU, you can address 
-these by modifying the screen component of the display. So `:0.0` refers to the first device, `:0.1` the second and so on.
+The main requirement is that you have access to a GPU machine that supports OpenGL rendering. Run [startx.py](scripts/startx.py) in a tmux shell:
+```bash
+# start tmux session
+$ tmux new -s startx 
+
+# start X server on DISPLAY 0
+$ sudo python $ALFRED_ROOT/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
+
+# detach from tmux shell
+# Ctrl+b then d
+
+# set DISPLAY variable to match X server
+$ export DISPLAY=:0
+
+# check THOR
+$ cd $ALFRED_ROOT
+$ python scripts/check_thor.py
+
+###############
+## (300, 300, 3)
+## Everything works!!!
+```
 
 Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/@etendue2013/how-to-run-ai2-thor-simulation-fast-with-google-cloud-platform-gcp-c9fcde213a4a)
 
