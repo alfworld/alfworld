@@ -8,7 +8,7 @@
 
 For the latest updates, see: [**alfworld.github.io**](https://askforalfred.com)
 
-<p align="center">
+<p align="left">
     <img width="500" alt="portfolio_view" src="media/alfworld_teaser.png">
 </p>
 
