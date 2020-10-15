@@ -175,7 +175,7 @@ rl:
 
 ## Evaluation
 
-The training script runs the evaluation every `report_frequency` episodes. But additionally, you can also evaluate pre-trained agents seperately:
+The training script runs eval every `report_frequency` episodes. But additionally, you can also independently evaluate pre-trained agents:
 
 ```bash
 $ cd $ALFRED_ROOT/agents
