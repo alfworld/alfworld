@@ -1,8 +1,16 @@
 # Agents
 
+![](../media/pipeline.png)
+
 ## Training
 
-Edit [`base_config.yaml`](base_config.yaml) to your needs:
+Start training:
+```bash
+$ cd $ALFRED_ROOT/agents
+$ python dagger/train_dagger.py config/base_config.yaml
+```
+
+Modify [base_config.yaml](config/base_config.yaml) to your needs.
 
 Dataset:
 ```yaml
