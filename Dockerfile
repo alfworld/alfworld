@@ -25,10 +25,17 @@ RUN yes "Y" | /tmp/install_deps.sh
 COPY ./docker/install_nvidia.sh /tmp/install_nvidia.sh
 RUN yes "Y" | /tmp/install_nvidia.sh
 
+# install python3.6 (required for fast-downward)
+RUN apt-get update && \
+  apt-get install -y software-properties-common && \
+  add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get update
+RUN apt-get install -y python3.6 python3.6-dev python3-pip python3.6-venv
+
 # setup python environment
 RUN cd $WORKDIR
 ENV VIRTUAL_ENV=/home/$USER_NAME/alfworld_env
-RUN python3 -m virtualenv --python=/usr/bin/python3 $VIRTUAL_ENV
+RUN python3.6 -m virtualenv --python=/usr/bin/python3.6 $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # install python requirements
