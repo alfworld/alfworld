@@ -47,7 +47,7 @@ Play around with [TextWorld and THOR demos](scripts/).
 
 ## Prerequisites
 
-- Python 3
+- Python 3.6
 - PyTorch 1.2.0
 - Torchvision 0.4.0
 - AI2THOR 2.1.0
