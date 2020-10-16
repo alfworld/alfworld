@@ -1,10 +1,7 @@
 import os
-import random
 import json
 import glob
-import hashlib
 import argparse
-from termcolor import colored
 
 import textworld
 from textworld.agents import HumanAgent
