@@ -4,10 +4,16 @@
 
 ## Training
 
-Start training:
+TextDAgger Training:
 ```bash
 $ cd $ALFRED_ROOT/agents
 $ python dagger/train_dagger.py config/base_config.yaml
+```
+
+VisionDAgger Training:
+```bash
+$ cd $ALFRED_ROOT/agents
+$ python dagger/train_vision_dagger.py config/base_config.yaml
 ```
 
 Modify [base_config.yaml](config/base_config.yaml) to your needs.
