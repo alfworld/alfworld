@@ -5,27 +5,25 @@
 cd $ALFRED_ROOT/data
 
 # JSON files
-rm 3cIEx9R*
-wget https://bit.ly/3cIEx9R
-mv 3cIEx9R 3cIEx9R.zip
-unzip 3cIEx9R.zip
-rm 3cIEx9R.zip
+rm json_2.1.1_json.zip
+wget https://aka.ms/alfworld/json_2.1.1_json.zip
+unzip json_2.1.1_json.zip
+rm json_2.1.1_json.zip
 
 # PDDL files
-rm 3mZsrhf*
-wget https://bit.ly/3mZsrhf
-mv 3mZsrhf 3mZsrhf.zip
-unzip 3mZsrhf.zip
-rm 3mZsrhf.zip
+rm json_2.1.1_pddl.zip
+wget https://aka.ms/alfworld/json_2.1.1_pddl.zip
+unzip json_2.1.1_pddl.zip
+rm json_2.1.1_pddl.zip
 
 # TW-Game files
-rm 2S8lexl*
-wget https://bit.ly/2S8lexl
-mv 2S8lexl 2S8lexl.zip
-unzip 2S8lexl.zip
-rm 2S8lexl.zip
+rm json_2.1.1_tw-pddl.zip
+wget https://aka.ms/alfworld/json_2.1.1_tw-pddl.zip
+unzip json_2.1.1_tw-pddl.zip
+rm json_2.1.1_tw-pddl.zip
 
 # Pre-trained MaskRCNN model
+rm mrcnn.pth
 wget https://aka.ms/alfworld/mrcnn.pth
 mkdir -p $ALFRED_ROOT/agents/detector/models/
 mv mrcnn.pth $ALFRED_ROOT/agents/detector/models/
