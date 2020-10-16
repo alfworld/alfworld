@@ -203,4 +203,4 @@ MIT License
 
 ## Contact
 
-Questions or issues? Contact [Mohit Shridhar](https://mohitshridhar.com)
+Questions or issues? File an issue or contact [Mohit Shridhar](https://mohitshridhar.com)
