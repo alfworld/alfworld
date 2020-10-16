@@ -56,8 +56,8 @@ general:
       clip_grad_norm: 5
 
   evaluate:
-    run_eval: False
-    batch_size: 40
+    run_eval: True
+    batch_size: 10
     env:
       type: "AlfredTWEnv"
 

@@ -11,6 +11,8 @@ from tqdm import tqdm
 
 import sys
 sys.path.insert(0, os.environ['ALFRED_ROOT'])
+sys.path.insert(0, os.path.join(os.environ['ALFRED_ROOT'], 'agents'))
+
 from agent import TextDAggerAgent
 import modules.generic as generic
 import eval.evaluate as evaluate
