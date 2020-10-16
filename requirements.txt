@@ -11,8 +11,8 @@ torch==1.2.0
 torchvision==0.4.0
 tensorboardX==1.8
 ai2thor==2.1.0
-tokenizers==0.5.2
 transformers
+tokenizers==0.8.1rc2
 scipy
 ipython
 matplotlib

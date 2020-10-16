@@ -8,6 +8,10 @@ import glob
 import importlib
 import numpy as np
 
+import sys
+sys.path.insert(0, os.environ['ALFRED_ROOT'])
+sys.path.insert(0, os.path.join(os.environ['ALFRED_ROOT'], 'agents'))
+
 from agent import TextDQNAgent
 import modules.generic as generic
 import eval.evaluate as evaluate
