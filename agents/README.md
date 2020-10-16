@@ -202,9 +202,6 @@ general:
     envs:                                                   # different environments to evaluate in
       - 'AlfredTWEnv'
       - 'AlfredThorEnv'
-    env:
-      type:
-       'AlfredThorEnv'
     eval_paths:                                             # different splits to evaluate on
       - '../data/json_2.1.1/valid_seen'
       - '../data/json_2.1.1/valid_unseen'
