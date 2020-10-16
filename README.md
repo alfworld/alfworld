@@ -18,7 +18,8 @@ $ export ALFRED_ROOT=$(pwd)/alfworld
 
 Install requirements:
 ```bash
-$ virtualenv -p $(which python3) --system-site-packages alfworld_env # or whichever package manager you prefer
+# Note: requires 3.6 or higher 
+$ virtualenv -p $(which python3.6) --system-site-packages alfworld_env # or whichever package manager you prefer
 $ source alfworld_env/bin/activate
 
 $ cd $ALFRED_ROOT
