@@ -54,13 +54,13 @@ def main(args):
         agent = AgentModule(env, traj_data, traj_root=root, load_receps=args.load_receps, debug=args.debug)
     elif args.controller == "mrcnn":
         AgentModule = MaskRCNNAgent
-        mask_rcnn = load_pretrained_model('./agents/detector/models/mrcnn_alfred_objects_sep13_004.pth')
+        mask_rcnn = load_pretrained_model('./agents/detector/models/mrcnn.pth')
         agent = AgentModule(env, traj_data, traj_root=root,
                             pretrained_model=mask_rcnn,
                             load_receps=args.load_receps, debug=args.debug)
     elif args.controller == "mrcnn_astar":
         AgentModule = MaskRCNNAStarAgent
-        mask_rcnn = load_pretrained_model('./agents/detector/models/mrcnn_alfred_objects_sep13_004.pth')
+        mask_rcnn = load_pretrained_model('./agents/detector/models/mrcnn.pth')
         agent = AgentModule(env, traj_data, traj_root=root,
                             pretrained_model=mask_rcnn,
                             load_receps=args.load_receps, debug=args.debug)
