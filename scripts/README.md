@@ -43,7 +43,7 @@ You won!
 
 ### THOR
 
-Interactive with embodied games:
+Interact with embodied games:
 
 ```bash
 $ cd $ALFRED_ROOT
