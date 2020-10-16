@@ -151,6 +151,8 @@ $ python docker/check_thor.py
 ## Everything works!!!
 ```
 
+You might have to modify `X_DISPLAY` in [gen/constants.py](gen/constants.py) depending on which display you use.
+
 Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/@etendue2013/how-to-run-ai2-thor-simulation-fast-with-google-cloud-platform-gcp-c9fcde213a4a)
 
 ## Citations
