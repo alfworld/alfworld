@@ -16,6 +16,12 @@ $ cd $ALFRED_ROOT/agents
 $ python dagger/train_vision_dagger.py config/base_config.yaml
 ```
 
+TextDQN Training (not fully supported):
+```bash
+$ cd $ALFRED_ROOT/agents
+$ python dqn/train_dqn.py config/base_config.yaml
+```
+
 Modify [base_config.yaml](config/base_config.yaml) to your needs.
 
 Dataset:
