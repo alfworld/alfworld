@@ -22,31 +22,31 @@ a cabinet 6, a coffeemachine 1, a toaster 1, a countertop 1, a stoveburner 2,
 a stoveburner 1, and a cabinet 5.
 
 Your task is to: put a hot potato in sinkbasin.
-
-> go to countertop 1                                                                                                                                                    
+     
+> go to countertop 1
 You arrive at loc 15. On the countertop 1, you see a plate 2, a spatula 3, a ladle 1, 
 a fork 3, a pan 1, a bread 1, a knife 1, a butterknife 1, a egg 3, a knife 2, 
 a spatula 2, a tomato 1, and a spatula 1.
 
-> go to countertop 2                                                                                                                                                    
+> go to countertop 2
 You arrive at loc 21. On the countertop 2, you see a saltshaker 1, a mug 2, 
 a spoon 1, a apple 1, a potato 2, a potato 1, a bowl 3, a cup 2, a fork 2, 
 a fork 1, and a apple 2.
 
-> take potato 1 from countertop 2                                                                                                                                       
+> take potato 1 from countertop 2
 You pick up the potato 1 from the countertop 2.
 
-> go to microwave 1                                                                                                                                                     
+> go to microwave 1
 You arrive at loc 10. The microwave 1 is closed.
 
-> heat potato 1 with microwave 1                                                                                                                                        
+> heat potato 1 with microwave 1
 You heat the potato 1 using the microwave 1.
 
-> go to sinkbasin 1                                                                                                                                                     
+> go to sinkbasin 1
 You arrive at loc 8. On the sinkbasin 1, you see a knife 3, a egg 2, 
 and a dishsponge 3.
 
-> put potato 1 in/on sinkbasin 1                                                                                                                                        
+> put potato 1 in/on sinkbasin 1
 You won!
 ```
 
