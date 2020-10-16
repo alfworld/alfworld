@@ -83,7 +83,7 @@ general:
 
   evaluate:
     run_eval: False
-    batch_size: 40
+    batch_size: 10
     env:
       type: "AlfredTWEnv"
 
