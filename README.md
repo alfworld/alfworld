@@ -8,7 +8,7 @@
 
 For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io)
 
-:exclamation: **_Work in progress_**
+:exclamation:**_Work in progress_**:exclamation:
 
 ## Quickstart
 
