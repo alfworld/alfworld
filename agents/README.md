@@ -33,6 +33,10 @@ $ python seq2seq/collect_seq2seq_dataset.py
 $ python seq2seq/train_seq2seq.py config/base_config.yaml
 ```
 
+Run `python -m visdom.server` and set `visdom: True` in the [config file](config/base_config.yaml) to plot training and evaluation curves.
+
+## Config
+
 Modify [base_config.yaml](config/base_config.yaml) to your needs.
 
 Dataset:
