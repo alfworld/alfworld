@@ -4,7 +4,7 @@ The ALFWorld dataset contains 3,553 training games, 140 seen and 134 unseen vali
 
 ## Download
 
-PDDL, Game Files and MaskRCNN detector:
+Download PDDL, Game Files and pre-trained MaskRCNN model:
 
 ```bash
 $ sh $ALFRED_ROOT/data/download_data.sh
