@@ -220,6 +220,8 @@ general:
 
 ```
 
+The script will sequentially evaluate all `envs`, `controllers`, and `eval_paths` in that nested order. 
+
 
 ## Folder Structure
 
