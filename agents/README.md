@@ -30,7 +30,7 @@ $ cd $ALFRED_ROOT/agents
 $ python seq2seq/collect_seq2seq_dataset.py
 
 # train seq2seq model
-$ python seq2seq/train_seq2seq.py
+$ python seq2seq/train_seq2seq.py config/base_config.yaml
 ```
 
 Modify [base_config.yaml](config/base_config.yaml) to your needs.
