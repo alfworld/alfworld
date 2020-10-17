@@ -22,6 +22,17 @@ $ cd $ALFRED_ROOT/agents
 $ python dqn/train_dqn.py config/base_config.yaml
 ```
 
+Seq2Seq Training:
+```bash
+$ cd $ALFRED_ROOT/agents
+
+# collect dataset for offline training
+$ python seq2seq/collect_seq2seq_dataset.py
+
+# train seq2seq model
+$ python seq2seq/train_seq2seq.py
+```
+
 Modify [base_config.yaml](config/base_config.yaml) to your needs.
 
 Dataset:
