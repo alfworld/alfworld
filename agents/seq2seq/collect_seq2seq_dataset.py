@@ -31,9 +31,9 @@ def train():
     # config['env']['expert_type'] = "downward"
 
     if train_or_eval == "train":
-        config['dataset']['data_path'] = "../../data/json_2.1.1/train"
+        config['dataset']['data_path'] = "../data/json_2.1.1/train"
     else:
-        config['dataset']['data_path'] = "../../data/json_2.1.1/valid_seen"
+        config['dataset']['data_path'] = "../data/json_2.1.1/valid_seen"
 
     agent = TextDAggerAgent(config)
     alfred_env = getattr(importlib.import_module("environment"), config["env"]["type"])(config, train_eval="train")
