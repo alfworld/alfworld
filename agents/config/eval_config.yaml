@@ -32,7 +32,7 @@ env:
 controller:
   type: 'oracle'                                            # 'oracle' or 'oracle_astar' or 'mrcnn' or 'mrcnn_astar' (aka BUTLER)
   debug: False
-  load_receps: True                                         # load receptacle locations from precomputed dict (if available)
+  load_receps: False                                        # load receptacle locations from precomputed dict (if available)
 
 mask_rcnn:
   pretrained_model_path: './detector/models/mrcnn.pth'
@@ -126,7 +126,7 @@ dagger:
   max_target_length: 20                                     # max token length for seq2seq generation
   beam_width: 10                                            # 1 means greedy
   generate_top_k: 5
-  unstick_by_beam_search: False                             # use beam-search for failed actions, set True during evaluation
+  unstick_by_beam_search: True                              # use beam-search for failed actions, set True during evaluation
 
   training:
     max_nb_steps_per_episode: 50                            # terminate after this many steps
