@@ -15,11 +15,12 @@ sys.path.insert(0, os.path.join(os.environ['ALFRED_ROOT'], 'agents'))
 from agent import TextDAggerAgent
 import modules.generic as generic
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-task_types = [1]
 train_or_eval = "train"
+if not os.path.exists("../data/seq2seq_data"):
+    os.makedirs("../data/seq2seq_data")
 
 
-def train():
+def collect_data(task_types):
 
     time_1 = datetime.datetime.now()
     config = generic.load_config()
@@ -129,9 +130,10 @@ def train():
         agent.finish_of_episode(episode_no, batch_size)
         episode_no += batch_size
 
-    with open("tw_alfred_seq2seq_" + train_or_eval + "_task" + "-".join([str(item) for item in task_types]) + "_hc.json", 'w', encoding='utf-8') as json_file:
+    with open("../data/seq2seq_data/tw_alfred_seq2seq_" + train_or_eval + "_task" + "-".join([str(item) for item in task_types]) + "_hc.json", 'w', encoding='utf-8') as json_file:
         json.dump({"data": collected_data}, json_file)
 
 
 if __name__ == '__main__':
-    train()
+    for task in [[1], [2], [3], [4], [5], [6]]:
+        collect_data(task)
