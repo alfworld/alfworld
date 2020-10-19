@@ -28,8 +28,19 @@ wget https://aka.ms/alfworld/mrcnn.pth
 mkdir -p $ALFRED_ROOT/agents/detector/models/
 mv mrcnn.pth $ALFRED_ROOT/agents/detector/models/
 
-# Seq2Seq training files
-rm seq2seq_data.zip
-wget https://aka.ms/seq2seq_data.zip
-unzip seq2seq_data.zip
-rm seq2seq_data.zip
+# Pre-trained BUTLER agents
+if [ "$1" = "extra" ]
+then
+    rm alfworld_pretrained_checkpoints.zip
+    wget https://aka.ms/alfworld_pretrained_checkpoints.zip
+    unzip alfworld_pretrained_checkpoints.zip
+    mkdir -p $ALFRED_ROOT/agents/runs/
+    mv pretrained_checkpoints/* $ALFRED_ROOT/agents/runs/
+    rm alfworld_pretrained_checkpoints.zip
+
+    # Seq2Seq training files
+    rm seq2seq_data.zip
+    wget https://aka.ms/seq2seq_data.zip
+    unzip seq2seq_data.zip
+    rm seq2seq_data.zip
+fi
