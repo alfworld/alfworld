@@ -74,10 +74,9 @@ def train():
 
     # load dataset
     # push experience into replay buffer (dagger)
-    # valid_dataset = json.load(open("tw_alfred_seq2seq_eval_task1.json", 'r'))
     task_types = config['env']['task_types']
     for tt in task_types:
-        train_dataset = json.load(open(data_dir + "/tw_alfred_seq2seq_dataset/tw_alfred_seq2seq_train_task" + str(tt) + "_hc.json", 'r'))
+        train_dataset = json.load(open(os.path.join(data_dir, "../data/seq2seq_data/", "tw_alfred_seq2seq_train_task" + str(tt) + "_hc.json"), 'r'))
         train_dataset = train_dataset["data"]
         for episode in tqdm(train_dataset):
             steps = episode["steps"]

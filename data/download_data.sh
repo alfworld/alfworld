@@ -27,3 +27,9 @@ rm mrcnn.pth
 wget https://aka.ms/alfworld/mrcnn.pth
 mkdir -p $ALFRED_ROOT/agents/detector/models/
 mv mrcnn.pth $ALFRED_ROOT/agents/detector/models/
+
+# Seq2Seq training files
+rm seq2seq_data.zip
+wget https://aka.ms/seq2seq_data.zip
+unzip seq2seq_data.zip
+rm seq2seq_data.zip
