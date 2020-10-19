@@ -10,6 +10,12 @@ Download PDDL, Game Files and pre-trained MaskRCNN model:
 $ sh $ALFRED_ROOT/data/download_data.sh
 ```
 
+Additional Seq2Seq data and pre-trained BUTLER checkpoints (All Tasks):
+
+```bash
+$ sh $ALFRED_ROOT/data/download_data.sh extra
+```
+
 ## File Structure
 
 ```

@@ -1,12 +1,12 @@
 dataset:
   data_path: '../data/json_2.1.1/train'
-  eval_id_data_path: '../data/json_2.1.1/valid_seen'     # null/None to disable
-  eval_ood_data_path: '../data/json_2.1.1/valid_unseen'  # null/None to disable
+  eval_id_data_path: '../data/json_2.1.1/valid_seen'        # null/None to disable
+  eval_ood_data_path: '../data/json_2.1.1/valid_unseen'     # null/None to disable
   num_train_games: -1                                       # max training games (<=0 indicates full dataset)
   num_eval_games: -1                                        # max evaluation games (<=0 indicates full dataset)
 
 pddl:
-  domain: '../data/alfred.pddl'                          # PDDL domain file that defines world dynamics
+  domain: '../data/alfred.pddl'                             # PDDL domain file that defines world dynamics
 
 env:
   type: 'AlfredTWEnv'                                       # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
@@ -27,7 +27,7 @@ env:
     screen_height: 300                                      # height of THOR window
     smooth_nav: False                                       # smooth rotations, looks, and translations during navigation (very slow)
     save_frames_to_disk: False                              # save frame PNGs to disk (useful for making videos)
-    save_frames_path: '../videos/'                       # path to save frame PNGs
+    save_frames_path: '../videos/'                          # path to save frame PNGs
 
 controller:
   type: 'oracle'                                            # 'oracle' or 'oracle_astar' or 'mrcnn' or 'mrcnn_astar' (aka BUTLER)
@@ -43,7 +43,7 @@ general:
   visdom: False                                             # plot training/eval curves, run with visdom server
   task: 'alfred'
   training_method: 'dagger'                                 # 'dqn' or 'dagger'
-  save_path: '.'                                            # path to save pytorch models
+  save_path: './runs/'                                      # path to save pytorch models
   observation_pool_capacity: 3                              # k-size queue, 0 indicates no observation
   hide_init_receptacles: False                              # remove initial observation containing navigable receptacles
 
@@ -70,14 +70,14 @@ general:
        'AlfredThorEnv'
     eval_paths:                                             # different splits to evaluate on
       - '../data/json_2.1.1/valid_seen'
-      - '../data/json_2.1.1/valid_unseen'
+      # - '../data/json_2.1.1/valid_unseen'
     eval_experiment_tag: "eval_run_001"                     # save results json with this prefix
 
   checkpoint:
     report_frequency: 10                                    # report every N episode
     experiment_tag: 'test'                                  # name of experiment
     load_pretrained: True                                   # during test, enable this so that the agent load your pretrained model
-    load_from_tag: 'pretrained_agent'                       # name of pre-trained model to load in save_path
+    load_from_tag: 'pretrained_checkpoint_id.pt'            # name of pre-trained model to load in save_path
 
   model:
     encoder_layers: 1
