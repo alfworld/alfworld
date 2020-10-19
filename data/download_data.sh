@@ -28,9 +28,9 @@ wget https://aka.ms/alfworld/mrcnn.pth
 mkdir -p $ALFRED_ROOT/agents/detector/models/
 mv mrcnn.pth $ALFRED_ROOT/agents/detector/models/
 
-# Pre-trained BUTLER agents
 if [ "$1" = "extra" ]
 then
+    # Pre-trained BUTLER agents
     rm alfworld_pretrained_checkpoints.zip
     wget https://aka.ms/alfworld_pretrained_checkpoints.zip
     unzip alfworld_pretrained_checkpoints.zip
