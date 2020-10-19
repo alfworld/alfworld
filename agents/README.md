@@ -26,7 +26,7 @@ Seq2Seq Training:
 ```bash
 $ cd $ALFRED_ROOT/agents
 
-# collect dataset for offline training (should already have been downloaded)
+# collect dataset for offline training (not needed if sh download_data.sh extra)
 # python seq2seq/collect_seq2seq_dataset.py config/base_config.yaml
 
 # train seq2seq model
