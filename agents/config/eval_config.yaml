@@ -77,7 +77,7 @@ general:
     report_frequency: 10                                    # report every N episode
     experiment_tag: 'test'                                  # name of experiment
     load_pretrained: True                                   # during test, enable this so that the agent load your pretrained model
-    load_from_tag: 'pretrained_checkpoint_id.pt'            # name of pre-trained model to load in save_path
+    load_from_tag: 'pretrained_checkpoint_id'               # name of pre-trained model to load in save_path
 
   model:
     encoder_layers: 1
