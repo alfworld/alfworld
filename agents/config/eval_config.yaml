@@ -35,7 +35,7 @@ controller:
   load_receps: False                                        # load receptacle locations from precomputed dict (if available)
 
 mask_rcnn:
-  pretrained_model_path: './detector/models/mrcnn.pth'
+  pretrained_model_path: 'agents/detector/models/mrcnn.pth'
 
 general:
   random_seed: 42
