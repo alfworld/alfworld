@@ -77,7 +77,6 @@ def train():
     task_types = config['env']['task_types']
     for tt in task_types:
         train_dataset = json.load(open(os.path.join(data_dir, "../data/seq2seq_data/", "tw_alfred_seq2seq_train_task" + str(tt) + "_hc.json"), 'r'))
-        train_dataset = train_dataset["data"]
         for episode in tqdm(train_dataset):
             steps = episode["steps"]
             task = episode["task"]
