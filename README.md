@@ -44,7 +44,7 @@ Play around with [TextWorld and THOR demos](scripts/).
 
 ## More Info 
 
-- [**Data**](data/): PDDL and Game Files of ALFRED Tasks. Generating PDDL states and detection training images.
+- [**Data**](data/): PDDL, Game Files, Pre-trained Agents. Generating PDDL states and detection training images.
 - [**Agents**](agents/): Training and evaluating TextDAgger, TextDQN, VisionDAgger agents.
 - [**Explore**](scripts/): Play around with ALFWorld TextWorld and THOR environments.
 
