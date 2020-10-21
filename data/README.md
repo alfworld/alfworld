@@ -104,6 +104,11 @@ $ cd $ALFRED_ROOT
 $ python gen/scripts/augment_pddl_trajectories.py --data_path data/json_2.1.1/train
 ```
 
+#### Adding additional attributes to Textworld games
+
+1. Use [augment_pddl_trajectories.py](https://github.com/alfworld/alfworld/blob/master/gen/scripts/augment_pddl_states.py#L254) to dump additional attributes and properties from THOR into `initial_state.pddl`.  
+2. Set [`regen_game_files = True`](https://github.com/alfworld/alfworld/blob/master/agents/config/base_config.yaml#L13) in your config file to generate `game.tw-pddl` files from the new `initial_state.pddl`s. This will use the expert to check if the text game is solvable and then dump a game file used by the text-engine. 
+3. Modify the demangler in [`misc.py`](https://github.com/alfworld/alfworld/blob/master/agents/utils/misc.py#L64) to display the attribute in Textworld, or modify the grammar in [`alfred.twl2`](https://github.com/alfworld/alfworld/blob/master/data/textworld_data/logic/alfred.twl2) to your needs.
 
 #### MaskRCNN training images from ALFRED
 
