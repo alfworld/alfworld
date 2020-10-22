@@ -271,6 +271,8 @@ The script will sequentially evaluate all `envs`, `controllers`, and `eval_paths
     mrcnn.py                   (MaskRCNN object detections and teleport navigation)
     mrcnn_astar.py             (MaskRCNN object detections and A* navigator aka BUTLER)
 /eval
-    evaluate.py                (evaluation loops for various agents)
+    evaluate_dagger.py         (evaluation loop for TextDAgger agents)
+    evaluate_vision_dagger.py  (evaluation loop for VisionDAgger agents)
+    evaluate_dqn.py            (evaluation loop for TextDQN agents)
     run_eval.py                (evaluation script for batch evals)
 ```
