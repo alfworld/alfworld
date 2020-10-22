@@ -1,21 +1,12 @@
-import os
-import random
-import copy
-import operator
 import logging
-from os.path import join as pjoin
-from queue import PriorityQueue
-
 import numpy as np
 import torch
-import torch.nn.functional as F
 from transformers import DistilBertModel, DistilBertTokenizer
 logging.getLogger("transformers.tokenization_utils").setLevel(logging.ERROR)
 
 import modules.memory as memory
 from modules.model import Policy
 from modules.generic import to_np, to_pt, _words_to_ids, pad_sequences, preproc, max_len, ez_gather_dim_1, LinearSchedule, BeamSearchNode
-from modules.layers import NegativeLogLoss, masked_mean, compute_mask, GetGenerationQValue
 
 
 class ObservationPool(object):
@@ -86,6 +77,10 @@ class ObservationPool(object):
 
 
 class BaseAgent:
+    '''
+    Base class for agents
+    '''
+
     def __init__(self, config):
         self.mode = "train"
         self.config = config
@@ -170,6 +165,7 @@ class BaseAgent:
             # disable epsilon greedy
             self.epsilon_anneal_episodes = -1
             self.epsilon = 0.0
+
         # replay buffer and updates
         self.accumulate_reward_from_final = self.config['rl']['replay']['accumulate_reward_from_final']
         self.discount_gamma_game_reward = self.config['rl']['replay']['discount_gamma_game_reward']
@@ -188,6 +184,7 @@ class BaseAgent:
         self.novel_object_reward_lambda = self.config['rl']['replay']['novel_object_reward_lambda']
         self.rl_replay_sample_history_length = self.config['rl']['replay']['replay_sample_history_length']
         self.rl_replay_sample_update_from = self.config['rl']['replay']['replay_sample_update_from']
+
         # rl train and eval
         self.learn_start_from_this_episode = self.config['rl']['training']['learn_start_from_this_episode']
         self.target_net_update_frequency = self.config['rl']['training']['target_net_update_frequency']

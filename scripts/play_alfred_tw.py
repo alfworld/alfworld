@@ -23,6 +23,7 @@ class AlfredDemangler(textworld.core.Wrapper):
         for info in self._game.infos.values():
             info.name = demangler.demangle_alfred_name(info.id)
 
+
 def main(args):
     GAME_LOGIC = {
         "pddl_domain": open(args.domain).read(),
@@ -51,18 +52,15 @@ def main(args):
     env = gym.make(env_id)
     obs, infos = env.reset()
 
-    # human agent3
+    # human agent
     agent = HumanAgent(True)
     agent.reset(env)
 
     while True:
         print(obs)
         cmd = agent.act(infos, 0, False)
-        if cmd == "STATE":
-            print("\n".join(sorted(map(str, clean_alfred_facts(obs._facts)))))
-            continue
 
-        elif cmd == "ipdb":
+        if cmd == "ipdb":
             from ipdb import set_trace; set_trace()
             continue
 

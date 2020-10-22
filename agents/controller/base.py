@@ -1,8 +1,6 @@
 import os
 import sys
 import json
-import numpy as np
-
 sys.path.append(os.path.join(os.environ['ALFRED_ROOT']))
 
 import copy
@@ -12,11 +10,10 @@ from gen.utils.image_util import compress_mask, decompress_mask
 from agents.utils.misc import get_templated_task_desc, get_human_anns_task_desc, NumpyArrayEncoder
 from enum import Enum
 
-from gen.game_states.task_game_state_full_knowledge import TaskGameStateFullKnowledge
-from gen.agents.deterministic_planner_agent import DeterministicPlannerAgent
-from gen.graph import graph_obj
-
 class BaseAgent(object):
+    '''
+    Base class for controllers
+    '''
 
     # constants
     RECEPTACLES = set(constants.RECEPTACLES) | {'Sink', 'Bathtub'}
@@ -68,6 +65,7 @@ class BaseAgent(object):
         self.setup_navigator()
         self.print_intro()
 
+    # explore the scene to build receptacle map
     def init_scene(self, load_receps):
         if load_receps and os.path.isfile(self.recep_file):
             with open(self.recep_file, 'r') as f:
@@ -115,6 +113,7 @@ class BaseAgent(object):
     def get_object_state(self, object_id):
         raise NotImplementedError()
 
+    # dump receptacle map to disk
     def save_receps(self):
         receptacles = copy.deepcopy(self.receptacles)
         for recep_id, recep in receptacles.items():
@@ -123,8 +122,8 @@ class BaseAgent(object):
         with open(self.recep_file, 'w') as f:
             json.dump(receptacles, f) #, cls=NumpyArrayEncoder)
 
+    # display initial observation and task text
     def print_intro(self):
-        # intro
         self.feedback = "-= Welcome to TextWorld, ALFRED! =-\n\nYou are in the middle of a room. Looking quickly around you, you see "
         recep_list = ["a %s," % (recep['num_id']) for id, recep in self.receptacles.items()]
         self.feedback += self.fix_and_comma_in_the_end(" ".join(recep_list)) + "\n\n"
@@ -137,22 +136,21 @@ class BaseAgent(object):
         self.feedback += "Your task is to: %s" % task
 
         self.intro = str(self.feedback)
-        # if self.debug:
-        #     print(self.feedback)
 
+    # choose between different navigator available
     def setup_navigator(self):
-        # directly teleport with THOR
-        self.navigator = self.env
+        self.navigator = self.env  # by default, directly teleport with THOR API
 
     def print_frame(self, recep, loc):
         raise NotImplementedError()
 
+    # display properties of an object
     def print_object(self, object):
         object_id, object_name = object['object_id'], object['num_id']
 
         is_clean, is_cool, is_hot, is_sliced = self.get_object_state(object_id)
 
-        # Default. Nothing interesting.
+        # by default, nothing interesting about the object
         feedback = "This is a normal %s" % object_name
 
         sliced_str = "sliced " if is_sliced else ""
@@ -173,6 +171,7 @@ class BaseAgent(object):
 
         return feedback
 
+    # command parser
     def parse_command(self, action_str):
 
         def get_triplet(astr, key):

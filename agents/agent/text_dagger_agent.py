@@ -1,9 +1,6 @@
-import os
-import random
 import copy
 import operator
 import logging
-from os.path import join as pjoin
 from queue import PriorityQueue
 
 import numpy as np
@@ -17,7 +14,9 @@ from modules.layers import NegativeLogLoss, masked_mean, compute_mask, GetGenera
 
 
 class TextDAggerAgent(BaseAgent):
-    # dagger stuff
+    '''
+    TextAgent trained with DAgger (Imitation Learning)
+    '''
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

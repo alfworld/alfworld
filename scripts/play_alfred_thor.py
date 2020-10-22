@@ -70,6 +70,10 @@ def main(args):
     print(agent.feedback)
     while True:
         cmd = input()
+        if cmd == "ipdb":
+            from ipdb import set_trace; set_trace()
+            continue
+
         agent.step(cmd)
         if not args.debug:
             print(agent.feedback)

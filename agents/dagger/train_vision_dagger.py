@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(os.environ['ALFRED_ROOT'], 'agents'))
 from agent import VisionDAggerAgent
 import modules.generic as generic
 import torch
-import eval.evaluate as evaluate
+from eval import evaluate_vision_dagger
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
 from agents.utils.misc import extract_admissible_commands
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -116,7 +116,6 @@ def train():
             action_candidate_list = list(infos["admissible_commands"])
         action_candidate_list = agent.preprocess_action_candidates(action_candidate_list)
         task_desc_strings = ["[SEP] %s" % td for td in task_desc_strings]
-        # observation_strings = [item + " [SEP] " + a for item, a in zip(observation_strings, execute_actions)]  # appending the chosen action at previous step into the observation
 
         # it requires to store sequences of transitions into memory with order,
         # so we use a cache to keep what agents returns, and push them into memory
@@ -128,11 +127,6 @@ def train():
         report = agent.report_frequency > 0 and (episode_no % agent.report_frequency <= (episode_no - batch_size) % agent.report_frequency)
 
         for step_no in range(agent.max_nb_steps_per_episode):
-            # # push obs into observation pool
-            # agent.observation_pool.push_batch(observation_strings)
-            # # get most recent k observations
-            # most_recent_observation_strings = agent.observation_pool.get()
-
             # get visual features
             current_frames = env.get_frames()
             observation_feats = agent.extract_visual_features(current_frames)
@@ -176,14 +170,11 @@ def train():
             scores = [float(item) for item in infos["won"]]
             dones = [float(item) for item in dones]
 
-            # observation_strings = list(obs)
-            # observation_strings = agent.preprocess_observation(observation_strings)
             if action_space == "exhaustive":
                 action_candidate_list = [extract_admissible_commands(intro, obs) for intro, obs in zip(first_sight_strings, observation_strings)]
             else:
                 action_candidate_list = list(infos["admissible_commands"])
             action_candidate_list = agent.preprocess_action_candidates(action_candidate_list)
-            # observation_strings = [item + " [SEP] " + a for item, a in zip(observation_strings, execute_actions)]  # appending the chosen action at previous step into the observation
             previous_dynamics = current_dynamics
 
             if step_in_total % agent.dagger_update_per_k_game_steps == 0:
@@ -249,10 +240,10 @@ def train():
         ood_eval_game_points, ood_eval_game_step = 0.0, 0.0
         if agent.run_eval:
             if id_eval_env is not None:
-                id_eval_res = evaluate.evaluate_vision_dagger(id_eval_env, agent, num_id_eval_game)
+                id_eval_res = evaluate_vision_dagger(id_eval_env, agent, num_id_eval_game)
                 id_eval_game_points, id_eval_game_step = id_eval_res['average_points'], id_eval_res['average_steps']
             if ood_eval_env is not None:
-                ood_eval_res = evaluate.evaluate_vision_dagger(ood_eval_env, agent, num_ood_eval_game)
+                ood_eval_res = evaluate_vision_dagger(ood_eval_env, agent, num_ood_eval_game)
                 ood_eval_game_points, ood_eval_game_step = ood_eval_res['average_points'], ood_eval_res['average_steps']
             if id_eval_game_points >= best_performance_so_far:
                 best_performance_so_far = id_eval_game_points

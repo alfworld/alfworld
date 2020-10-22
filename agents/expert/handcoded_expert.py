@@ -193,26 +193,25 @@ class BasePolicy(object):
 
     def act(self, game_state, last_action):
         obs = game_state['feedback']
-        # print(last_action)
-        # print(obs)
         self.steps += 1
 
-        # Timeout
+        # timeout
         if self.steps > self.max_steps:
             raise HandCodedAgentTimeout()
-        # Finished all subgoals but still didn't achieve the goal
+
+        # finished all subgoals but still didn't achieve the goal
         elif self.subgoal_idx >= len(self.subgoals):
             while len(self.action_backlog) > 0:
                 return self.action_backlog.pop()
             raise HandCodedAgentFailed()
 
-        # Update state tracking
+        # update state tracking
         self.update_state_tracking(game_state, last_action)
 
-        # Update observations
+        # update observations
         self.observe(obs)
 
-        # Get subgoal
+        # get subgoal
         self.subgoal_idx = self.check_subgoal_completion(game_state)
         sub_action, sub_param, objs_of_interest = self.get_next_subgoal()
 
@@ -335,7 +334,7 @@ class BasePolicy(object):
             else:
                 return "go to {}".format(self.got_inventory_from_recep)
 
-        # Examine objects on receptacles by default
+        # examine objects on receptacles by default
         if "closed" in obs:
             return "open {}".format(self.curr_recep)
         else:
@@ -542,8 +541,7 @@ class PickCleanThenPlaceInRecepPolicy(BasePolicy):
         raise NotImplementedError()
 
 class HandCodedAgent(Agent):
-    """ Handcoded expert for solving tasks.
-        Based on a set of heuristics to solve ALFRED tasks.
+    """ Handcoded expert for solving tasks. Based on a set of heuristics to solve ALFRED tasks.
         Not guaranteed to succeed or be optimal"""
 
     def __init__(self, max_steps=150):

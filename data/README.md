@@ -118,3 +118,12 @@ To generate image and instance-segmentation pairs from ALFRED training scenes:
 $ cd $ALFRED_ROOT
 $ python gen/scripts/augment_trajectories.py --data_path data/json_2.1.1/train --save_path detector/data/test --num_threads 4 
 ```
+
+#### Training MaskRCNN
+
+To fine-tune a COCO-trained MaskRCNN model:
+
+```bash
+$ cd $ALFRED_ROOT/agents/detector
+$ python train_mrcnn.py --data_path ./data/test/ --save_path ./data/test --balance_scenes --object_types objects  --batch_size 32 --num_workers 4 
+```
