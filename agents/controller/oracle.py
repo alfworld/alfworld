@@ -48,10 +48,8 @@ class OracleAgent(BaseAgent):
     def get_exploration_frames(self):
         return self.exploration_frames
 
+    # use pre-computed openable points from ALFRED to store receptacle locations
     def explore_scene(self):
-        '''
-        Use pre-computed openable points from ALFRED to store receptacle locations
-        '''
         agent_height = self.env.last_event.metadata['agent']['position']['y']
         for object_id, point in self.openable_points.items():
             action = {'action': 'TeleportFull',
@@ -98,10 +96,8 @@ class OracleAgent(BaseAgent):
 
         # self.save_receps()
 
+    # ground-truth instance segemetations (with consistent object IDs) from THOR
     def get_instance_seg(self):
-        '''
-        Ground-truth instance segemetations (with consistent object IDs) from THOR
-        '''
         instance_segs = np.array(self.env.last_event.instance_segmentation_frame)
         inst_color_to_object_id = self.env.last_event.color_to_object_id
 
@@ -113,10 +109,8 @@ class OracleAgent(BaseAgent):
                 inst_color_count[tuple(color)] += 1
         return inst_color_count, inst_color_to_object_id
 
+    # ground-truth object state info maintained by ThorEnv
     def get_object_state(self, object_id):
-        '''
-        Ground-truth object state info maintained by ThorEnv
-        '''
         is_clean = object_id in self.env.cleaned_objects
         is_hot = object_id in self.env.heated_objects
         is_cool = object_id in self.env.cooled_objects
@@ -130,23 +124,6 @@ class OracleAgent(BaseAgent):
     def print_frame(self, recep, loc):
         inst_color_count, inst_color_to_object_id = self.get_instance_seg()
         recep_object_id = recep['object_id']
-
-        # visible_objects = []
-        # for obj in self.env.last_event.metadata['objects']:
-        #     if obj['objectType'] in self.OBJECTS and (not obj['openable'] or (obj['openable'] and obj['isOpen'])) \
-        #             and obj['parentReceptacles'] and recep_object_id in obj['parentReceptacles']:
-        #         object_id = obj['objectId']
-        #         object_type = obj['objectType']
-        #         if object_id not in self.objects:
-        #             self.objects[object_id] = {
-        #                 'object_id': object_id,
-        #                 'object_type': object_type,
-        #                 'parent': recep['object_id'],
-        #                 'loc': loc,
-        #                 'num_id': "%s %d" % (object_type.lower() if "Sliced" not in object_id else "sliced-%s" % object_type.lower(),
-        #                                      self.get_next_num_id(object_type, self.objects))
-        #             }
-        #             visible_objects.append(self.objects[object_id]['num_id'])
 
         # for each unique seg add to object dictionary if it's more visible than before
         visible_objects = []
@@ -184,8 +161,6 @@ class OracleAgent(BaseAgent):
         return visible_objects, feedback
 
     def step(self, action_str):
-
-        # print(action_str)
         event = None
         self.feedback = "Nothing happens."
 
@@ -352,7 +327,6 @@ class OracleAgent(BaseAgent):
                 print(traceback.format_exc())
 
         if event and not event.metadata['lastActionSuccess']:
-            # self.feedback = "Failed! Error: %s" % event.metadata['errorMessage']
             self.feedback = "Nothing happens."
 
         if self.debug:

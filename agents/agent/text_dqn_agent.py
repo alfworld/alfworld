@@ -14,7 +14,9 @@ from modules.layers import NegativeLogLoss, masked_mean, compute_mask, GetGenera
 
 
 class TextDQNAgent(BaseAgent):
-    # action scoring stuff (Deep Q-Learning)
+    '''
+    TextAgent trained with DQN (Reinforcement Learning)
+    '''
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

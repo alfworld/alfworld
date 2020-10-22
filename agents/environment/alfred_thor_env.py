@@ -25,6 +25,9 @@ TASK_TYPES = {1: "pick_and_place_simple",
               6: "pick_two_obj_and_place"}
 
 class AlfredThorEnv(object):
+    '''
+    Interface for Embodied (THOR) environment
+    '''
 
     class Thor(threading.Thread):
         def __init__(self, queue, train_eval="train"):

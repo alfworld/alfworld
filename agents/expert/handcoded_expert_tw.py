@@ -29,8 +29,7 @@ class PickTwoObjAndPlaceTWPolicy(PickTwoObjAndPlacePolicy):
         facts, facts_wo_num_ids, admissible_commands, admissible_commands_wo_num_ids = self.get_state_info(game_state)
         in_recep_predicate = "inreceptacle {} {}".format(obj, parent)
         is_one_object_already_inside_receptacle = in_recep_predicate in facts_wo_num_ids
-        in_receptacle_obj_ids = [" ".join(f.split()[1:3]) for f in facts if
-                                 in_recep_predicate in self.remove_num_ids(f)]
+        in_receptacle_obj_ids = [" ".join(f.split()[1:3]) for f in facts if in_recep_predicate in self.remove_num_ids(f)]
         in_receptacle_obj_id = in_receptacle_obj_ids[0] if len(in_receptacle_obj_ids) > 0 else ""
         trying_to_take_the_same_object = any("take {}".format(in_receptacle_obj_id) in ac for ac in admissible_commands)
         self.is_agent_holding_right_object = "holds agent {}".format(obj) in facts_wo_num_ids
