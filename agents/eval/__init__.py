@@ -1,0 +1,3 @@
+from agents.eval.evaluate_dagger import evaluate_dagger
+from agents.eval.evaluate_vision_dagger import evaluate_vision_dagger
+from agents.eval.evaluate_dqn import evaluate_dqn

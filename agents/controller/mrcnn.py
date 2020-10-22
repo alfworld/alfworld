@@ -1,3 +1,6 @@
+############
+# Reference: https://haochen23.github.io/2020/05/instance-segmentation-mask-rcnn.html#.XyiLqfhKg40
+
 import os
 import cv2
 import sys
@@ -16,10 +19,6 @@ from agents.controller.base import BaseAgent
 from agents.utils.misc import extract_admissible_commands_with_heuristics
 
 import torchvision.transforms as T
-
-#######
-# Reference: https://haochen23.github.io/2020/05/instance-segmentation-mask-rcnn.html#.XyiLqfhKg40
-
 
 class MaskRCNNAgent(BaseAgent):
 
@@ -61,10 +60,8 @@ class MaskRCNNAgent(BaseAgent):
             openable_points = json.load(f)
         return openable_points
 
+    # use pre-computed openable points from ALFRED to store receptacle locations
     def explore_scene(self):
-        '''
-        Use pre-computed openable points from ALFRED to store receptacle locations
-        '''
         agent_height = self.env.last_event.metadata['agent']['position']['y']
         for object_id, point in self.openable_points.items():
             action = {'action': 'TeleportFull',
@@ -111,49 +108,7 @@ class MaskRCNNAgent(BaseAgent):
 
         # self.save_receps()
 
-    # def explore_scene(self):
-    #     '''
-    #     Use pre-computed openable points from ALFRED to store receptacle locations
-    #     '''
-    #     agent_height = self.env.last_event.metadata['agent']['position']['y']
-    #     for gt_recep_id, point in self.openable_points.items():
-    #         gt_recep_class = gt_recep_id.split("|")[0]
-    #         action = {'action': 'TeleportFull',
-    #                   'x': point[0],
-    #                   'y': agent_height,
-    #                   'z': point[1],
-    #                   'rotateOnTeleport': False,
-    #                   'rotation': point[2],
-    #                   'horizon': point[3]}
-    #         event = self.env.step(action)
-    #
-    #         if event and event.metadata['lastActionSuccess']:
-    #             masks, boxes, pred_cls = self.get_instance_seg()
-    #
-    #             for i in range(len(masks)):
-    #                 object_id = "{}|{}".format(pred_cls[i], str(point))
-    #                 object_type = object_id.split('|')[0]
-    #                 num_pixels = len(masks[i].nonzero()[0])
-    #                 if "Basin" in object_id:
-    #                     object_type += "Basin"
-    #                 if object_type in self.STATIC_RECEPTACLES: # and object_type == recep_class:
-    #                     recep_id = object_id
-    #                     if recep_id not in self.receptacles:
-    #                         self.receptacles[recep_id] = {
-    #                             'object_id': recep_id,
-    #                             'object_type': object_type,
-    #                             'locs': action,
-    #                             'mask': masks[i] if masks[i].shape == (300, 300) else np.ones((300, 300)),
-    #                             'num_pixels': num_pixels,
-    #                             'num_id': "%s %d" % (object_type.lower(), self.get_next_num_id(object_type, self.receptacles)),
-    #                             'closed': True if object_type in constants.OPENABLE_CLASS_LIST else None
-    #                         }
-    #                     elif recep_id in self.receptacles and num_pixels > self.receptacles[recep_id]['num_pixels']:
-    #                         self.receptacles[recep_id]['locs'] = action  # .append(action)
-    #                         self.receptacles[recep_id]['num_pixels'] = num_pixels
-    #
-    #     # self.save_receps()
-
+    # explore each scene exhaustively with grid-search
     def explore_scene_exhaustively(self):
         event = self.env.step(dict(action='GetReachablePositions',
                                    gridSize=constants.AGENT_STEP_SIZE))
@@ -227,6 +182,7 @@ class MaskRCNNAgent(BaseAgent):
 
         # self.save_receps()
 
+    # display a list of visible objects
     def print_frame(self, recep, loc):
         visible_objects = self.update_detection(recep, loc)
 
@@ -585,7 +541,6 @@ class MaskRCNNAgent(BaseAgent):
                 print(traceback.format_exc())
 
         if event and not event.metadata['lastActionSuccess']:
-            # self.feedback = "Failed! Error: %s" % event.metadata['errorMessage']
             self.feedback = "Nothing happens."
 
         if self.debug:

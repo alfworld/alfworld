@@ -51,6 +51,9 @@ class AlfredInfos(textworld.core.Wrapper):
 
 
 class AlfredTWEnv(object):
+    '''
+    Interface for Textworld Env
+    '''
 
     def __init__(self, config, train_eval="train"):
         print("Initializing AlfredTWEnv...")
@@ -180,6 +183,7 @@ class AlfredTWEnv(object):
         self.game_logic = {"pddl_domain": open(self.config['pddl']['domain']).read(),
                            "grammar": "\n".join(open(f).read() for f in glob.glob(os.path.join(os.environ['ALFRED_ROOT'], "data/textworld_data/logic/*.twl2")))}
 
+    # use expert to check the game is solvable
     def is_solvable(self, env, game_file_path,
                     random_perturb=True, random_start=10, random_prob_after_state=0.15):
         done = False
@@ -207,7 +211,7 @@ class AlfredTWEnv(object):
         return True, "", steps
 
     def init_env(self, batch_size):
-        # Register a new Gym environment.
+        # register a new Gym environment.
         training_method = self.config["general"]["training_method"]
         expert_type = self.config["env"]["expert_type"]
         if training_method == "dqn":
@@ -229,6 +233,6 @@ class AlfredTWEnv(object):
                                               asynchronous=True,
                                               max_episode_steps=max_nb_steps_per_episode,
                                               wrappers=[alfred_demangler, AlfredInfos])
-        # Launch Gym environment.
+        # launch Gym environment.
         env = gym.make(env_id)
         return env

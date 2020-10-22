@@ -1,10 +1,6 @@
 import datetime
 import os
-import random
-import time
-import copy
 import json
-import glob
 import importlib
 import numpy as np
 from tqdm import tqdm
@@ -15,10 +11,8 @@ sys.path.insert(0, os.path.join(os.environ['ALFRED_ROOT'], 'agents'))
 
 from agent import TextDAggerAgent
 import modules.generic as generic
-import eval.evaluate as evaluate
+from eval import evaluate_dagger
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
-from environment import AlfredTWEnv, AlfredThorEnv
-from agents.utils.misc import extract_admissible_commands
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 MAX_TRAIN_STEP = 50000
 REPORT_FREQUENCY = 1000
@@ -111,10 +105,10 @@ def train():
         ood_eval_game_points, ood_eval_game_step = 0.0, 0.0
         if agent.run_eval:
             if id_eval_env is not None:
-                id_eval_res = evaluate.evaluate_dagger(id_eval_env, agent, num_id_eval_game)
+                id_eval_res = evaluate_dagger(id_eval_env, agent, num_id_eval_game)
                 id_eval_game_points, id_eval_game_step = id_eval_res['average_points'], id_eval_res['average_steps']
             if ood_eval_env is not None:
-                ood_eval_res = evaluate.evaluate_dagger(ood_eval_env, agent, num_ood_eval_game)
+                ood_eval_res = evaluate_dagger(ood_eval_env, agent, num_ood_eval_game)
                 ood_eval_game_points, ood_eval_game_step = ood_eval_res['average_points'], ood_eval_res['average_steps']
             if id_eval_game_points >= best_performance_so_far:
                 best_performance_so_far = id_eval_game_points

@@ -2,6 +2,9 @@ import random
 import importlib
 
 class AlfredHybrid(object):
+    '''
+    Hybrid training manager for switching between AlfredTWEnv and AlfredThorEnv
+    '''
 
     def __init__(self, config, train_eval="train"):
         print("Setting up AlfredHybrid env")

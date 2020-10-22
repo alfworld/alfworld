@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.join(os.environ['ALFRED_ROOT'], 'agents'))
 
 from agent import TextDQNAgent
 import modules.generic as generic
-import eval.evaluate as evaluate
+from eval import evaluate_dqn
 from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
 from agents.utils.misc import extract_admissible_commands
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -273,10 +273,10 @@ def train():
         ood_eval_game_points, ood_eval_game_step = 0.0, 0.0
         if agent.run_eval:
             if id_eval_env is not None:
-                id_eval_res = evaluate.evaluate_dqn(id_eval_env, agent, num_id_eval_game)
+                id_eval_res = evaluate_dqn(id_eval_env, agent, num_id_eval_game)
                 id_eval_game_points, id_eval_game_step = id_eval_res['average_points'], id_eval_res['average_steps']
             if ood_eval_env is not None:
-                ood_eval_res = evaluate.evaluate_dqn(ood_eval_env, agent, num_ood_eval_game)
+                ood_eval_res = evaluate_dqn(ood_eval_env, agent, num_ood_eval_game)
                 ood_eval_game_points, ood_eval_game_step = ood_eval_res['average_points'], ood_eval_res['average_steps']
             if id_eval_game_points >= best_performance_so_far:
                 best_performance_so_far = id_eval_game_points

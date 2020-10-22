@@ -15,7 +15,6 @@ import numpy as np
 from json import JSONEncoder
 
 
-
 class Demangler(object):
 
     def __init__(self, obj_dict=None, game_infos=None, shuffle=False):
@@ -135,6 +134,7 @@ def parse_objects(desc):
                 objs.append(item)
     return objs
 
+
 def extract_admissible_commands_with_heuristics(intro, frame_desc, feedback,
                                                 curr_recep, inventory):
     '''
@@ -236,10 +236,9 @@ def extract_admissible_commands_with_heuristics(intro, frame_desc, feedback,
     return admissible_commands
 
 
-
 def extract_admissible_commands(intro, frame_desc):
     '''
-    admissible command extraction
+    exhaustive list of admissible commands
     '''
 
     admissible_commands = []

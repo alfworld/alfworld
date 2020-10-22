@@ -1,6 +1,5 @@
 import os
 import sys
-import random
 import copy
 
 import numpy as np
@@ -21,6 +20,9 @@ from torchvision.ops import boxes as box_ops
 
 
 class VisionDAggerAgent(TextDAggerAgent):
+    '''
+    Vision Agent trained with DAgger
+    '''
     def __init__(self, config):
         super().__init__(config)
 
@@ -57,6 +59,10 @@ class VisionDAggerAgent(TextDAggerAgent):
             raise NotImplementedError()
 
     def box_features_hook(self, module, input, output):
+        '''
+        hook for extracting features from MaskRCNN
+        '''
+
         features, proposals, image_shapes, targets = input
 
         box_features = module.box_roi_pool(features, proposals, image_shapes)
@@ -122,6 +128,7 @@ class VisionDAggerAgent(TextDAggerAgent):
         self.detection_box_features = box_features_per_image
         self.fpn_pooled_features = self.avg2dpool(features['pool']).squeeze(-1).squeeze(-1)
 
+    # visual features for state representation
     def extract_visual_features(self, images):
         with torch.no_grad():
             if "resnet" in self.vision_model_type:
