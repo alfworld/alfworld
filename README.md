@@ -201,7 +201,7 @@ Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/
 
 ## License
 
-MIT License
+GNU General Public License (GPL) v3.0
 
 ## Contact
 
