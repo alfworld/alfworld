@@ -201,9 +201,9 @@ Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/
 
 ## License
 
-ALFWorld - MIT License  
-TextWorld (Jericho) - GNU General Public License (GPL) v2.0  
-Fast Downward - GNU General Public License (GPL) v3.0 
+- ALFWorld - MIT License  
+- TextWorld (Jericho) - GNU General Public License (GPL) v2.0  
+- Fast Downward - GNU General Public License (GPL) v3.0 
 
 ## Contact
 
