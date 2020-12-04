@@ -10,19 +10,21 @@ $ cd $ALFRED_ROOT/agents
 $ python dagger/train_dagger.py config/base_config.yaml
 ```
 
-VisionDAgger Training:
+By default, you should be able to reproduce **BUTLERg** All Tasks results reported in [Table 2](https://arxiv.org/pdf/2010.03768.pdf). Run the [eval script](https://github.com/alfworld/alfworld/blob/master/agents/README.md#evaluation) with `unstick_by_beam_search: True` to reproduce **BUTLER** evaluation results with a trained model.
+
+VisionDAgger Training (unimodal baseline):
 ```bash
 $ cd $ALFRED_ROOT/agents
 $ python dagger/train_vision_dagger.py config/base_config.yaml
 ```
 
-TextDQN Training (not fully supported):
+TextDQN Training (not reported in the paper):
 ```bash
 $ cd $ALFRED_ROOT/agents
 $ python dqn/train_dqn.py config/base_config.yaml
 ```
 
-Seq2Seq Training:
+Seq2Seq Training (no DAgger basline):
 ```bash
 $ cd $ALFRED_ROOT/agents
 
@@ -34,8 +36,6 @@ $ python seq2seq/train_seq2seq.py config/base_config.yaml
 ```
 
 Run `python -m visdom.server` and set `visdom: True` in the [config file](config/base_config.yaml) to plot training and evaluation curves.  
-
-By default, you should be able to reproduce **BUTLERg** All Tasks results reported in [Table 2](https://arxiv.org/pdf/2010.03768.pdf). Run the [eval script](https://github.com/alfworld/alfworld/blob/master/agents/README.md#evaluation) with `unstick_by_beam_search: True` to reproduce **BUTLER** evaluation results with a trained model.
 
 ## Config
 
