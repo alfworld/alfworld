@@ -106,6 +106,7 @@ $ python docker/docker_run.py --headless
   sudo nvidia-xconfig -a --use-display-device=None --virtual=1280x1024
 
   # start X server on DISPLAY 0
+  # single X server should be sufficient for multiple instances of THOR
   sudo python ~/alfworld/docker/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
   # detach from tmux shell
@@ -137,6 +138,7 @@ The main requirement is that you have access to a GPU machine that supports Open
 $ tmux new -s startx 
 
 # start X server on DISPLAY 0
+# single X server should be sufficient for multiple instances of THOR
 $ sudo python $ALFRED_ROOT/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
 # detach from tmux shell
