@@ -24,7 +24,7 @@ $ cd $ALFRED_ROOT/agents
 $ python dqn/train_dqn.py config/base_config.yaml
 ```
 
-Seq2Seq Training (no DAgger basline):
+Seq2Seq Training (no DAgger baseline):
 ```bash
 $ cd $ALFRED_ROOT/agents
 
