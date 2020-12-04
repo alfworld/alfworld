@@ -35,7 +35,7 @@ $ python seq2seq/train_seq2seq.py config/base_config.yaml
 
 Run `python -m visdom.server` and set `visdom: True` in the [config file](config/base_config.yaml) to plot training and evaluation curves.  
 
-By default, you should be able to reproduce **BUTLERg** All Tasks results reported in [Table 2](https://arxiv.org/pdf/2010.03768.pdf). Run the eval script with `unstick_by_beam_search: True` to reproduce **BUTLER** evaluation results with a trained model.
+By default, you should be able to reproduce **BUTLERg** All Tasks results reported in [Table 2](https://arxiv.org/pdf/2010.03768.pdf). Run the [eval script](https://github.com/alfworld/alfworld/blob/master/agents/README.md#evaluation) with `unstick_by_beam_search: True` to reproduce **BUTLER** evaluation results with a trained model.
 
 ## Config
 
