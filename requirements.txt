@@ -1,4 +1,4 @@
-numpy==1.16.2
+numpy #==1.16.2
 pandas
 opencv-python
 networkx
@@ -26,5 +26,5 @@ h5py
 pyyaml
 pytz
 visdom
-https://github.com/MarcCote/downward/archive/faster_replan.zip
-https://github.com/MohitShridhar/TextWorld/archive/handcoded_expert_integration.zip
+fast-downward @ https://github.com/MarcCote/downward/archive/faster_replan.zip
+textworld @ https://github.com/MohitShridhar/TextWorld/archive/handcoded_expert_integration.zip

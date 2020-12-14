@@ -1,0 +1,8 @@
+include requirements.txt
+include README.md
+include LICENSE.txt
+include License.md
+include setup.sh
+
+include alfworld/data/alfred.pddl
+include alfworld/data/alfred.twl2
