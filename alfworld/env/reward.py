@@ -1,4 +1,4 @@
-from gen.utils.game_util import get_object
+from alfworld.gen.utils.game_util import get_object
 
 class BaseAction(object):
     '''

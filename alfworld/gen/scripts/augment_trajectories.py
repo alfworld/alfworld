@@ -1,12 +1,10 @@
 import os
 import sys
-sys.path.append(os.path.join(os.environ['ALFRED_ROOT']))
-sys.path.append(os.path.join(os.environ['ALFRED_ROOT'], 'gen'))
 
 import json
 import glob
 import os
-import constants
+import alfworld.gen.constants
 import cv2
 import shutil
 import numpy as np
@@ -15,9 +13,10 @@ import threading
 import time
 import copy
 import random
-from utils.video_util import VideoSaver
-from utils.py_util import walklevel
-from env.thor_env import ThorEnv
+import alfworld.gen
+from alfworld.gen.utils.video_util import VideoSaver
+from alfworld.gen.utils.py_util import walklevel
+from alfworld.env.thor_env import ThorEnv
 
 
 TRAJ_DATA_JSON_FILENAME = "traj_data.json"
@@ -94,7 +93,7 @@ def get_scene_type(scene_num):
 
 def get_openable_points(traj_data):
     scene_num = traj_data['scene']['scene_num']
-    openable_json_file = os.path.join(os.environ['ALFRED_ROOT'], 'gen/layouts/FloorPlan%d-openable.json' % scene_num)
+    openable_json_file = os.path.join(alfworld.gen.__path__, 'layouts/FloorPlan%d-openable.json' % scene_num)
     with open(openable_json_file, 'r') as f:
         openable_points = json.load(f)
     return openable_points

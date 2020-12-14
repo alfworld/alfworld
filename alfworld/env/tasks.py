@@ -1,8 +1,8 @@
 import json
 import numpy as np
-from gen.graph import graph_obj
-from gen.utils.game_util import get_objects_with_name_and_prop
-from env.reward import get_action
+from alfworld.gen.graph import graph_obj
+from alfworld.gen.utils.game_util import get_objects_with_name_and_prop
+from alfworld.env.reward import get_action
 
 
 class BaseTask(object):

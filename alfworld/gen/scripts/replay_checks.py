@@ -1,15 +1,13 @@
 import os
 import sys
-sys.path.append(os.path.join(os.environ['ALFRED_ROOT']))
-sys.path.append(os.path.join(os.environ['ALFRED_ROOT'], 'gen'))
 
 import argparse
 import json
 import numpy as np
 import shutil
 import time
-from env.thor_env import ThorEnv
-from utils.replay_json import replay_json
+from alfworld.env.thor_env import ThorEnv
+from alfworld.gen.utils.replay_json import replay_json
 
 
 JSON_FILENAME = "traj_data.json"

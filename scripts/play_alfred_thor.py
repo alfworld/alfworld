@@ -1,13 +1,12 @@
 import os
 import sys
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
 
 import json
 import argparse
 
-from env.thor_env import ThorEnv
-from agents.detector.mrcnn import load_pretrained_model
-from agents.controller import OracleAgent, OracleAStarAgent, MaskRCNNAgent, MaskRCNNAStarAgent
+from alfworld.env.thor_env import ThorEnv
+from alfworld.agents.detector.mrcnn import load_pretrained_model
+from alfworld.agents.controller import OracleAgent, OracleAStarAgent, MaskRCNNAgent, MaskRCNNAStarAgent
 
 
 def setup_scene(env, traj_data, r_idx, args, reward_type='dense'):

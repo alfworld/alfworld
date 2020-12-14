@@ -7,9 +7,8 @@ from textworld.logic import Proposition, Variable
 
 import os
 import sys
-sys.path.insert(0, os.environ["ALFRED_ROOT"])
-import gen.goal_library as glib
-import gen.constants as constants
+import alfworld.gen.goal_library as glib
+import alfworld.gen.constants as constants
 
 import numpy as np
 from json import JSONEncoder

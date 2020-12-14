@@ -2,9 +2,8 @@ import os
 import sys
 import json
 
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
-import gen.constants as constants
-from agents.expert.handcoded_expert_tw import HandCodedTWAgent, PickAndPlaceSimplePolicy, PickTwoObjAndPlacePolicy, LookAtObjInLightPolicy, PickHeatThenPlaceInRecepPolicy, PickCoolThenPlaceInRecepPolicy, PickCleanThenPlaceInRecepPolicy
+import alfworld.gen.constants as constants
+from alfworld.agents.expert.handcoded_expert_tw import HandCodedTWAgent, PickAndPlaceSimplePolicy, PickTwoObjAndPlacePolicy, LookAtObjInLightPolicy, PickHeatThenPlaceInRecepPolicy, PickCoolThenPlaceInRecepPolicy, PickCleanThenPlaceInRecepPolicy
 
 class PickAndPlaceSimpleThorPolicy(PickAndPlaceSimplePolicy):
 

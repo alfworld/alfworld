@@ -6,13 +6,12 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-import modules.memory as memory
-from agent import TextDAggerAgent
-from modules.generic import to_np, to_pt, _words_to_ids, pad_sequences, preproc, max_len, ez_gather_dim_1, LinearSchedule
-from modules.layers import NegativeLogLoss, masked_mean, compute_mask
-
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
-from detector.mrcnn import load_pretrained_model
+import alfworld.agents
+import alfworld.agents.modules.memory as memory
+from alfworld.agents.agent import TextDAggerAgent
+from alfworld.agents.modules.generic import to_np, to_pt, _words_to_ids, pad_sequences, preproc, max_len, ez_gather_dim_1, LinearSchedule
+from alfworld.agents.modules.layers import NegativeLogLoss, masked_mean, compute_mask
+from alfworld.agents.detector.mrcnn import load_pretrained_model
 
 import torchvision.transforms as T
 from torchvision import models
@@ -43,7 +42,7 @@ class VisionDAggerAgent(TextDAggerAgent):
             if self.use_gpu:
                 self.detector.cuda()
         elif self.vision_model_type in {'maskrcnn', 'maskrcnn_whole'}:
-            pretrained_model_path = os.path.join(os.environ['ALFRED_ROOT'], config['mask_rcnn']['pretrained_model_path'])
+            pretrained_model_path = config['mask_rcnn']['pretrained_model_path']
             self.mask_rcnn_top_k_boxes = self.config['vision_dagger']['maskrcnn_top_k_boxes']
             self.avg2dpool = torch.nn.AvgPool2d((13, 13))
             self.detector = load_pretrained_model(pretrained_model_path)

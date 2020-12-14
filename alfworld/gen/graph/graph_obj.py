@@ -5,8 +5,9 @@ import time
 import networkx as nx
 import numpy as np
 
-import gen.constants as constants
-from gen.utils import game_util
+import alfworld.gen.constants as constants
+from alfworld.gen.utils import game_util
+
 
 MAX_WEIGHT_IN_GRAPH = 1e5
 PRED_WEIGHT_THRESH = 10

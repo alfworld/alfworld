@@ -1,5 +1,7 @@
 import numpy as np
-from gen import constants
+
+from alfworld.gen import constants
+
 
 def bbox_to_mask(bbox):
     '''

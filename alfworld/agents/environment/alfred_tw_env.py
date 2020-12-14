@@ -4,13 +4,13 @@ import json
 import glob
 import random
 
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
-from agents.utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
+from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
 
 import textworld
 import textworld.agents
 import textworld.gym
 import gym
+
 
 TASK_TYPES = {1: "pick_and_place_simple",
               2: "look_at_obj_in_light",
@@ -180,8 +180,10 @@ class AlfredTWEnv(object):
             print("Evaluating with %d games" % (len(self.game_files)))
 
     def get_game_logic(self):
-        self.game_logic = {"pddl_domain": open(self.config['pddl']['domain']).read(),
-                           "grammar": "\n".join(open(f).read() for f in glob.glob(os.path.join(os.environ['ALFRED_ROOT'], "data/textworld_data/logic/*.twl2")))}
+        self.game_logic = {
+            "pddl_domain": open(self.config['logic']['domain']).read(),
+            "grammar": open(self.config['logic']['grammar']).read()
+        }
 
     # use expert to check the game is solvable
     def is_solvable(self, env, game_file_path,

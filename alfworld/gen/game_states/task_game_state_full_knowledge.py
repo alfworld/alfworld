@@ -1,13 +1,15 @@
 import copy
 import os
 import sys
-import gen.constants as constants
+
 import numpy as np
-from gen.game_states.game_state_base import GameStateBase
-from gen.game_states.planned_game_state import PlannedGameState
-from gen.game_states.task_game_state import TaskGameState
-from gen.utils import bb_util
-from gen.utils import game_util
+
+import alfworld.gen.constants as constants
+from alfworld.gen.game_states.game_state_base import GameStateBase
+from alfworld.gen.game_states.planned_game_state import PlannedGameState
+from alfworld.gen.game_states.task_game_state import TaskGameState
+from alfworld.gen.utils import bb_util
+from alfworld.gen.utils import game_util
 
 
 class TaskGameStateFullKnowledge(TaskGameState):

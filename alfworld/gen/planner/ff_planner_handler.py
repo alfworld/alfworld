@@ -6,9 +6,9 @@ import shlex
 import subprocess
 import time
 
-import gen.constants as constants
-from gen.utils import game_util
-from gen.utils import py_util
+import alfworld.gen.constants as constants
+from alfworld.gen.utils import game_util
+from alfworld.gen.utils import py_util
 
 DEBUG = False
 

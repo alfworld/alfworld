@@ -1,7 +1,7 @@
-import gen.constants as constants
-from gen.agents.agent_base import AgentBase
-from gen.game_states.planned_game_state import PlannedGameState
-from gen.utils import game_util
+import alfworld.gen.constants as constants
+from alfworld.gen.agents.agent_base import AgentBase
+from alfworld.gen.game_states.planned_game_state import PlannedGameState
+from alfworld.gen.utils import game_util
 
 
 class PlanAgent(AgentBase):

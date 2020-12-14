@@ -1,12 +1,13 @@
 import copy
 import json
 import os
-import gen.constants as constants
-from gen.game_states.game_state_base import GameStateBase
-from gen.planner import ff_planner_handler
-from gen.utils import game_util
-from gen.utils import py_util
 from abc import ABC
+
+import alfworld.gen.constants as constants
+from alfworld.gen.game_states.game_state_base import GameStateBase
+from alfworld.gen.planner import ff_planner_handler
+from alfworld.gen.utils import game_util
+from alfworld.gen.utils import py_util
 
 
 class PlannedGameState(GameStateBase, ABC):

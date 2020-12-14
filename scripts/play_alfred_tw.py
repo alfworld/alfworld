@@ -2,6 +2,7 @@ import os
 import json
 import glob
 import argparse
+from os.path import join as pjoin
 
 import textworld
 from textworld.agents import HumanAgent
@@ -10,8 +11,8 @@ import gym
 import textworld.gym
 
 import sys
-sys.path.append(os.environ["ALFRED_ROOT"])
-from agents.utils.misc import Demangler, get_templated_task_desc, clean_alfred_facts, add_task_to_grammar
+import alfworld.gen
+from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, clean_alfred_facts, add_task_to_grammar
 
 
 class AlfredDemangler(textworld.core.Wrapper):
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("problem", help="Path to folder containing pddl and traj_data files")
     parser.add_argument("--domain",
-                        default=os.environ.get("ALFRED_ROOT", ".") + "/gen/planner/domains/PutTaskExtended_domain.pddl",
+                        default=pjoin("data", "logic", "alfred.pddl"),
                         help="Path to a PDDL file describing the domain."
                              " Default: `%(default)s`.")
     args = parser.parse_args()

@@ -1,9 +1,10 @@
 import os
 import random
-import gen.constants as constants
-import gen.goal_library as glib
-from gen.game_states.planned_game_state import PlannedGameState
-from gen.utils import game_util
+
+import alfworld.gen.constants as constants
+import alfworld.gen.goal_library as glib
+from alfworld.gen.game_states.planned_game_state import PlannedGameState
+from alfworld.gen.utils import game_util
 
 
 class TaskGameState(PlannedGameState):

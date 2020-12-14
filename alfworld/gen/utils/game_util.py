@@ -1,9 +1,11 @@
 import copy
 import random
+
 import cv2
 import numpy as np
-from gen import constants
-from gen import goal_library as glib
+
+from alfworld.gen import constants
+from alfworld.gen import goal_library as glib
 
 
 def get_pose(event):

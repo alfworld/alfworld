@@ -1,13 +1,12 @@
 import os
 import sys
 import json
-sys.path.append(os.path.join(os.environ['ALFRED_ROOT']))
 
 import copy
 import random
-import gen.constants as constants
-from gen.utils.image_util import compress_mask, decompress_mask
-from agents.utils.misc import get_templated_task_desc, get_human_anns_task_desc, NumpyArrayEncoder
+import alfworld.gen.constants as constants
+from alfworld.gen.utils.image_util import compress_mask, decompress_mask
+from alfworld.agents.utils.misc import get_templated_task_desc, get_human_anns_task_desc, NumpyArrayEncoder
 from enum import Enum
 
 class BaseAgent(object):

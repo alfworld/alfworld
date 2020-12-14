@@ -2,14 +2,15 @@ import cv2
 import copy
 import os
 import glob
-import gen.constants as constants
 import numpy as np
 from collections import Counter, OrderedDict
-from env.tasks import get_task
 from ai2thor.controller import Controller
-import gen.utils.image_util as image_util
-from gen.utils import game_util
-from gen.utils.game_util import get_objects_of_type, get_obj_of_type_closest_to_obj
+
+import alfworld.gen.constants as constants
+from alfworld.env.tasks import get_task
+import alfworld.gen.utils.image_util as image_util
+from alfworld.gen.utils import game_util
+from alfworld.gen.utils.game_util import get_objects_of_type, get_obj_of_type_closest_to_obj
 
 
 DEFAULT_RENDER_SETTINGS = {'renderImage': True,

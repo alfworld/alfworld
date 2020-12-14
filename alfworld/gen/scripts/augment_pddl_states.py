@@ -1,12 +1,10 @@
 import os
 import sys
-sys.path.append(os.path.join(os.environ['ALFRED_ROOT']))
-sys.path.append(os.path.join(os.environ['ALFRED_ROOT'], 'gen'))
 
 import json
 import glob
 import os
-import constants
+import alfworld.gen.constants
 import cv2
 import shutil
 import numpy as np
@@ -15,14 +13,14 @@ import threading
 import time
 import copy
 import random
-import goal_library as glib
-from utils.video_util import VideoSaver
-from utils.py_util import walklevel
-from env.thor_env import ThorEnv
-from game_states.task_game_state_full_knowledge import TaskGameStateFullKnowledge
+import alfworld.gen.goal_library as glib
+from alfworld.gen.utils.video_util import VideoSaver
+from alfworld.gen.utils.py_util import walklevel
+from alfworld.env.thor_env import ThorEnv
+from alfworld.gen.game_states.task_game_state_full_knowledge import TaskGameStateFullKnowledge
 
-from utils import game_util, py_util
-from graph import graph_obj
+from alfworld.gen.utils import game_util, py_util
+from alfworld.gen.graph import graph_obj
 
 
 TRAJ_DATA_JSON_FILENAME = "traj_data.json"

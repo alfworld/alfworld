@@ -9,13 +9,13 @@ from queue import Queue
 from threading import Thread
 import sys
 import random
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
 
-from agents.utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
-from env.thor_env import ThorEnv
-from agents.expert import HandCodedThorAgent, HandCodedAgentTimeout
-from detector.mrcnn import load_pretrained_model
-from agents.controller import OracleAgent, OracleAStarAgent, MaskRCNNAgent, MaskRCNNAStarAgent
+import alfworld.agents
+from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
+from alfworld.env.thor_env import ThorEnv
+from alfworld.agents.expert import HandCodedThorAgent, HandCodedAgentTimeout
+from alfworld.agents.detector.mrcnn import load_pretrained_model
+from alfworld.agents.controller import OracleAgent, OracleAStarAgent, MaskRCNNAgent, MaskRCNNAStarAgent
 
 TASK_TYPES = {1: "pick_and_place_simple",
               2: "look_at_obj_in_light",
@@ -73,8 +73,7 @@ class AlfredThorEnv(object):
         def load_mask_rcnn(self):
             # load pretrained MaskRCNN model if required
             if 'mrcnn' in self.config['controller']['type'] and not self.mask_rcnn:
-                model_path = os.path.join(os.environ['ALFRED_ROOT'],
-                                          self.config['mask_rcnn']['pretrained_model_path'])
+                model_path = os.path.expandvars(self.config['mask_rcnn']['pretrained_model_path'])
                 self.mask_rcnn = load_pretrained_model(model_path)
 
         def set_task(self, task_file):
@@ -110,7 +109,7 @@ class AlfredThorEnv(object):
 
             # setup task for reward
             class args: pass
-            args.reward_config = os.path.join(os.environ['ALFRED_ROOT'], 'agents/config/rewards.json')
+            args.reward_config = os.path.join(alfworld.agents.__path__, 'config/rewards.json')
             self.env.set_task(self.traj_data, args, reward_type='dense')
 
             # set controller

@@ -6,8 +6,7 @@ from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 
 import os
 import sys
-sys.path.insert(0, os.environ["ALFRED_ROOT"])
-import gen.constants as constants
+import alfworld.gen.constants as constants
 
 
 def get_model_instance_segmentation(num_classes):

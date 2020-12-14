@@ -4,8 +4,8 @@ import torch
 
 import os
 import sys
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
-from agents.utils.misc import extract_admissible_commands
+
+from alfworld.agents.utils.misc import extract_admissible_commands
 
 
 def evaluate_dagger(env, agent, num_games, debug=False):

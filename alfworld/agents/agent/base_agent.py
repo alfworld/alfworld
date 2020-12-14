@@ -4,9 +4,9 @@ import torch
 from transformers import DistilBertModel, DistilBertTokenizer
 logging.getLogger("transformers.tokenization_utils").setLevel(logging.ERROR)
 
-import modules.memory as memory
-from modules.model import Policy
-from modules.generic import to_np, to_pt, _words_to_ids, pad_sequences, preproc, max_len, ez_gather_dim_1, LinearSchedule, BeamSearchNode
+import alfworld.agents.modules.memory as memory
+from alfworld.agents.modules.model import Policy
+from alfworld.agents.modules.generic import to_np, to_pt, _words_to_ids, pad_sequences, preproc, max_len, ez_gather_dim_1, LinearSchedule, BeamSearchNode
 
 
 class ObservationPool(object):

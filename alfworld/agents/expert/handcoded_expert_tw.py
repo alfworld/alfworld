@@ -1,8 +1,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
-from agents.expert.handcoded_expert import HandCodedAgent, PickAndPlaceSimplePolicy, PickTwoObjAndPlacePolicy, LookAtObjInLightPolicy, PickHeatThenPlaceInRecepPolicy, PickCoolThenPlaceInRecepPolicy, PickCleanThenPlaceInRecepPolicy
+from alfworld.agents.expert.handcoded_expert import HandCodedAgent, PickAndPlaceSimplePolicy, PickTwoObjAndPlacePolicy, LookAtObjInLightPolicy, PickHeatThenPlaceInRecepPolicy, PickCoolThenPlaceInRecepPolicy, PickCleanThenPlaceInRecepPolicy
 
 class PickAndPlaceSimpleTWPolicy(PickAndPlaceSimplePolicy):
 
