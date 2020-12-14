@@ -9,14 +9,14 @@ import importlib
 import numpy as np
 
 import sys
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
-sys.path.insert(0, os.path.join(os.environ['ALFRED_ROOT'], 'agents'))
 
-from agent import TextDQNAgent
-import modules.generic as generic
-from eval import evaluate_dqn
-from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
-from agents.utils.misc import extract_admissible_commands
+import alfworld.agents.environment
+import alfworld.agents.modules.generic as generic
+from alfworld.agents.agent import TextDQNAgent
+from alfworld.agents.eval import evaluate_dqn
+from alfworld.agents.modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
+from alfworld.agents.utils.misc import extract_admissible_commands
+
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
@@ -26,28 +26,28 @@ def train():
     config = generic.load_config()
     agent = TextDQNAgent(config)
 
-    env_type = config["env"]["type"]        
+    env_type = config["env"]["type"]
     id_eval_env, num_id_eval_game = None, 0
     ood_eval_env, num_ood_eval_game = None, 0
     if env_type == "Hybrid":
-        thor = getattr(importlib.import_module("environment"), "AlfredThorEnv")(config)
-        tw = getattr(importlib.import_module("environment"), "AlfredTWEnv")(config)
+        thor = getattr(alfworld.agents.environment, "AlfredThorEnv")(config)
+        tw = getattr(alfworld.agents.environment, "AlfredTWEnv")(config)
 
         thor_env = thor.init_env(batch_size=agent.batch_size)
         tw_env = tw.init_env(batch_size=agent.batch_size)
     else:
-        alfred_env = getattr(importlib.import_module("environment"), config["env"]["type"])(config, train_eval="train")
+        alfred_env = getattr(alfworld.agents.environment, config["env"]["type"])(config, train_eval="train")
         env = alfred_env.init_env(batch_size=agent.batch_size)
 
         if agent.run_eval:
             # in distribution
             if config['dataset']['eval_id_data_path'] is not None:
-                alfred_env = getattr(importlib.import_module("environment"), config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_in_distribution")
+                alfred_env = getattr(alfworld.agents.environment, config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_in_distribution")
                 id_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
                 num_id_eval_game = alfred_env.num_games
             # out of distribution
             if config['dataset']['eval_ood_data_path'] is not None:
-                alfred_env = getattr(importlib.import_module("environment"), config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
+                alfred_env = getattr(alfworld.agents.environment, config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
                 ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
                 num_ood_eval_game = alfred_env.num_games
 
@@ -208,7 +208,7 @@ def train():
             # if all ended, break
             if np.sum(still_running) == 0:
                 break
-        
+
         still_running_mask_np = np.array(still_running_mask)
         game_rewards_np = np.array(sequence_game_rewards) * still_running_mask_np  # step x batch
         count_rewards_np = np.array(sequence_count_rewards) * still_running_mask_np  # step x batch
@@ -234,10 +234,10 @@ def train():
             mem = []
             for i in range(game_rewards_np.shape[0]):
                 observation_strings, task_strings, action_candidate_list, chosen_indices = transition_cache[i]
-                mem.append([observation_strings[b], 
-                            task_strings[b], 
-                            action_candidate_list[b], 
-                            chosen_indices[b], 
+                mem.append([observation_strings[b],
+                            task_strings[b],
+                            action_candidate_list[b],
+                            chosen_indices[b],
                             game_rewards_pt[i][b], count_rewards_pt[i][b], novel_object_rewards_pt[i][b]])
                 if still_running_mask_np[i][b] == 0.0:
                     break

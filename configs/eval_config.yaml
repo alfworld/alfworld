@@ -1,12 +1,13 @@
 dataset:
-  data_path: '../data/json_2.1.1/train'
-  eval_id_data_path: '../data/json_2.1.1/valid_seen'        # null/None to disable
-  eval_ood_data_path: '../data/json_2.1.1/valid_unseen'     # null/None to disable
+  data_path: './data/json_2.1.1/train'
+  eval_id_data_path: './data/json_2.1.1/valid_seen'         # null/None to disable
+  eval_ood_data_path: './data/json_2.1.1/valid_unseen'      # null/None to disable
   num_train_games: -1                                       # max training games (<=0 indicates full dataset)
   num_eval_games: -1                                        # max evaluation games (<=0 indicates full dataset)
 
-pddl:
-  domain: '../data/alfred.pddl'                             # PDDL domain file that defines world dynamics
+logic:
+  domain: './data/logic/alfred.pddl'                        # PDDL domain file that defines the world dynamics
+  grammar: './data/logic/alfred.twl2'                       # Grammar file that defines the text feedbacks
 
 env:
   type: 'AlfredTWEnv'                                       # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
@@ -27,15 +28,15 @@ env:
     screen_height: 300                                      # height of THOR window
     smooth_nav: False                                       # smooth rotations, looks, and translations during navigation (very slow)
     save_frames_to_disk: False                              # save frame PNGs to disk (useful for making videos)
-    save_frames_path: '../videos/'                          # path to save frame PNGs
+    save_frames_path: './videos/'                           # path to save frame PNGs
 
 controller:
   type: 'oracle'                                            # 'oracle' or 'oracle_astar' or 'mrcnn' or 'mrcnn_astar' (aka BUTLER)
   debug: False
-  load_receps: True                                         # load receptacle locations from precomputed dict (if available)
+  load_receps: False                                        # load receptacle locations from precomputed dict (if available)
 
 mask_rcnn:
-  pretrained_model_path: 'agents/detector/models/mrcnn.pth'
+  pretrained_model_path: './data/models/mrcnn.pth'
 
 general:
   random_seed: 42
@@ -43,7 +44,7 @@ general:
   visdom: False                                             # plot training/eval curves, run with visdom server
   task: 'alfred'
   training_method: 'dagger'                                 # 'dqn' or 'dagger'
-  save_path: '.'                                            # path to save pytorch models
+  save_path: './runs/'                                      # path to save pytorch models
   observation_pool_capacity: 3                              # k-size queue, 0 indicates no observation
   hide_init_receptacles: False                              # remove initial observation containing navigable receptacles
 
@@ -57,15 +58,27 @@ general:
 
   evaluate:
     run_eval: True
-    batch_size: 10
+    batch_size: 3                                           # number of parallel eval threads
+    repeats: 1                                              # number of times to loop over eval games (we used 3 in paper experiments)
+    controllers:                                            # different controllers to evaluate with
+      - 'oracle'
+      - 'mrcnn_astar'
+    envs:                                                   # different environments to evaluate in
+      - 'AlfredTWEnv'
+      - 'AlfredThorEnv'
     env:
-      type: "AlfredTWEnv"
+      type:
+       'AlfredThorEnv'
+    eval_paths:                                             # different splits to evaluate on
+      - './data/json_2.1.1/valid_seen'
+      # - './data/json_2.1.1/valid_unseen'
+    eval_experiment_tag: "eval_run_001"                     # save results json with this prefix
 
   checkpoint:
-    report_frequency: 1000                                  # report every N episode
+    report_frequency: 10                                    # report every N episode
     experiment_tag: 'test'                                  # name of experiment
-    load_pretrained: False                                  # during test, enable this so that the agent load your pretrained model
-    load_from_tag: 'not loading anything'                   # name of pre-trained model to load in save_path
+    load_pretrained: True                                   # during test, enable this so that the agent load your pretrained model
+    load_from_tag: 'pretrained_checkpoint_id'               # name of pre-trained model to load in save_path
 
   model:
     encoder_layers: 1
@@ -114,7 +127,7 @@ dagger:
   max_target_length: 20                                     # max token length for seq2seq generation
   beam_width: 10                                            # 1 means greedy
   generate_top_k: 5
-  unstick_by_beam_search: False                             # use beam-search for failed actions, set True during evaluation
+  unstick_by_beam_search: True                              # use beam-search for failed actions, set True during evaluation
 
   training:
     max_nb_steps_per_episode: 50                            # terminate after this many steps

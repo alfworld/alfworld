@@ -1,33 +1,28 @@
 import datetime
 import os
-import random
-import time
 import copy
 import json
-import glob
 import importlib
 import numpy as np
 
 import sys
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
-sys.path.insert(0, os.path.join(os.environ['ALFRED_ROOT'], 'agents'))
-
-from agent import VisionDAggerAgent
-import modules.generic as generic
-import torch
-from eval import evaluate_vision_dagger
-from modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
-from agents.utils.misc import extract_admissible_commands
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+import alfworld.agents.environment
+import alfworld.agents.modules.generic as generic
+from alfworld.agents.eval import evaluate_dagger
+from alfworld.agents.agent import TextDAggerAgent
+from alfworld.agents.utils.misc import extract_admissible_commands
+from alfworld.agents.modules.generic import HistoryScoreCache, EpisodicCountingMemory, ObjCentricEpisodicMemory
 
 
 def train():
 
     time_1 = datetime.datetime.now()
+    step_time = []
     config = generic.load_config()
-    agent = VisionDAggerAgent(config)
-    env_type = "AlfredThorEnv"
-    alfred_env = getattr(importlib.import_module("environment"), env_type)(config, train_eval="train")
+    agent = TextDAggerAgent(config)
+    alfred_env = getattr(alfworld.agents.environment, config["env"]["type"])(config, train_eval="train")
     env = alfred_env.init_env(batch_size=agent.batch_size)
 
     id_eval_env, num_id_eval_game = None, 0
@@ -35,18 +30,17 @@ def train():
     if agent.run_eval:
         # in distribution
         if config['dataset']['eval_id_data_path'] is not None:
-            alfred_env = getattr(importlib.import_module("environment"), env_type)(config, train_eval="eval_in_distribution")
+            alfred_env = getattr(alfworld.agents.environment, config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_in_distribution")
             id_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_id_eval_game = alfred_env.num_games
         # out of distribution
         if config['dataset']['eval_ood_data_path'] is not None:
-            alfred_env = getattr(importlib.import_module("environment"), env_type)(config, train_eval="eval_out_of_distribution")
+            alfred_env = getattr(alfworld.agents.environment, config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
             ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_ood_eval_game = alfred_env.num_games
 
     output_dir = config["general"]["save_path"]
     data_dir = config["general"]["save_path"]
-    action_space = config["dagger"]["action_space"]
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -71,7 +65,7 @@ def train():
     running_avg_dagger_loss = HistoryScoreCache(capacity=500)
 
     json_file_name = agent.experiment_tag.replace(" ", "_")
-    best_performance_so_far = 0.0
+    best_performance_so_far, best_ood_performance_so_far = 0.0, 0.0
 
     # load model from checkpoint
     if agent.load_pretrained:
@@ -100,22 +94,17 @@ def train():
             prev_rewards.append(0.0)
 
         observation_strings = list(obs)
-        observation_strings = agent.preprocess_observation(observation_strings)
         task_desc_strings, observation_strings = agent.get_task_and_obs(observation_strings)
+        task_desc_strings = agent.preprocess_task(task_desc_strings)
+        observation_strings = agent.preprocess_observation(observation_strings)
         first_sight_strings = copy.deepcopy(observation_strings)
         agent.observation_pool.push_first_sight(first_sight_strings)
-
-        # extract exploration frame features
-        if agent.use_exploration_frame_feats:
-            exploration_frames = env.get_exploration_frames()
-            exploration_frame_feats = agent.extract_exploration_frame_feats(exploration_frames)
-
         if agent.action_space == "exhaustive":
             action_candidate_list = [extract_admissible_commands(intro, obs) for intro, obs in zip(first_sight_strings, observation_strings)]
         else:
             action_candidate_list = list(infos["admissible_commands"])
         action_candidate_list = agent.preprocess_action_candidates(action_candidate_list)
-        task_desc_strings = ["[SEP] %s" % td for td in task_desc_strings]
+        observation_strings = [item + " [SEP] " + a for item, a in zip(observation_strings, execute_actions)]  # appending the chosen action at previous step into the observation
 
         # it requires to store sequences of transitions into memory with order,
         # so we use a cache to keep what agents returns, and push them into memory
@@ -127,17 +116,16 @@ def train():
         report = agent.report_frequency > 0 and (episode_no % agent.report_frequency <= (episode_no - batch_size) % agent.report_frequency)
 
         for step_no in range(agent.max_nb_steps_per_episode):
-            # get visual features
-            current_frames = env.get_frames()
-            observation_feats = agent.extract_visual_features(current_frames)
-
-            # add exploration features if specified
-            if agent.use_exploration_frame_feats:
-                observation_feats = [torch.cat([ef, obs], dim=0) for ef, obs in zip(exploration_frame_feats, observation_feats)]
+            # push obs into observation pool
+            agent.observation_pool.push_batch(observation_strings)
+            # get most recent k observations
+            most_recent_observation_strings = agent.observation_pool.get()
 
             # predict actions
             if agent.action_space == "generation":
-                agent_actions, current_dynamics = agent.command_generation_greedy_generation(observation_feats, task_desc_strings, previous_dynamics)
+                agent_actions, current_dynamics = agent.command_generation_greedy_generation(most_recent_observation_strings, task_desc_strings, previous_dynamics)
+            elif agent.action_space in ["admissible", "exhaustive"]:
+                agent_actions, _, current_dynamics = agent.admissible_commands_greedy_generation(most_recent_observation_strings, task_desc_strings, action_candidate_list, previous_dynamics)
             else:
                 raise NotImplementedError()
 
@@ -163,18 +151,25 @@ def train():
                 else:
                     execute_actions.append(agent_actions[b])
 
-            observation_feats = [of.detach().cpu() for of in observation_feats]
-            replay_info = [observation_feats, task_desc_strings, action_candidate_list, expert_actions, expert_indices]
+            replay_info = [most_recent_observation_strings, task_desc_strings, action_candidate_list, expert_actions, expert_indices]
             transition_cache.append(replay_info)
+
+            env_step_start_time = datetime.datetime.now()
             obs, _, dones, infos = env.step(execute_actions)
+            env_step_stop_time = datetime.datetime.now()
+            step_time.append((env_step_stop_time-env_step_start_time).microseconds / (float(batch_size)))
+
             scores = [float(item) for item in infos["won"]]
             dones = [float(item) for item in dones]
 
-            if action_space == "exhaustive":
+            observation_strings = list(obs)
+            observation_strings = agent.preprocess_observation(observation_strings)
+            if agent.action_space == "exhaustive":
                 action_candidate_list = [extract_admissible_commands(intro, obs) for intro, obs in zip(first_sight_strings, observation_strings)]
             else:
                 action_candidate_list = list(infos["admissible_commands"])
             action_candidate_list = agent.preprocess_action_candidates(action_candidate_list)
+            observation_strings = [item + " [SEP] " + a for item, a in zip(observation_strings, execute_actions)]  # appending the chosen action at previous step into the observation
             previous_dynamics = current_dynamics
 
             if step_in_total % agent.dagger_update_per_k_game_steps == 0:
@@ -207,8 +202,8 @@ def train():
             for b in range(batch_size):
                 trajectory = []
                 for i in range(len(transition_cache)):
-                    observation_feats, task_strings, action_candidate_list, expert_actions, expert_indices = transition_cache[i]
-                    trajectory.append([observation_feats[b], task_strings[b], action_candidate_list[b],
+                    observation_strings, task_strings, action_candidate_list, expert_actions, expert_indices = transition_cache[i]
+                    trajectory.append([observation_strings[b], task_strings[b], action_candidate_list[b],
                                        expert_actions[b], expert_indices[b]])
                     if still_running_mask_np[i][b] == 0.0:
                         break
@@ -231,7 +226,8 @@ def train():
         time_2 = datetime.datetime.now()
         time_spent_seconds = (time_2-time_1).seconds
         eps_per_sec = float(episode_no) / time_spent_seconds
-        print("Name: {:s} | Episode: {:3d} | {:s} | time spent: {:s} | eps/sec : {:2.3f} | loss: {:2.3f} | game points: {:2.3f} | used steps: {:2.3f} | student points: {:2.3f} | student steps: {:2.3f} | fraction assist: {:2.3f} | fraction random: {:2.3f}".format(agent.experiment_tag, episode_no, game_names[0], str(time_2 - time_1).rsplit(".")[0], eps_per_sec, running_avg_dagger_loss.get_avg(), running_avg_game_points.get_avg(), running_avg_game_steps.get_avg(), running_avg_student_points.get_avg(), running_avg_student_steps.get_avg(), agent.fraction_assist, agent.fraction_random))
+        avg_step_time = np.mean(np.array(step_time))
+        print("Model: {:s} | Episode: {:3d} | {:s} | time spent: {:s} | eps/sec : {:2.3f} | avg step time: {:2.10f} | loss: {:2.3f} | game points: {:2.3f} | used steps: {:2.3f} | student points: {:2.3f} | student steps: {:2.3f} | fraction assist: {:2.3f} | fraction random: {:2.3f}".format(agent.experiment_tag, episode_no, game_names[0], str(time_2 - time_1).rsplit(".")[0], eps_per_sec, avg_step_time, running_avg_dagger_loss.get_avg(), running_avg_game_points.get_avg(), running_avg_game_steps.get_avg(), running_avg_student_points.get_avg(), running_avg_student_steps.get_avg(), agent.fraction_assist, agent.fraction_random))
         # print(game_id + ":    " + " | ".join(print_actions))
         print(" | ".join(print_actions))
 
@@ -240,14 +236,17 @@ def train():
         ood_eval_game_points, ood_eval_game_step = 0.0, 0.0
         if agent.run_eval:
             if id_eval_env is not None:
-                id_eval_res = evaluate_vision_dagger(id_eval_env, agent, num_id_eval_game)
+                id_eval_res = evaluate_dagger(id_eval_env, agent, num_id_eval_game)
                 id_eval_game_points, id_eval_game_step = id_eval_res['average_points'], id_eval_res['average_steps']
             if ood_eval_env is not None:
-                ood_eval_res = evaluate_vision_dagger(ood_eval_env, agent, num_ood_eval_game)
+                ood_eval_res = evaluate_dagger(ood_eval_env, agent, num_ood_eval_game)
                 ood_eval_game_points, ood_eval_game_step = ood_eval_res['average_points'], ood_eval_res['average_steps']
             if id_eval_game_points >= best_performance_so_far:
                 best_performance_so_far = id_eval_game_points
-                agent.save_model_to_path(output_dir + "/" + agent.experiment_tag + ".pt")
+                agent.save_model_to_path(output_dir + "/" + agent.experiment_tag + "_id.pt")
+            if ood_eval_game_points >= best_ood_performance_so_far:
+                best_ood_performance_so_far = ood_eval_game_points
+                agent.save_model_to_path(output_dir + "/" + agent.experiment_tag + "_ood.pt")
         else:
             if running_avg_student_points.get_avg() >= best_performance_so_far:
                 best_performance_so_far = running_avg_student_points.get_avg()
@@ -268,65 +267,65 @@ def train():
 
             if reward_win is None:
                 reward_win = viz.line(X=viz_x, Y=viz_game_points,
-                                      opts=dict(title=agent.experiment_tag + "_game_points"),
-                                      name="game points")
+                            opts=dict(title=agent.experiment_tag + "_game_points"),
+                        name="game points")
                 viz.line(X=viz_x, Y=viz_student_points,
-                         opts=dict(title=agent.experiment_tag + "_student_points"),
-                         win=reward_win, update='append', name="student points")
+                            opts=dict(title=agent.experiment_tag + "_student_points"),
+                            win=reward_win, update='append', name="student points")
                 viz.line(X=viz_x, Y=viz_id_eval_game_points,
-                         opts=dict(title=agent.experiment_tag + "_id_eval_game_points"),
-                         win=reward_win, update='append', name="id eval game points")
+                            opts=dict(title=agent.experiment_tag + "_id_eval_game_points"),
+                            win=reward_win, update='append', name="id eval game points")
                 viz.line(X=viz_x, Y=viz_ood_eval_game_points,
-                         opts=dict(title=agent.experiment_tag + "_ood_eval_game_points"),
-                         win=reward_win, update='append', name="ood eval game points")
+                            opts=dict(title=agent.experiment_tag + "_ood_eval_game_points"),
+                            win=reward_win, update='append', name="ood eval game points")
             else:
                 viz.line(X=[len(viz_game_points) - 1], Y=[viz_game_points[-1]],
-                         opts=dict(title=agent.experiment_tag + "_game_points"),
-                         win=reward_win,
-                         update='append', name="game points")
+                            opts=dict(title=agent.experiment_tag + "_game_points"),
+                            win=reward_win,
+                            update='append', name="game points")
                 viz.line(X=[len(viz_student_points) - 1], Y=[viz_student_points[-1]],
-                         opts=dict(title=agent.experiment_tag + "_student_points"),
-                         win=reward_win,
-                         update='append', name="student points")
+                            opts=dict(title=agent.experiment_tag + "_student_points"),
+                            win=reward_win,
+                            update='append', name="student points")
                 viz.line(X=[len(viz_id_eval_game_points) - 1], Y=[viz_id_eval_game_points[-1]],
-                         opts=dict(title=agent.experiment_tag + "_id_eval_game_points"),
-                         win=reward_win,
-                         update='append', name="id eval game points")
+                            opts=dict(title=agent.experiment_tag + "_id_eval_game_points"),
+                            win=reward_win,
+                            update='append', name="id eval game points")
                 viz.line(X=[len(viz_ood_eval_game_points) - 1], Y=[viz_ood_eval_game_points[-1]],
-                         opts=dict(title=agent.experiment_tag + "_ood_eval_game_points"),
-                         win=reward_win,
-                         update='append', name="ood eval game points")
+                            opts=dict(title=agent.experiment_tag + "_ood_eval_game_points"),
+                            win=reward_win,
+                            update='append', name="ood eval game points")
 
             if step_win is None:
                 step_win = viz.line(X=viz_x, Y=viz_game_step,
                                     opts=dict(title=agent.experiment_tag + "_game_step"),
                                     name="game step")
                 viz.line(X=viz_x, Y=viz_student_step,
-                         opts=dict(title=agent.experiment_tag + "_student_step"),
-                         win=step_win, update='append', name="student step")
+                            opts=dict(title=agent.experiment_tag + "_student_step"),
+                            win=step_win, update='append', name="student step")
                 viz.line(X=viz_x, Y=viz_id_eval_step,
-                         opts=dict(title=agent.experiment_tag + "_id_eval_step"),
-                         win=step_win, update='append', name="id eval step")
+                            opts=dict(title=agent.experiment_tag + "_id_eval_step"),
+                            win=step_win, update='append', name="id eval step")
                 viz.line(X=viz_x, Y=viz_ood_eval_step,
-                         opts=dict(title=agent.experiment_tag + "_ood_eval_step"),
-                         win=step_win, update='append', name="ood eval step")
+                            opts=dict(title=agent.experiment_tag + "_ood_eval_step"),
+                            win=step_win, update='append', name="ood eval step")
             else:
                 viz.line(X=[len(viz_game_step) - 1], Y=[viz_game_step[-1]],
-                         opts=dict(title=agent.experiment_tag + "_game_step"),
-                         win=step_win,
-                         update='append', name="game step")
+                            opts=dict(title=agent.experiment_tag + "_game_step"),
+                            win=step_win,
+                            update='append', name="game step")
                 viz.line(X=[len(viz_student_step) - 1], Y=[viz_student_step[-1]],
-                         opts=dict(title=agent.experiment_tag + "_student_step"),
-                         win=step_win,
-                         update='append', name="student step")
+                            opts=dict(title=agent.experiment_tag + "_student_step"),
+                            win=step_win,
+                            update='append', name="student step")
                 viz.line(X=[len(viz_id_eval_step) - 1], Y=[viz_id_eval_step[-1]],
-                         opts=dict(title=agent.experiment_tag + "_id_eval_step"),
-                         win=step_win,
-                         update='append', name="id eval step")
+                            opts=dict(title=agent.experiment_tag + "_id_eval_step"),
+                            win=step_win,
+                            update='append', name="id eval step")
                 viz.line(X=[len(viz_ood_eval_step) - 1], Y=[viz_ood_eval_step[-1]],
-                         opts=dict(title=agent.experiment_tag + "_ood_eval_step"),
-                         win=step_win,
-                         update='append', name="ood eval step")
+                            opts=dict(title=agent.experiment_tag + "_ood_eval_step"),
+                            win=step_win,
+                            update='append', name="ood eval step")
 
             if loss_win is None:
                 loss_win = viz.line(X=viz_x, Y=viz_loss,
@@ -334,13 +333,13 @@ def train():
                                     name="loss")
             else:
                 viz.line(X=[len(viz_loss) - 1], Y=[viz_loss[-1]],
-                         opts=dict(title=agent.experiment_tag + "_loss"),
-                         win=loss_win,
-                         update='append', name="loss")
+                            opts=dict(title=agent.experiment_tag + "_loss"),
+                            win=loss_win,
+                            update='append', name="loss")
 
         # write accuracies down into file
         _s = json.dumps({"time spent": str(time_2 - time_1).rsplit(".")[0],
-                         "time spent seconds": time_spent_seconds,
+                         "time spent seconds":  time_spent_seconds,
                          "episodes": episode_no,
                          "episodes per second": eps_per_sec,
                          "loss": str(running_avg_dagger_loss.get_avg()),
@@ -355,6 +354,7 @@ def train():
         with open(output_dir + "/" + json_file_name + '.json', 'a+') as outfile:
             outfile.write(_s + '\n')
             outfile.flush()
+    agent.save_model_to_path(output_dir + "/" + agent.experiment_tag + "_final.pt")
 
 
 if __name__ == '__main__':
