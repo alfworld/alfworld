@@ -9,16 +9,14 @@ import importlib
 import numpy as np
 
 import sys
-sys.path.insert(0, os.environ['ALFRED_ROOT'])
-sys.path.insert(0, os.path.join(os.environ['ALFRED_ROOT'], 'agents'))
 
-from agent import TextDAggerAgent
-import modules.generic as generic
+import alfworld.agents.environment
+import alfworld.agents.modules.generic as generic
+from alfworld.agents.agent import TextDAggerAgent
+
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-train_or_eval = "train"
-if not os.path.exists("../data/seq2seq_data"):
-    os.makedirs("../data/seq2seq_data")
 
+train_or_eval = "train"
 
 def collect_data(task_types):
 
@@ -32,12 +30,12 @@ def collect_data(task_types):
     # config['env']['expert_type'] = "downward"
 
     if train_or_eval == "train":
-        config['dataset']['data_path'] = "../data/json_2.1.1/train"
+        config['dataset']['data_path'] = "./data/json_2.1.1/train"
     else:
-        config['dataset']['data_path'] = "../data/json_2.1.1/valid_seen"
+        config['dataset']['data_path'] = "./data/json_2.1.1/valid_seen"
 
     agent = TextDAggerAgent(config)
-    alfred_env = getattr(importlib.import_module("environment"), config["env"]["type"])(config, train_eval="train")
+    alfred_env = getattr(alfworld.agents.environment, config["env"]["type"])(config, train_eval="train")
     env = alfred_env.init_env(batch_size=agent.batch_size)
     num_game = alfred_env.num_games
     env.seed(42)
@@ -121,7 +119,7 @@ def collect_data(task_types):
                 continue
             try:
                 if len(episode_data[b]) >= 200:
-                    continue 
+                    continue
                 collected_data.append({"g": "/".join(game_names[b].split("/")[-3:-1]), "g_id": episode_no, "task": task_desc_strings[b], "steps": episode_data[b]})
             except:
                 pass
@@ -135,5 +133,8 @@ def collect_data(task_types):
 
 
 if __name__ == '__main__':
+    if not os.path.exists("./data/seq2seq_data"):
+        os.makedirs("./data/seq2seq_data")
+
     for task in [[1], [2], [3], [4], [5], [6]]:
         collect_data(task)

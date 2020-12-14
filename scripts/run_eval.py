@@ -2,9 +2,12 @@ import os
 import json
 import importlib
 
-from agent import TextDAggerAgent
-import modules.generic as generic
-from eval import evaluate_dagger, evaluate_dqn
+import alfworld.agents.environment
+import alfworld.agents.modules.generic as generic
+from alfworld.agents.agent import TextDAggerAgent
+from alfworld.agents.eval import evaluate_dagger, evaluate_dqn
+
+
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
@@ -41,7 +44,7 @@ def run_eval():
                 config["dataset"]["eval_ood_data_path"] = eval_path
                 config["controller"]["type"] = controller_type
 
-                alfred_env = getattr(importlib.import_module("environment"), config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
+                alfred_env = getattr(alfworld.agents.environment, config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
                 eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
 
                 # evaluate method
