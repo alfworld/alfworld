@@ -1,13 +1,13 @@
 dataset:
-  data_path: './data/json_2.1.1/train'
-  eval_id_data_path: './data/json_2.1.1/valid_seen'         # null/None to disable
-  eval_ood_data_path: './data/json_2.1.1/valid_unseen'      # null/None to disable
+  data_path: '$ALFWORLD_DATA/json_2.1.1/train'
+  eval_id_data_path: '$ALFWORLD_DATA/json_2.1.1/valid_seen'    # null/None to disable
+  eval_ood_data_path: '$ALFWORLD_DATA/json_2.1.1/valid_unseen' # null/None to disable
   num_train_games: -1                                       # max training games (<=0 indicates full dataset)
   num_eval_games: -1                                        # max evaluation games (<=0 indicates full dataset)
 
 logic:
-  domain: './data/logic/alfred.pddl'                        # PDDL domain file that defines the world dynamics
-  grammar: './data/logic/alfred.twl2'                       # Grammar file that defines the text feedbacks
+  domain: '$ALFWORLD_DATA/logic/alfred.pddl'                # PDDL domain file that defines the world dynamics
+  grammar: '$ALFWORLD_DATA/logic/alfred.twl2'               # Grammar file that defines the text feedbacks
 
 env:
   type: 'AlfredTWEnv'                                       # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
@@ -36,7 +36,7 @@ controller:
   load_receps: False                                        # load receptacle locations from precomputed dict (if available)
 
 mask_rcnn:
-  pretrained_model_path: './data/models/mrcnn.pth'
+  pretrained_model_path: '$ALFWORLD_DATA/detectors/mrcnn.pth'
 
 general:
   random_seed: 42

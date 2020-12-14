@@ -8,8 +8,8 @@ from os.path import join as pjoin
 
 from tqdm import tqdm
 
-# from alfworld.info import ALFWORLD_CACHE
-# from alfworld.info import DETECTORS_CACHE, AGENTS_CACHE
+from alfworld.utils import mkdirs
+from alfworld.info import ALFWORLD_DATA
 from alfworld.info import ALFRED_PDDL_PATH, ALFRED_TWL2_PATH
 
 
@@ -19,15 +19,6 @@ TW_PDDL_FILES_URL = "https://aka.ms/alfworld/json_2.1.1_tw-pddl.zip"
 MRCNN_URL = "https://aka.ms/alfworld/mrcnn.pth"
 CHECKPOINTS_URL = "https://aka.ms/alfworld_pretrained_checkpoints.zip"
 SEQ2SEQ_DATA_URL = "https://aka.ms/seq2seq_data.zip"
-
-
-def mkdirs(dirpath):
-    try:
-        os.makedirs(dirpath)
-    except FileExistsError:
-        pass
-
-    return dirpath
 
 
 def download(url, dst, force=False):
@@ -46,13 +37,8 @@ def download(url, dst, force=False):
         This code is inspired by
         https://github.com/huggingface/transformers/blob/v4.0.0/src/transformers/file_utils.py#L1069
     """
-    try:
-        os.makedirs(dst)  # Create any missing folders.
-    except FileExistsError:
-        pass
-
     filename = url.split('/')[-1]
-    path = pjoin(dst, filename)
+    path = pjoin(mkdirs(dst), filename)
 
     if os.path.isfile(path) and not force:
         return path
@@ -114,8 +100,10 @@ def unzip(filename, dst, force=False):
 def build_argparser():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--data-dir", default="./data",
-                        help="Folder where to download the data. Default: './data'")
+    parser.add_argument("--data-dir", default=ALFWORLD_DATA,
+                        help="Folder where to download the data. Default: '%(default)s'")
+    parser.add_argument("--extra", action="store_true",
+                        help="Also, download pre-trained BUTLER agents and Seq2Seq training files.")
     parser.add_argument("-f", "--force", action="store_true",
                         help="Overwrite existing files.")
     parser.add_argument("-ff", "--force-download", action="store_true",
@@ -142,13 +130,14 @@ def main():
 
     download(MRCNN_URL, dst=pjoin(args.data_dir, "detectors"), force=args.force_download)
 
-    zipped_filename = download(CHECKPOINTS_URL, dst=args.data_dir,
-                               force=args.force_download)
-    unzip(zipped_filename, dst=pjoin(args.data_dir, "agents"), force=args.force)
+    if args.extra:
+        zipped_filename = download(CHECKPOINTS_URL, dst=args.data_dir,
+                                force=args.force_download)
+        unzip(zipped_filename, dst=pjoin(args.data_dir, "agents"), force=args.force)
 
-    zipped_filename = download(SEQ2SEQ_DATA_URL, dst=args.data_dir,
-                               force=args.force_download)
-    unzip(zipped_filename, dst=args.data_dir, force=args.force)
+        zipped_filename = download(SEQ2SEQ_DATA_URL, dst=args.data_dir,
+                                force=args.force_download)
+        unzip(zipped_filename, dst=args.data_dir, force=args.force)
 
     # Get a copy of the PDDL and TW logic files.
     logic_dir = mkdirs(pjoin(args.data_dir, "logic"))

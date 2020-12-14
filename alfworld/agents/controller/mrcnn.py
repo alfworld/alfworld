@@ -57,7 +57,7 @@ class MaskRCNNAgent(BaseAgent):
 
     def get_openable_points(self, traj_data):
         scene_num = traj_data['scene']['scene_num']
-        openable_json_file = os.path.join(alfworld.gen.__path__, 'layouts/FloorPlan%d-openable.json' % scene_num)
+        openable_json_file = os.path.join(alfworld.gen.__path__[0], 'layouts/FloorPlan%d-openable.json' % scene_num)
         with open(openable_json_file, 'r') as f:
             openable_points = json.load(f)
         return openable_points

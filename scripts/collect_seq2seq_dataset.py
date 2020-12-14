@@ -1,15 +1,16 @@
 import datetime
 import os
+import sys
 import random
 import time
 import copy
 import json
 import glob
-import importlib
+from os.path import join as pjoin
+
 import numpy as np
 
-import sys
-
+from alfworld.info import ALFWORLD_DATA
 import alfworld.agents.environment
 import alfworld.agents.modules.generic as generic
 from alfworld.agents.agent import TextDAggerAgent
@@ -30,9 +31,9 @@ def collect_data(task_types):
     # config['env']['expert_type'] = "downward"
 
     if train_or_eval == "train":
-        config['dataset']['data_path'] = "./data/json_2.1.1/train"
+        config['dataset']['data_path'] = pjoin(ALFWORLD_DATA, "json_2.1.1", "train")
     else:
-        config['dataset']['data_path'] = "./data/json_2.1.1/valid_seen"
+        config['dataset']['data_path'] = pjoin(ALFWORLD_DATA, "json_2.1.1", "valid_seen")
 
     agent = TextDAggerAgent(config)
     alfred_env = getattr(alfworld.agents.environment, config["env"]["type"])(config, train_eval="train")

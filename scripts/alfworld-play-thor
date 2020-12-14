@@ -1,9 +1,13 @@
 import os
 import sys
-
 import json
+import glob
+import random
 import argparse
+from os.path import join as pjoin
 
+import alfworld.agents
+from alfworld.info import ALFWORLD_DATA
 from alfworld.env.thor_env import ThorEnv
 from alfworld.agents.detector.mrcnn import load_pretrained_model
 from alfworld.agents.controller import OracleAgent, OracleAStarAgent, MaskRCNNAgent, MaskRCNNAStarAgent
@@ -31,6 +35,7 @@ def setup_scene(env, traj_data, r_idx, args, reward_type='dense'):
 
 
 def main(args):
+    print(f"Playing '{args.problem}'.")
 
     # start THOR
     env = ThorEnv()
@@ -53,13 +58,13 @@ def main(args):
         agent = AgentModule(env, traj_data, traj_root=root, load_receps=args.load_receps, debug=args.debug)
     elif args.controller == "mrcnn":
         AgentModule = MaskRCNNAgent
-        mask_rcnn = load_pretrained_model('./agents/detector/models/mrcnn.pth')
+        mask_rcnn = load_pretrained_model(pjoin(ALFWORLD_DATA, "detectors", "mrcnn.pth"))
         agent = AgentModule(env, traj_data, traj_root=root,
                             pretrained_model=mask_rcnn,
                             load_receps=args.load_receps, debug=args.debug)
     elif args.controller == "mrcnn_astar":
         AgentModule = MaskRCNNAStarAgent
-        mask_rcnn = load_pretrained_model('./agents/detector/models/mrcnn.pth')
+        mask_rcnn = load_pretrained_model(pjoin(ALFWORLD_DATA, "detectors", "mrcnn.pth"))
         agent = AgentModule(env, traj_data, traj_root=root,
                             pretrained_model=mask_rcnn,
                             load_receps=args.load_receps, debug=args.debug)
@@ -84,13 +89,20 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("problem", help="Path to folder containing pddl and traj_data files")
+    description = "Play the abstract text version of an ALFRED environment."
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("problem", nargs="?", default=None,
+                        help="Path to a folder containing PDDL and traj_data files."
+                             f"Default: pick one at random found in {ALFWORLD_DATA}")
     parser.add_argument("--controller", default="oracle", choices=["oracle", "oracle_astar", "mrcnn", "mrcnn_astar"])
     parser.add_argument("--debug", action="store_true")
     parser.add_argument('--load_receps', action="store_true")
-    parser.add_argument('--reward_config', type=str, default="agents/config/rewards.json")
+    parser.add_argument('--reward_config', type=str, default=pjoin(alfworld.agents.__path__[0], 'config', 'rewards.json'))
     args = parser.parse_args()
+
+    if args.problem is None:
+        problems = glob.glob(pjoin(ALFWORLD_DATA, "**", "initial_state.pddl"), recursive=True)
+        args.problem = os.path.dirname(random.choice(problems))
 
     main(args)
 

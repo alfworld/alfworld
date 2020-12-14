@@ -77,11 +77,11 @@ class AlfredTWEnv(object):
         self.game_files = []
 
         if self.train_eval == "train":
-            data_path = self.config['dataset']['data_path']
+            data_path = os.path.expandvars(self.config['dataset']['data_path'])
         elif self.train_eval == "eval_in_distribution":
-            data_path = self.config['dataset']['eval_id_data_path']
+            data_path = os.path.expandvars(self.config['dataset']['eval_id_data_path'])
         elif self.train_eval == "eval_out_of_distribution":
-            data_path = self.config['dataset']['eval_ood_data_path']
+            data_path = os.path.expandvars(self.config['dataset']['eval_ood_data_path'])
         print("Checking for solvable games...")
 
         # get task types
@@ -181,8 +181,8 @@ class AlfredTWEnv(object):
 
     def get_game_logic(self):
         self.game_logic = {
-            "pddl_domain": open(self.config['logic']['domain']).read(),
-            "grammar": open(self.config['logic']['grammar']).read()
+            "pddl_domain": open(os.path.expandvars(self.config['logic']['domain'])).read(),
+            "grammar": open(os.path.expandvars(self.config['logic']['grammar'])).read()
         }
 
     # use expert to check the game is solvable

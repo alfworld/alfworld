@@ -1,19 +1,19 @@
 import os
 import sys
-
 import json
 import glob
-import os
-import alfworld.gen.constants
-import cv2
-import shutil
-import numpy as np
-import argparse
-import threading
 import time
 import copy
 import random
+import shutil
+import argparse
+import threading
+
+import cv2
+import numpy as np
+
 import alfworld.gen
+import alfworld.gen.constants
 from alfworld.gen.utils.video_util import VideoSaver
 from alfworld.gen.utils.py_util import walklevel
 from alfworld.env.thor_env import ThorEnv
@@ -93,7 +93,7 @@ def get_scene_type(scene_num):
 
 def get_openable_points(traj_data):
     scene_num = traj_data['scene']['scene_num']
-    openable_json_file = os.path.join(alfworld.gen.__path__, 'layouts/FloorPlan%d-openable.json' % scene_num)
+    openable_json_file = os.path.join(alfworld.gen.__path__[0], 'layouts/FloorPlan%d-openable.json' % scene_num)
     with open(openable_json_file, 'r') as f:
         openable_points = json.load(f)
     return openable_points

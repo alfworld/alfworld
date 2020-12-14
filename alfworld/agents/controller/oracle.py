@@ -7,10 +7,11 @@ import random
 import traceback
 
 import numpy as np
-import alfworld.gen.constants as constants
 from collections import Counter
-from alfworld.agents.controller.base import BaseAgent
 
+import alfworld.gen
+import alfworld.gen.constants as constants
+from alfworld.agents.controller.base import BaseAgent
 from alfworld.agents.utils.misc import extract_admissible_commands_with_heuristics
 
 
@@ -29,7 +30,7 @@ class OracleAgent(BaseAgent):
 
     def get_openable_points(self, traj_data):
         scene_num = traj_data['scene']['scene_num']
-        openable_json_file = os.path.join(alfworld.gen.__path__, 'layouts/FloorPlan%d-openable.json' % scene_num)
+        openable_json_file = os.path.join(alfworld.gen.__path__[0], 'layouts/FloorPlan%d-openable.json' % scene_num)
         with open(openable_json_file, 'r') as f:
             openable_points = json.load(f)
         return openable_points

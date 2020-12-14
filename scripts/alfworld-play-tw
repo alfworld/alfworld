@@ -1,6 +1,8 @@
 import os
+import sys
 import json
 import glob
+import random
 import argparse
 from os.path import join as pjoin
 
@@ -10,7 +12,7 @@ from textworld.agents import HumanAgent
 import gym
 import textworld.gym
 
-import sys
+from alfworld.info import ALFWORLD_DATA
 import alfworld.gen
 from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, clean_alfred_facts, add_task_to_grammar
 
@@ -26,9 +28,10 @@ class AlfredDemangler(textworld.core.Wrapper):
 
 
 def main(args):
+    print(f"Playing '{args.problem}'.")
     GAME_LOGIC = {
         "pddl_domain": open(args.domain).read(),
-        "grammar": "\n".join(open(f).read() for f in glob.glob("data/textworld_data/logic/*.twl2")),
+        "grammar": open(args.grammar).read(),
     }
 
     # load state and trajectory files
@@ -73,11 +76,23 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("problem", help="Path to folder containing pddl and traj_data files")
+    description = "Play the abstract text version of an ALFRED environment."
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("problem", nargs="?", default=None,
+                        help="Path to a folder containing PDDL and traj_data files."
+                             f"Default: pick one at random found in {ALFWORLD_DATA}")
     parser.add_argument("--domain",
-                        default=pjoin("data", "logic", "alfred.pddl"),
+                        default=pjoin(ALFWORLD_DATA, "logic", "alfred.pddl"),
                         help="Path to a PDDL file describing the domain."
                              " Default: `%(default)s`.")
+    parser.add_argument("--grammar",
+                        default=pjoin(ALFWORLD_DATA, "logic", "alfred.twl2"),
+                        help="Path to a TWL2 file defining the grammar used to generated text feedbacks."
+                             " Default: `%(default)s`.")
     args = parser.parse_args()
+
+    if args.problem is None:
+        problems = glob.glob(pjoin(ALFWORLD_DATA, "**", "initial_state.pddl"), recursive=True)
+        args.problem = os.path.dirname(random.choice(problems))
+
     main(args)

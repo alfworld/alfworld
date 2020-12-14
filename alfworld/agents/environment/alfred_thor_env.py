@@ -17,12 +17,14 @@ from alfworld.agents.expert import HandCodedThorAgent, HandCodedAgentTimeout
 from alfworld.agents.detector.mrcnn import load_pretrained_model
 from alfworld.agents.controller import OracleAgent, OracleAStarAgent, MaskRCNNAgent, MaskRCNNAStarAgent
 
+
 TASK_TYPES = {1: "pick_and_place_simple",
               2: "look_at_obj_in_light",
               3: "pick_clean_then_place_in_recep",
               4: "pick_heat_then_place_in_recep",
               5: "pick_cool_then_place_in_recep",
               6: "pick_two_obj_and_place"}
+
 
 class AlfredThorEnv(object):
     '''
@@ -109,7 +111,7 @@ class AlfredThorEnv(object):
 
             # setup task for reward
             class args: pass
-            args.reward_config = os.path.join(alfworld.agents.__path__, 'config/rewards.json')
+            args.reward_config = os.path.join(alfworld.agents.__path__[0], 'config/rewards.json')
             self.env.set_task(self.traj_data, args, reward_type='dense')
 
             # set controller
@@ -238,11 +240,11 @@ class AlfredThorEnv(object):
         self.json_file_list = []
 
         if self.train_eval == "train":
-            data_path = self.config['dataset']['data_path']
+            data_path = os.path.expandvars(self.config['dataset']['data_path'])
         elif self.train_eval == "eval_in_distribution":
-            data_path = self.config['dataset']['eval_id_data_path']
+            data_path = os.path.expandvars(self.config['dataset']['eval_id_data_path'])
         elif self.train_eval == "eval_out_of_distribution":
-            data_path = self.config['dataset']['eval_ood_data_path']
+            data_path = os.path.expandvars(self.config['dataset']['eval_ood_data_path'])
         else:
             raise Exception("Invalid split. Must be either train or eval")
 

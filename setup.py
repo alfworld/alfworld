@@ -13,6 +13,11 @@ setup(
     name='alfworld',
     version=open(os.path.join("alfworld", "info.py")).readlines()[0].split("=")[-1].strip("' \n"),
     packages=find_packages(),
+    scripts=[
+        "scripts/alfworld-download",
+        "scripts/alfworld-play-tw",
+        "scripts/alfworld-play-thor",
+    ],
     include_package_data=True,
     license=open('LICENSE').read(),
     zip_safe=False,
