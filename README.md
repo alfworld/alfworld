@@ -10,7 +10,76 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
 
 :exclamation:**_Work in progress_**:exclamation:
 
-## Quickstart
+## Quickstart 
+
+Install with pip:
+
+```bash
+$ pip install alfworld
+```
+
+Download PDDL & Game files and pre-trained MaskRCNN detector:
+
+```bash
+$ alfworld-download
+```
+
+Play a Textworld game:
+
+```bash
+$ alfworld-play-tw
+```
+
+Play a THOR game:
+
+```bash
+$ alfworld-play-thor
+```
+
+Get started with the environment:
+
+```python
+GAME_LOGIC = {
+    "pddl_domain": open(args.domain).read(),
+    "grammar": open(args.grammar).read(),
+}
+
+# load state and trajectory files
+pddl_file = os.path.join(args.problem, 'initial_state.pddl')
+json_file = os.path.join(args.problem, 'traj_data.json')
+with open(json_file, 'r') as f:
+    traj_data = json.load(f)
+GAME_LOGIC['grammar'] = add_task_to_grammar(GAME_LOGIC['grammar'], traj_data)
+
+# dump game file
+gamedata = dict(**GAME_LOGIC, pddl_problem=open(pddl_file).read())
+gamefile = os.path.join(os.path.dirname(pddl_file), 'game.tw-pddl')
+json.dump(gamedata, open(gamefile, "w"))
+
+# register a new Gym environment.
+infos = textworld.EnvInfos(won=True, admissible_commands=True)
+env_id = textworld.gym.register_game(gamefile, infos,
+                                     max_episode_steps=1000000,
+                                     wrappers=[AlfredDemangler])
+
+# reset env
+env = gym.make(env_id)
+obs, infos = env.reset()
+
+# human agent
+agent = HumanAgent(True)
+agent.reset(env)
+
+while True:
+    print(obs)
+    cmd = agent.act(infos, 0, False)
+    obs, score, done, infos = env.step(cmd)
+```
+
+
+## Install Source 
+
+**Recommended**
 
 Clone repo:
 ```bash
