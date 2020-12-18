@@ -21,8 +21,10 @@ $ pip install alfworld
 Download PDDL & Game files and pre-trained MaskRCNN detector:
 
 ```bash
-$ alfworld-download
+$ export ALFWORLD_DATA=<storage_path>
+$ alfworld-download 
 ```
+Use `--extra` to download pre-trained checkpoints and seq2seq data.
 
 Play a Textworld game:
 
@@ -36,50 +38,38 @@ Play a THOR game:
 $ alfworld-play-thor
 ```
 
-Get started with the environment:
+Get started with a random agent:
 
 ```python
-GAME_LOGIC = {
-    "pddl_domain": open(args.domain).read(),
-    "grammar": open(args.grammar).read(),
-}
+import numpy as np
+import alfworld.agents.environment as environment
+import alfworld.agents.modules.generic as generic
 
-# load state and trajectory files
-pddl_file = os.path.join(args.problem, 'initial_state.pddl')
-json_file = os.path.join(args.problem, 'traj_data.json')
-with open(json_file, 'r') as f:
-    traj_data = json.load(f)
-GAME_LOGIC['grammar'] = add_task_to_grammar(GAME_LOGIC['grammar'], traj_data)
 
-# dump game file
-gamedata = dict(**GAME_LOGIC, pddl_problem=open(pddl_file).read())
-gamefile = os.path.join(os.path.dirname(pddl_file), 'game.tw-pddl')
-json.dump(gamedata, open(gamefile, "w"))
+# load config
+config = generic.load_config()
+env_type = config['env']['type'] # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
 
-# register a new Gym environment.
-infos = textworld.EnvInfos(won=True, admissible_commands=True)
-env_id = textworld.gym.register_game(gamefile, infos,
-                                     max_episode_steps=1000000,
-                                     wrappers=[AlfredDemangler])
+# setup environment 
+env = getattr(environment, env_type)(config, train_eval='train')
+env = env.init_env(batch_size=1)
 
-# reset env
-env = gym.make(env_id)
-obs, infos = env.reset()
-
-# human agent
-agent = HumanAgent(True)
-agent.reset(env)
-
+# interact
+obs, info = env.reset()
 while True:
-    print(obs)
-    cmd = agent.act(infos, 0, False)
-    obs, score, done, infos = env.step(cmd)
+    # get random actions from valid commands (not available for AlfredThorEnv)
+    admissible_commands = list(info['admissible_commands'])
+    random_actions = [np.random.choice(admissible_commands[0])]
+   
+    # step
+    obs, _, dones, infos = env.step(random_actions)
+    print("Action: {}, Obs: {}".format(random_actions[0], obs[0]))
 ```
-
+Run `python <script>.py configs/base_config.yaml`
 
 ## Install Source 
 
-**Recommended**
+Installing from source is recommended for development.
 
 Clone repo:
 ```bash
@@ -92,28 +82,28 @@ Install requirements:
 $ virtualenv -p $(which python3.6) --system-site-packages alfworld_env # or whichever package manager you prefer
 $ source alfworld_env/bin/activate
 
-$ cd $ALFRED_ROOT
 $ pip install --upgrade pip
 $ pip install -r requirements.txt
 ```
 
 Download PDDL & Game Files and pre-trained MaskRCNN detector:
 ```bash
-$ sh $ALFRED_ROOT/data/download_data.sh
+$ python scripts/alfworld-download
 ```
+Use `--extra` to download pre-trained checkpoints and seq2seq data.
 
 Train models:
 ```bash
-$ cd $ALFRED_ROOT/agents
-$ python dagger/train_dagger.py config/base_config.yaml
+$ cd <src>/agent
+$ python scripts/train_dagger.py configs/base_config.yaml
 ```
 
 Play around with [TextWorld and THOR demos](scripts/).
 
 ## More Info 
 
-- [**Data**](data/): PDDL, Game Files, Pre-trained Agents. Generating PDDL states and detection training images.
-- [**Agents**](agents/): Training and evaluating TextDAgger, TextDQN, VisionDAgger agents.
+- [**Data**](alfworld/data/): PDDL, Game Files, Pre-trained Agents. Generating PDDL states and detection training images.
+- [**Agents**](alfworld/agents/): Training and evaluating TextDAgger, TextDQN, VisionDAgger agents.
 - [**Explore**](scripts/): Play around with ALFWorld TextWorld and THOR environments.
 
 ## Prerequisites
@@ -156,7 +146,6 @@ For local machines:
 $ python docker/docker_run.py
  
   source ~/alfworld_env/bin/activate
-  cd $ALFRED_ROOT
 ```
 
 #### Run (Headless)
@@ -187,7 +176,7 @@ $ python docker/docker_run.py --headless
   export DISPLAY=:0
 
   # check THOR
-  cd $ALFRED_ROOT
+  cd <src>
   python docker/check_thor.py
 
   ###############
@@ -207,7 +196,7 @@ $ tmux new -s startx
 
 # start X server on DISPLAY 0
 # single X server should be sufficient for multiple instances of THOR
-$ sudo python $ALFRED_ROOT/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
+$ sudo python <src>/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
 # detach from tmux shell
 # Ctrl+b then d
@@ -216,7 +205,7 @@ $ sudo python $ALFRED_ROOT/scripts/startx.py 0  # if this throws errors e.g "(EE
 $ export DISPLAY=:0
 
 # check THOR
-$ cd $ALFRED_ROOT
+$ cd <src>
 $ python docker/check_thor.py
 
 ###############
