@@ -8,11 +8,11 @@
 
 For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io)
 
-:exclamation:**_Work in progress_**:exclamation:
+<img src="https://github.com/alfworld/alfworld/blob/fix_3/media/alfworld_teaser.png" width="300">
 
 ## Quickstart 
 
-Install with pip:
+Install with pip (python3.6 or higher):
 
 ```bash
 $ pip install alfworld
@@ -94,7 +94,6 @@ Use `--extra` to download pre-trained checkpoints and seq2seq data.
 
 Train models:
 ```bash
-$ cd <src>/agent
 $ python scripts/train_dagger.py configs/base_config.yaml
 ```
 
@@ -176,8 +175,7 @@ $ python docker/docker_run.py --headless
   export DISPLAY=:0
 
   # check THOR
-  cd <src>
-  python docker/check_thor.py
+  python ~/alfworld/docker/check_thor.py
 
   ###############
   ## (300, 300, 3)
@@ -196,7 +194,7 @@ $ tmux new -s startx
 
 # start X server on DISPLAY 0
 # single X server should be sufficient for multiple instances of THOR
-$ sudo python <src>/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
+$ sudo python ~/alfworld/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
 # detach from tmux shell
 # Ctrl+b then d
@@ -205,8 +203,7 @@ $ sudo python <src>/scripts/startx.py 0  # if this throws errors e.g "(EE) Serve
 $ export DISPLAY=:0
 
 # check THOR
-$ cd <src>
-$ python docker/check_thor.py
+$ python ~/alfworld/docker/check_thor.py
 
 ###############
 ## (300, 300, 3)
