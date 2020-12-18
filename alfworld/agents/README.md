@@ -1,54 +1,50 @@
 # Agents
 
-![](../media/pipeline.png)
+![](../../media/pipeline.png)
 
 ## Training
 
 TextDAgger Training:
 ```bash
-$ cd $ALFRED_ROOT/agents
-$ python dagger/train_dagger.py config/base_config.yaml
+$ python scripts/train_dagger.py config/base_config.yaml
 ```
 
 By default, you should be able to reproduce **BUTLERg** All Tasks results reported in [Table 2](https://arxiv.org/pdf/2010.03768.pdf). Run the [eval script](https://github.com/alfworld/alfworld/blob/master/agents/README.md#evaluation) with `unstick_by_beam_search: True` to reproduce **BUTLER** evaluation results with a trained model.
 
 VisionDAgger Training (unimodal baseline):
 ```bash
-$ cd $ALFRED_ROOT/agents
-$ python dagger/train_vision_dagger.py config/base_config.yaml
+$ python scripts/train_vision_dagger.py config/base_config.yaml
 ```
 
 TextDQN Training (not reported in the paper):
 ```bash
-$ cd $ALFRED_ROOT/agents
-$ python dqn/train_dqn.py config/base_config.yaml
+$ python scripts/train_dqn.py config/base_config.yaml
 ```
 
 Seq2Seq Training (no DAgger baseline):
 ```bash
-$ cd $ALFRED_ROOT/agents
 
 # collect dataset for offline training (not needed if sh download_data.sh extra)
 # python seq2seq/collect_seq2seq_dataset.py config/base_config.yaml
 
 # train seq2seq model
-$ python seq2seq/train_seq2seq.py config/base_config.yaml
+$ python scripts/train_seq2seq.py config/base_config.yaml
 ```
 
-Run `python -m visdom.server` and set `visdom: True` in the [config file](config/base_config.yaml) to plot training and evaluation curves.  
+Run `python -m visdom.server` and set `visdom: True` in the [config file](../../configs/base_config.yaml) to plot training and evaluation curves.  
 
 ## Config
 
-Modify [base_config.yaml](config/base_config.yaml) to your needs.
+Modify [base_config.yaml](../../configs/base_config.yaml) to your needs.
 
 Dataset:
 ```yaml
 dataset:
-  data_path: '../../data/json_2.1.1/train'
-  eval_id_data_path: '../../data/json_2.1.1/valid_seen'     # null/None to disable
-  eval_ood_data_path: '../../data/json_2.1.1/valid_unseen'  # null/None to disable
-  num_train_games: -1                                       # max training games (<=0 indicates full dataset)
-  num_eval_games: -1                                        # max evaluation games (<=0 indicates full dataset)
+  data_path: '$ALFWORLD_DATA/json_2.1.1/train'
+  eval_id_data_path: '$ALFWORLD_DATA/json_2.1.1/valid_seen'     # null/None to disable
+  eval_ood_data_path: '$ALFWORLD_DATA/json_2.1.1/valid_unseen'  # null/None to disable
+  num_train_games: -1                                           # max training games (<=0 indicates full dataset)
+  num_eval_games: -1                                            # max evaluation games (<=0 indicates full dataset)
 ```
 
 Environment:
@@ -207,11 +203,10 @@ rl:
 The training script evaluates every `report_frequency` episodes. But additionally, you can also independently evaluate pre-trained agents:
 
 ```bash
-$ cd $ALFRED_ROOT/agents
-$ python eval/run_eval.py config/eval_config.yaml
+$ python scripts/run_eval.py config/eval_config.yaml
 ```
 
-Modify [eval_config.yaml](config/eval_config.yaml) to your needs:
+Modify [eval_config.yaml](../../configs/eval_config.yaml) to your needs:
 ```yaml
 general:
 ...
@@ -243,38 +238,37 @@ The script will sequentially evaluate all `envs`, `controllers`, and `eval_paths
 ## Folder Structure
 
 ```
-/agent
-    base_agent.py              (base class for agents)
-    text_dagger_agent.py       (TextDAgger agent used for BUTLER)
-    text_dqn_agent.py          (TextDQN agent not reported in the paper)
-    vision_dagger_agent.py     (VisionDAgger agent used for unimodal baselines)
-/config
-    base_config.yaml           (basic settings for all experiments)
-    eval_config.yaml           (settings for batch evaluations) 
-/environment
-    alfred_tw_env.py           (ALFRED TextWorld environment)
-    alfred_thor_env.py         (ALFRED embodied environment with THOR)
-    alfred_hybrid.py           (hybrid training manager)
-/dagger
-    train_dagger.py            (training script for TextDAgger agents)
-    train_vision_dagger.py     (training script for VisionDAgger agents)
-/dqn
-    train_dqn.py               (training script for TextDQN agents)
-/seq2seq
-    collect_seq2seq_dataset.py (data collection script for expert demonstrations)
-    train_seq2seq.py           (training script for TextSeq2seq agents)
-/detector
-    mrcnn.py                   (MaskRCNN state-estimator)
-    train_mrcnn.py             (training script for MaskRCNN state-estimator)
-/controller
-    base.py                    (base class for controllers)
-    oracle.py                  (GT object detections and teleport navigation)
-    oracle_astar.py            (GT object detections and A* navigator)
-    mrcnn.py                   (MaskRCNN object detections and teleport navigation)
-    mrcnn_astar.py             (MaskRCNN object detections and A* navigator aka BUTLER)
-/eval
-    evaluate_dagger.py         (evaluation loop for TextDAgger agents)
-    evaluate_vision_dagger.py  (evaluation loop for VisionDAgger agents)
-    evaluate_dqn.py            (evaluation loop for TextDQN agents)
-    run_eval.py                (evaluation script for batch evals)
+/configs
+    base_config.yaml               (basic settings for all experiments)
+    eval_config.yaml               (settings for batch evaluations) 
+/scripts
+    train_dagger.py                (training script for TextDAgger agents)
+    train_vision_dagger.py         (training script for VisionDAgger agents)
+    train_dqn.py                   (training script for TextDQN agents)
+    train_seq2seq.py               (training script for TextSeq2seq agents)
+    run_eval.py                    (evaluation script for batch evals)
+    collect_seq2seq_dataset.py     (data collection script for expert demonstrations)
+    train_mrcnn.py                 (training script for MaskRCNN state-estimator)
+/alfworld
+    /agent
+        base_agent.py              (base class for agents)
+        text_dagger_agent.py       (TextDAgger agent used for BUTLER)
+        text_dqn_agent.py          (TextDQN agent not reported in the paper)
+        vision_dagger_agent.py     (VisionDAgger agent used for unimodal baselines)
+    /environment
+        alfred_tw_env.py           (ALFRED TextWorld environment)
+        alfred_thor_env.py         (ALFRED embodied environment with THOR)
+        alfred_hybrid.py           (hybrid training manager)
+    /detector
+        mrcnn.py                   (MaskRCNN state-estimator)
+    /controller
+        base.py                    (base class for controllers)
+        oracle.py                  (GT object detections and teleport navigation)
+        oracle_astar.py            (GT object detections and A* navigator)
+        mrcnn.py                   (MaskRCNN object detections and teleport navigation)
+        mrcnn_astar.py             (MaskRCNN object detections and A* navigator aka BUTLER)
+    /eval
+        evaluate_dagger.py         (evaluation loop for TextDAgger agents)
+        evaluate_vision_dagger.py  (evaluation loop for VisionDAgger agents)
+        evaluate_dqn.py            (evaluation loop for TextDQN agents)
 ```
