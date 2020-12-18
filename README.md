@@ -84,7 +84,6 @@ while True:
 Clone repo:
 ```bash
 $ git clone https://github.com/alfworld/alfworld.git alfworld
-$ export ALFRED_ROOT=$(pwd)/alfworld
 ```
 
 Install requirements:

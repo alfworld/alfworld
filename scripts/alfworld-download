@@ -121,14 +121,17 @@ def main():
     zipped_filename = download(JSON_FILES_URL, dst=args.data_dir,
                                force=args.force_download)
     unzip(zipped_filename, dst=args.data_dir, force=args.force)
+    os.remove(zipped_filename)
 
     zipped_filename = download(PDDL_FILES_URL, dst=args.data_dir,
                                force=args.force_download)
     unzip(zipped_filename, dst=args.data_dir, force=args.force)
+    os.remove(zipped_filename)
 
     zipped_filename = download(TW_PDDL_FILES_URL, dst=args.data_dir,
                                force=args.force_download)
     unzip(zipped_filename, dst=args.data_dir, force=args.force)
+    os.remove(zipped_filename)
 
     download(MRCNN_URL, dst=pjoin(args.data_dir, "detectors"), force=args.force_download)
 
@@ -136,10 +139,12 @@ def main():
         zipped_filename = download(CHECKPOINTS_URL, dst=args.data_dir,
                                 force=args.force_download)
         unzip(zipped_filename, dst=pjoin(args.data_dir, "agents"), force=args.force)
+        os.remove(zipped_filename)
 
         zipped_filename = download(SEQ2SEQ_DATA_URL, dst=args.data_dir,
                                 force=args.force_download)
         unzip(zipped_filename, dst=args.data_dir, force=args.force)
+        os.remove(zipped_filename)
 
     # Get a copy of the PDDL and TW logic files.
     logic_dir = mkdirs(pjoin(args.data_dir, "logic"))
