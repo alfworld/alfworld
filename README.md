@@ -8,7 +8,9 @@
 
 For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io)
 
-<img src="https://github.com/alfworld/alfworld/blob/fix_3/media/alfworld_teaser.png" width="300">
+<p align="center">
+   <img src="https://github.com/alfworld/alfworld/blob/fix_3/media/alfworld_teaser.png" width="500">
+</p>
 
 ## Quickstart 
 
@@ -145,6 +147,7 @@ For local machines:
 $ python docker/docker_run.py
  
   source ~/alfworld_env/bin/activate
+  cd ~/alfworld
 ```
 
 #### Run (Headless)
@@ -182,7 +185,7 @@ $ python docker/docker_run.py --headless
   ## Everything works!!!
 ```
 
-You might have to modify `X_DISPLAY` in [gen/constants.py](gen/constants.py) depending on which display you use.
+You might have to modify `X_DISPLAY` in [gen/constants.py](alfworld/gen/constants.py) depending on which display you use.
 
 ## Cloud Instance
 
@@ -210,7 +213,7 @@ $ python ~/alfworld/docker/check_thor.py
 ## Everything works!!!
 ```
 
-You might have to modify `X_DISPLAY` in [gen/constants.py](gen/constants.py) depending on which display you use.
+You might have to modify `X_DISPLAY` in [gen/constants.py](alfworld/gen/constants.py) depending on which display you use.
 
 Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/@etendue2013/how-to-run-ai2-thor-simulation-fast-with-google-cloud-platform-gcp-c9fcde213a4a)
 
