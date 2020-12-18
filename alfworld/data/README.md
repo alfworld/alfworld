@@ -7,13 +7,13 @@ The ALFWorld dataset contains 3,553 training games, 140 seen and 134 unseen vali
 Download PDDL, Game Files and pre-trained MaskRCNN model:
 
 ```bash
-$ sh $ALFRED_ROOT/data/download_data.sh
+$ python scripts/alfworld-download
 ```
 
 Additional Seq2Seq data and pre-trained BUTLER checkpoints (All Tasks):
 
 ```bash
-$ sh $ALFRED_ROOT/data/download_data.sh extra
+$ python scripts/alfworld-download --extra
 ```
 
 ## File Structure
@@ -100,8 +100,7 @@ Images:
 To generate `initial_state.pddl` from ALFRED `traj_data.json` files:
 
 ```bash
-$ cd $ALFRED_ROOT
-$ python gen/scripts/augment_pddl_trajectories.py --data_path data/json_2.1.1/train
+$ python alfworld/gen/scripts/augment_pddl_trajectories.py --data_path data/json_2.1.1/train
 ```
 
 #### Adding additional attributes to Textworld games

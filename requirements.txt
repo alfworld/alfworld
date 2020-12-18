@@ -27,4 +27,4 @@ pyyaml
 pytz
 visdom
 fast-downward @ https://github.com/MarcCote/downward/archive/faster_replan.zip
-textworld @ https://github.com/MohitShridhar/TextWorld/archive/handcoded_expert_integration.zip
+textworld @ https://github.com/MarcCote/TextWorld/archive/handcoded_expert_integration.zip
