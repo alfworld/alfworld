@@ -19,7 +19,7 @@
     "negative": 0,
     "neutral": 0,
     "invalid_action": -0.5,
-    "min_reach_distance": 5
+    "min_reach_distance": 3
   },
   "PickupObjectAction":
   {

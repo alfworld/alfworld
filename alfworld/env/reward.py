@@ -40,11 +40,14 @@ class GotoLocationAction(BaseAction):
         curr_distance = len(curr_actions)
         reward = (prev_distance - curr_distance) * 0.2 # distance reward factor?
 
+        # [DEPRECATED] Old criteria which requires the next subgoal object to be visible
         # Consider navigation a success if we can see the target object in the next step from here.
-        assert len(expert_plan) > goal_idx + 1
-        next_subgoal = expert_plan[goal_idx + 1]['planner_action']
-        next_goal_object = get_object(next_subgoal['objectId'], state.metadata)
-        done = next_goal_object['visible'] and curr_distance < self.rewards['min_reach_distance']
+        # assert len(expert_plan) > goal_idx + 1
+        # next_subgoal = expert_plan[goal_idx + 1]['planner_action']
+        # next_goal_object = get_object(next_subgoal['objectId'], state.metadata)
+        # done = (next_goal_object['visible'] and curr_distance < self.rewards['min_reach_distance'])
+
+        done = curr_distance < self.rewards['min_reach_distance']
 
         if done:
             reward += self.rewards['positive']
