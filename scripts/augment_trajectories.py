@@ -13,7 +13,7 @@ import cv2
 import numpy as np
 
 import alfworld.gen
-import alfworld.gen.constants
+import alfworld.gen.constants as constants
 from alfworld.gen.utils.video_util import VideoSaver
 from alfworld.gen.utils.py_util import walklevel
 from alfworld.env.thor_env import ThorEnv
@@ -241,13 +241,13 @@ lock = threading.Lock()
 
 # parse arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_path', type=str, default="data/2.1.0")
+parser.add_argument('--data_path', type=str, default="$ALFWORLD_DATA/json_2.1.1")
 parser.add_argument('--save_path', type=str, default="detector/data/")
 parser.add_argument('--smooth_nav', dest='smooth_nav', action='store_true')
 parser.add_argument('--time_delays', dest='time_delays', action='store_true')
 parser.add_argument('--shuffle', dest='shuffle', action='store_true')
 parser.add_argument('--num_threads', type=int, default=1)
-parser.add_argument('--reward_config', type=str, default='models/config/rewards.json')
+parser.add_argument('--reward_config', type=str, default='alfworld/agents/config/rewards.json')
 args = parser.parse_args()
 
 
@@ -260,7 +260,8 @@ else:
     finished_jsons = {'finished': []}
 
 # make a list of all the traj_data json files
-for dir_name, subdir_list, file_list in walklevel(args.data_path, level=2):
+data_path = os.path.expandvars(args.data_path)
+for dir_name, subdir_list, file_list in walklevel(data_path, level=2):
     if "trial_" in dir_name:
         json_file = os.path.join(dir_name, TRAJ_DATA_JSON_FILENAME)
         if not os.path.isfile(json_file) or json_file in finished_jsons['finished']:

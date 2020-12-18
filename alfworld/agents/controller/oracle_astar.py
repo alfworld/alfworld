@@ -37,7 +37,7 @@ class OracleAStarAgent(OracleAgent):
         game_state.agent_height = self.env.last_event.metadata['agent']['position']['y']
         game_state.camera_height = game_state.agent_height + constants.CAMERA_HEIGHT_OFFSET
 
-        points_source = os.path.join(alfworld.gen, 'layouts/FloorPlan%s-openable.json' % scene_num)
+        points_source = os.path.join(alfworld.gen.__path__[0], 'layouts/FloorPlan%s-openable.json' % scene_num)
         with open(points_source, 'r') as f:
             openable_object_to_point = json.load(f)
         game_state.openable_object_to_point = openable_object_to_point

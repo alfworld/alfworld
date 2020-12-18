@@ -26,5 +26,6 @@ h5py
 pyyaml
 pytz
 visdom
+pycocotools
 fast-downward @ https://github.com/MarcCote/downward/archive/faster_replan.zip
 textworld @ https://github.com/MarcCote/TextWorld/archive/handcoded_expert_integration.zip

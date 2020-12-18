@@ -85,6 +85,9 @@ $ source alfworld_env/bin/activate
 
 $ pip install --upgrade pip
 $ pip install -r requirements.txt
+
+$ cd alfworld
+$ python setup.py develop
 ```
 
 Download PDDL & Game Files and pre-trained MaskRCNN detector:

@@ -100,22 +100,21 @@ Images:
 To generate `initial_state.pddl` from ALFRED `traj_data.json` files:
 
 ```bash
-$ python alfworld/gen/scripts/augment_pddl_trajectories.py --data_path data/json_2.1.1/train
+$ python scripts/augment_pddl_states.py --data_path $ALFWORLD_DATA/json_2.1.1/train
 ```
 
 #### Adding additional attributes to Textworld games
 
-1. Use [augment_pddl_trajectories.py](https://github.com/alfworld/alfworld/blob/master/gen/scripts/augment_pddl_states.py#L254) to dump additional attributes and properties from THOR into `initial_state.pddl`.  
-2. Set [`regen_game_files = True`](https://github.com/alfworld/alfworld/blob/master/agents/config/base_config.yaml#L13) in your config file to generate `game.tw-pddl` files from the new `initial_state.pddl`s. This will use the expert to check if the text game is solvable and then dump a game file used by the text-engine. 
-3. Modify the demangler in [`misc.py`](https://github.com/alfworld/alfworld/blob/master/agents/utils/misc.py#L64) to display the attribute in Textworld, or modify the grammar in [`alfred.twl2`](https://github.com/alfworld/alfworld/blob/master/data/textworld_data/logic/alfred.twl2) to your needs.
+1. Use [augment_pddl_trajectories.py](../../scripts/augment_pddl_states.py#L254) to dump additional attributes and properties from THOR into `initial_state.pddl`.  
+2. Set [`regen_game_files = True`](../../configs/base_config.yaml#L14) in your config file to generate `game.tw-pddl` files from the new `initial_state.pddl`s. This will use the expert to check if the text game is solvable and then dump a game file used by the text-engine. 
+3. Modify the demangler in [`misc.py`](../../alfworld/agents/utils/misc.py#L64) to display the attribute in Textworld, or modify the grammar in [`alfred.twl2`](https://github.com/alfworld/alfworld/blob/master/data/textworld_data/logic/alfred.twl2) to your needs.
 
 #### Generating MaskRCNN training images from ALFRED
 
 To generate image and instance-segmentation pairs from ALFRED training scenes:
 
 ```bash
-$ cd $ALFRED_ROOT
-$ python gen/scripts/augment_trajectories.py --data_path data/json_2.1.1/train --save_path detector/data/test --num_threads 4 
+$ python scripts/augment_trajectories.py --data_path $ALFWORLD_DATA/json_2.1.1/train --save_path $ALFWORLD_DATA/raw_images --num_threads 4 
 ```
 
 #### Fine-tuning MaskRCNN 
@@ -123,6 +122,5 @@ $ python gen/scripts/augment_trajectories.py --data_path data/json_2.1.1/train -
 To fine-tune a COCO-trained MaskRCNN model:
 
 ```bash
-$ cd $ALFRED_ROOT/agents/detector
-$ python train_mrcnn.py --data_path ./data/test/ --save_path ./data/test --balance_scenes --object_types objects  --batch_size 32 --num_workers 4 
+$ python scripts/train_mrcnn.py --data_path $ALFWORLD_DATA/raw_images --save_path $ALFWORLD_DATA/mrcnn --balance_scenes --object_types objects  --batch_size 32 
 ```

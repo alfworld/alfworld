@@ -4,7 +4,7 @@ import sys
 import json
 import glob
 import os
-import alfworld.gen.constants
+import alfworld.gen.constants as constants
 import cv2
 import shutil
 import numpy as np
@@ -13,6 +13,7 @@ import threading
 import time
 import copy
 import random
+import alfworld.gen
 import alfworld.gen.goal_library as glib
 from alfworld.gen.utils.video_util import VideoSaver
 from alfworld.gen.utils.py_util import walklevel
@@ -53,7 +54,7 @@ class TextWorldTaskGameStateFullKnowledge(TaskGameStateFullKnowledge):
         problem_id = traj_data['task_id']
         pddl_params = traj_data['pddl_params']
 
-        points_source = 'gen/layouts/%s-openable.json' % traj_data['scene']['floor_plan']
+        points_source = os.path.join(alfworld.gen.__path__[0], 'layouts/%s-openable.json' % traj_data['scene']['floor_plan'])
         with open(points_source, 'r') as f:
             openable_object_to_point = json.load(f)
         self.openable_object_to_point = openable_object_to_point
@@ -475,7 +476,7 @@ def augment_traj(env, json_file):
     game_state.agent_height = env.last_event.metadata['agent']['position']['y']
     game_state.camera_height = game_state.agent_height + constants.CAMERA_HEIGHT_OFFSET
 
-    points_source = 'gen/layouts/%s-openable.json' % scene_name
+    points_source = os.path.join(alfworld.gen.__path__[0], 'layouts/%s-openable.json' % scene_name)
     with open(points_source, 'r') as f:
         openable_object_to_point = json.load(f)
     game_state.openable_object_to_point = openable_object_to_point
@@ -537,15 +538,16 @@ lock = threading.Lock()
 
 # parse arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_path', type=str, default="data/2.1.0")
+parser.add_argument('--data_path', type=str, default="$ALFWORLD_DATA/json_2.1.1")
 parser.add_argument('--shuffle', dest='shuffle', action='store_true')
-parser.add_argument('--reward_config', type=str, default='models/config/rewards.json')
+parser.add_argument('--reward_config', type=str, default='alfworld/agents/config/rewards.json')
 parser.add_argument('--interactive', action="store_true",
                     help='enable simplistic interactive navigation within the environment')
 args = parser.parse_args()
 
 # make a list of all the traj_data json files
-for dir_name, _, file_list in os.walk(args.data_path, topdown=False):
+data_path = os.path.expandvars(args.data_path)
+for dir_name, _, file_list in os.walk(data_path, topdown=False):
     if "trial_" in dir_name and "test" not in dir_name:
         json_file = os.path.join(dir_name, TRAJ_DATA_JSON_FILENAME)
         if not os.path.isfile(json_file):

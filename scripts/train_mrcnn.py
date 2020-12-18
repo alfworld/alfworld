@@ -11,11 +11,11 @@ from PIL import Image
 
 import cv2
 
-from engine import train_one_epoch, evaluate
-import utils
+from alfworld.agents.detector.engine import train_one_epoch, evaluate
+import alfworld.agents.detector.utils as utils
 import torchvision
-import transforms as T
-from mrcnn import get_model_instance_segmentation, load_pretrained_model
+import alfworld.agents.detector.transforms as T
+from alfworld.agents.detector.mrcnn import get_model_instance_segmentation, load_pretrained_model
 
 import sys
 import alfworld.gen.constants as constants

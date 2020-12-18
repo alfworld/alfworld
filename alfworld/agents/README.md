@@ -221,8 +221,8 @@ general:
       - 'AlfredTWEnv'
       - 'AlfredThorEnv'
     eval_paths:                                             # different splits to evaluate on
-      - '../data/json_2.1.1/valid_seen'
-      - '../data/json_2.1.1/valid_unseen'
+      - '$ALFWORLD_DATA/json_2.1.1/valid_seen'
+      - '$ALFWORLD_DATA/json_2.1.1/valid_unseen'
     eval_experiment_tag: "eval_run_001"                     # save results json with this prefix
 
   checkpoint:
