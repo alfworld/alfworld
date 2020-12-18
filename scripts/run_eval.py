@@ -15,13 +15,14 @@ def run_eval():
     config = generic.load_config()
     agent = TextDAggerAgent(config)
 
-    output_dir = config["general"]["save_path"]
+    output_dir = os.path.expandvars(config["general"]["save_path"])
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     # load model from checkpoint
-    data_dir = config["general"]["save_path"]
+    data_dir = os.path.expandvars(config["general"]["save_path"])
     if agent.load_pretrained:
+        print("Checking {} for {}".format(data_dir, agent.load_from_tag))
         if os.path.exists(data_dir + "/" + agent.load_from_tag + ".pt"):
             agent.load_pretrained_model(data_dir + "/" + agent.load_from_tag + ".pt")
             agent.update_target_net()

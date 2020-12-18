@@ -44,7 +44,7 @@ general:
   visdom: False                                             # plot training/eval curves, run with visdom server
   task: 'alfred'
   training_method: 'dagger'                                 # 'dqn' or 'dagger'
-  save_path: './runs/'                                      # path to save pytorch models
+  save_path: '$ALFWORLD_DATA/agents/pretrained_checkpoints/'   # path to save pytorch models
   observation_pool_capacity: 3                              # k-size queue, 0 indicates no observation
   hide_init_receptacles: False                              # remove initial observation containing navigable receptacles
 
@@ -70,15 +70,15 @@ general:
       type:
        'AlfredThorEnv'
     eval_paths:                                             # different splits to evaluate on
-      - './data/json_2.1.1/valid_seen'
-      # - './data/json_2.1.1/valid_unseen'
+      - '$ALFWORLD_DATA/json_2.1.1/valid_seen'
+#      - '$ALFWORLD_DATA/json_2.1.1/valid_unseen'
     eval_experiment_tag: "eval_run_001"                     # save results json with this prefix
 
   checkpoint:
     report_frequency: 10                                    # report every N episode
     experiment_tag: 'test'                                  # name of experiment
     load_pretrained: True                                   # during test, enable this so that the agent load your pretrained model
-    load_from_tag: 'pretrained_checkpoint_id'               # name of pre-trained model to load in save_path
+    load_from_tag: 'pretrained_checkpoint_id' # name of pre-trained model to load in save_path
 
   model:
     encoder_layers: 1

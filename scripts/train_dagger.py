@@ -69,6 +69,7 @@ def train():
 
     # load model from checkpoint
     if agent.load_pretrained:
+        print("Checking {} for {}".format(data_dir, agent.load_from_tag))
         if os.path.exists(data_dir + "/" + agent.load_from_tag + ".pt"):
             agent.load_pretrained_model(data_dir + "/" + agent.load_from_tag + ".pt")
             agent.update_target_net()
