@@ -9,7 +9,7 @@ TextDAgger Training:
 $ python scripts/train_dagger.py config/base_config.yaml
 ```
 
-By default, you should be able to reproduce **BUTLERg** All Tasks results reported in [Table 2](https://arxiv.org/pdf/2010.03768.pdf). Run the [eval script](evaluation) with `unstick_by_beam_search: True` to reproduce **BUTLER** evaluation results with a trained model.
+By default, you should be able to reproduce **BUTLERg** All Tasks results reported in [Table 2](https://arxiv.org/pdf/2010.03768.pdf). Run the [eval script](#evaluation) with `unstick_by_beam_search: True` to reproduce **BUTLER** evaluation results with a trained model.
 
 VisionDAgger Training (unimodal baseline):
 ```bash
