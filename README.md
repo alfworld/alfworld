@@ -9,7 +9,7 @@
 For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io)
 
 <p align="center">
-   <img src="https://github.com/alfworld/alfworld/blob/fix_3/media/alfworld_teaser.png" width="500">
+   <img src="https://github.com/alfworld/alfworld/blob/master/media/alfworld_teaser.png" width="500">
 </p>
 
 ## Quickstart
