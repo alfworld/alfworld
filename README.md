@@ -17,7 +17,7 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
 Install with pip (python3.6 or higher):
 
 ```bash
-$ pip install alfworld
+$ pip install --pre alfworld
 ```
 
 Download PDDL & Game files and pre-trained MaskRCNN detector:
@@ -218,6 +218,11 @@ $ python ~/alfworld/docker/check_thor.py
 You might have to modify `X_DISPLAY` in [gen/constants.py](alfworld/gen/constants.py) depending on which display you use.
 
 Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/@etendue2013/how-to-run-ai2-thor-simulation-fast-with-google-cloud-platform-gcp-c9fcde213a4a)
+
+## Change Log
+
+18/12/2020:
+- PIP package version available. The repo was refactored.
 
 ## Citations
 
