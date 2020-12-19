@@ -1,10 +1,10 @@
 # ALFWorld
 
-[<b>Aligning Text and Embodied Environments for Interactive Learning</b>](https://arxiv.org/abs/2010.03768)  
-[Mohit Shridhar](https://mohitshridhar.com/), [Xingdi (Eric) Yuan](https://xingdi-eric-yuan.github.io/), [Marc-Alexandre Côté](https://www.microsoft.com/en-us/research/people/macote/),   
+[<b>Aligning Text and Embodied Environments for Interactive Learning</b>](https://arxiv.org/abs/2010.03768)
+[Mohit Shridhar](https://mohitshridhar.com/), [Xingdi (Eric) Yuan](https://xingdi-eric-yuan.github.io/), [Marc-Alexandre Côté](https://www.microsoft.com/en-us/research/people/macote/),
 [Yonatan Bisk](https://yonatanbisk.com/), [Adam Trischler](https://www.microsoft.com/en-us/research/people/adtrisch/), [Matthew Hausknecht](https://mhauskn.github.io/)
 
-**ALFWorld** contains interactive TextWorld environments (Côté et. al) that parallel embodied worlds in the ALFRED dataset (Shridhar et. al). The aligned environments allow agents to reason and learn high-level policies in an abstract space before solving embodied tasks through low-level actuation.  
+**ALFWorld** contains interactive TextWorld environments (Côté et. al) that parallel embodied worlds in the ALFRED dataset (Shridhar et. al). The aligned environments allow agents to reason and learn high-level policies in an abstract space before solving embodied tasks through low-level actuation.
 
 For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io)
 
@@ -12,19 +12,21 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
    <img src="https://github.com/alfworld/alfworld/blob/fix_3/media/alfworld_teaser.png" width="500">
 </p>
 
-## Quickstart 
+## Quickstart
 
 Install with pip (python3.6 or higher):
 
 ```bash
-$ pip install --pre alfworld
+$ pip install https://github.com/MarcCote/downward/archive/faster_replan.zip
+$ pip install https://github.com/MarcCote/TextWorld/archive/handcoded_expert_integration.zip
+$ pip install alfworld
 ```
 
 Download PDDL & Game files and pre-trained MaskRCNN detector:
 
 ```bash
 $ export ALFWORLD_DATA=<storage_path>
-$ alfworld-download 
+$ alfworld-download
 ```
 Use `--extra` to download pre-trained checkpoints and seq2seq data.
 
@@ -51,7 +53,7 @@ import alfworld.agents.modules.generic as generic
 config = generic.load_config()
 env_type = config['env']['type'] # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
 
-# setup environment 
+# setup environment
 env = getattr(environment, env_type)(config, train_eval='train')
 env = env.init_env(batch_size=1)
 
@@ -61,14 +63,14 @@ while True:
     # get random actions from admissible 'valid' commands (not available for AlfredThorEnv)
     admissible_commands = list(info['admissible_commands']) # note: BUTLER generates commands word-by-word without using admissible_commands
     random_actions = [np.random.choice(admissible_commands[0])]
-       
+
     # step
     obs, _, dones, infos = env.step(random_actions)
     print("Action: {}, Obs: {}".format(random_actions[0], obs[0]))
 ```
 Run `python <script>.py configs/base_config.yaml`
 
-## Install Source 
+## Install Source
 
 Installing from source is recommended for development.
 
@@ -79,7 +81,7 @@ $ git clone https://github.com/alfworld/alfworld.git alfworld
 
 Install requirements:
 ```bash
-# Note: Requires python 3.6 or higher 
+# Note: Requires python 3.6 or higher
 $ virtualenv -p $(which python3.6) --system-site-packages alfworld_env # or whichever package manager you prefer
 $ source alfworld_env/bin/activate
 
@@ -103,7 +105,7 @@ $ python scripts/train_dagger.py configs/base_config.yaml
 
 Play around with [TextWorld and THOR demos](scripts/).
 
-## More Info 
+## More Info
 
 - [**Data**](alfworld/data/): PDDL, Game Files, Pre-trained Agents. Generating PDDL states and detection training images.
 - [**Agents**](alfworld/agents/): Training and evaluating TextDAgger, TextDQN, VisionDAgger agents.
@@ -118,7 +120,7 @@ Play around with [TextWorld and THOR demos](scripts/).
 
 See [requirements.txt](requirements.txt) for all prerequisites
 
-## Hardware 
+## Hardware
 
 Tested on:
 - **GPU** - GTX 1080 Ti (12GB)
@@ -129,16 +131,16 @@ Tested on:
 
 ## Docker Setup
 
-Install [Docker](https://docs.docker.com/engine/install/ubuntu/) and [NVIDIA Docker](https://github.com/NVIDIA/nvidia-docker#ubuntu-160418042004-debian-jessiestretchbuster). 
+Install [Docker](https://docs.docker.com/engine/install/ubuntu/) and [NVIDIA Docker](https://github.com/NVIDIA/nvidia-docker#ubuntu-160418042004-debian-jessiestretchbuster).
 
 Modify [docker_build.py](docker/docker_build.py) and [docker_run.py](docker/docker_run.py) to your needs.
 
-#### Build 
+#### Build
 
 Build the image:
 
 ```bash
-$ python docker/docker_build.py 
+$ python docker/docker_build.py
 ```
 
 #### Run (Local)
@@ -147,7 +149,7 @@ For local machines:
 
 ```bash
 $ python docker/docker_run.py
- 
+
   source ~/alfworld_env/bin/activate
   cd ~/alfworld
 ```
@@ -157,7 +159,7 @@ $ python docker/docker_run.py
 For headless VMs and Cloud-Instances:
 
 ```bash
-$ python docker/docker_run.py --headless 
+$ python docker/docker_run.py --headless
 
   # inside docker
   tmux new -s startx  # start a new tmux session
@@ -175,7 +177,7 @@ $ python docker/docker_run.py --headless
 
   # source env
   source ~/alfworld_env/bin/activate
-  
+
   # set DISPLAY variable to match X server
   export DISPLAY=:0
 
@@ -191,11 +193,11 @@ You might have to modify `X_DISPLAY` in [gen/constants.py](alfworld/gen/constant
 
 ## Cloud Instance
 
-ALFWorld can be setup on headless machines like AWS or GoogleCloud instances. 
+ALFWorld can be setup on headless machines like AWS or GoogleCloud instances.
 The main requirement is that you have access to a GPU machine that supports OpenGL rendering. Run [startx.py](docker/startx.py) in a tmux shell:
 ```bash
 # start tmux session
-$ tmux new -s startx 
+$ tmux new -s startx
 
 # start X server on DISPLAY 0
 # single X server should be sufficient for multiple instances of THOR
@@ -238,7 +240,7 @@ Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/
   year = {2020},
   url = {https://arxiv.org/abs/2010.03768}
 }
-```  
+```
 
 **ALFRED**
 ```
@@ -267,9 +269,9 @@ Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/
 
 ## License
 
-- ALFWorld - MIT License  
-- TextWorld (Jericho) - GNU General Public License (GPL) v2.0  
-- Fast Downward - GNU General Public License (GPL) v3.0 
+- ALFWorld - MIT License
+- TextWorld (Jericho) - GNU General Public License (GPL) v2.0
+- Fast Downward - GNU General Public License (GPL) v3.0
 
 ## Contact
 
