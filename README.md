@@ -8,14 +8,73 @@
 
 For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io)
 
-:exclamation:**_Work in progress_**:exclamation:
+<p align="center">
+   <img src="https://github.com/alfworld/alfworld/blob/fix_3/media/alfworld_teaser.png" width="500">
+</p>
 
-## Quickstart
+## Quickstart 
+
+Install with pip (python3.6 or higher):
+
+```bash
+$ pip install --pre alfworld
+```
+
+Download PDDL & Game files and pre-trained MaskRCNN detector:
+
+```bash
+$ export ALFWORLD_DATA=<storage_path>
+$ alfworld-download 
+```
+Use `--extra` to download pre-trained checkpoints and seq2seq data.
+
+Play a Textworld game:
+
+```bash
+$ alfworld-play-tw
+```
+
+Play a THOR game:
+
+```bash
+$ alfworld-play-thor
+```
+
+Get started with a random agent:
+
+```python
+import numpy as np
+import alfworld.agents.environment as environment
+import alfworld.agents.modules.generic as generic
+
+# load config
+config = generic.load_config()
+env_type = config['env']['type'] # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
+
+# setup environment 
+env = getattr(environment, env_type)(config, train_eval='train')
+env = env.init_env(batch_size=1)
+
+# interact
+obs, info = env.reset()
+while True:
+    # get random actions from admissible 'valid' commands (not available for AlfredThorEnv)
+    admissible_commands = list(info['admissible_commands']) # note: BUTLER generates commands word-by-word without using admissible_commands
+    random_actions = [np.random.choice(admissible_commands[0])]
+       
+    # step
+    obs, _, dones, infos = env.step(random_actions)
+    print("Action: {}, Obs: {}".format(random_actions[0], obs[0]))
+```
+Run `python <script>.py configs/base_config.yaml`
+
+## Install Source 
+
+Installing from source is recommended for development.
 
 Clone repo:
 ```bash
 $ git clone https://github.com/alfworld/alfworld.git alfworld
-$ export ALFRED_ROOT=$(pwd)/alfworld
 ```
 
 Install requirements:
@@ -24,28 +83,30 @@ Install requirements:
 $ virtualenv -p $(which python3.6) --system-site-packages alfworld_env # or whichever package manager you prefer
 $ source alfworld_env/bin/activate
 
-$ cd $ALFRED_ROOT
 $ pip install --upgrade pip
 $ pip install -r requirements.txt
+
+$ cd alfworld
+$ python setup.py develop
 ```
 
 Download PDDL & Game Files and pre-trained MaskRCNN detector:
 ```bash
-$ sh $ALFRED_ROOT/data/download_data.sh
+$ python scripts/alfworld-download
 ```
+Use `--extra` to download pre-trained checkpoints and seq2seq data.
 
 Train models:
 ```bash
-$ cd $ALFRED_ROOT/agents
-$ python dagger/train_dagger.py config/base_config.yaml
+$ python scripts/train_dagger.py configs/base_config.yaml
 ```
 
 Play around with [TextWorld and THOR demos](scripts/).
 
 ## More Info 
 
-- [**Data**](data/): PDDL, Game Files, Pre-trained Agents. Generating PDDL states and detection training images.
-- [**Agents**](agents/): Training and evaluating TextDAgger, TextDQN, VisionDAgger agents.
+- [**Data**](alfworld/data/): PDDL, Game Files, Pre-trained Agents. Generating PDDL states and detection training images.
+- [**Agents**](alfworld/agents/): Training and evaluating TextDAgger, TextDQN, VisionDAgger agents.
 - [**Explore**](scripts/): Play around with ALFWorld TextWorld and THOR environments.
 
 ## Prerequisites
@@ -88,7 +149,7 @@ For local machines:
 $ python docker/docker_run.py
  
   source ~/alfworld_env/bin/activate
-  cd $ALFRED_ROOT
+  cd ~/alfworld
 ```
 
 #### Run (Headless)
@@ -119,27 +180,26 @@ $ python docker/docker_run.py --headless
   export DISPLAY=:0
 
   # check THOR
-  cd $ALFRED_ROOT
-  python docker/check_thor.py
+  python ~/alfworld/docker/check_thor.py
 
   ###############
   ## (300, 300, 3)
   ## Everything works!!!
 ```
 
-You might have to modify `X_DISPLAY` in [gen/constants.py](gen/constants.py) depending on which display you use.
+You might have to modify `X_DISPLAY` in [gen/constants.py](alfworld/gen/constants.py) depending on which display you use.
 
 ## Cloud Instance
 
 ALFWorld can be setup on headless machines like AWS or GoogleCloud instances. 
-The main requirement is that you have access to a GPU machine that supports OpenGL rendering. Run [startx.py](scripts/startx.py) in a tmux shell:
+The main requirement is that you have access to a GPU machine that supports OpenGL rendering. Run [startx.py](docker/startx.py) in a tmux shell:
 ```bash
 # start tmux session
 $ tmux new -s startx 
 
 # start X server on DISPLAY 0
 # single X server should be sufficient for multiple instances of THOR
-$ sudo python $ALFRED_ROOT/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
+$ sudo python ~/alfworld/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
 # detach from tmux shell
 # Ctrl+b then d
@@ -148,17 +208,21 @@ $ sudo python $ALFRED_ROOT/scripts/startx.py 0  # if this throws errors e.g "(EE
 $ export DISPLAY=:0
 
 # check THOR
-$ cd $ALFRED_ROOT
-$ python docker/check_thor.py
+$ python ~/alfworld/docker/check_thor.py
 
 ###############
 ## (300, 300, 3)
 ## Everything works!!!
 ```
 
-You might have to modify `X_DISPLAY` in [gen/constants.py](gen/constants.py) depending on which display you use.
+You might have to modify `X_DISPLAY` in [gen/constants.py](alfworld/gen/constants.py) depending on which display you use.
 
 Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/@etendue2013/how-to-run-ai2-thor-simulation-fast-with-google-cloud-platform-gcp-c9fcde213a4a)
+
+## Change Log
+
+18/12/2020:
+- PIP package version available. The repo was refactored.
 
 ## Citations
 
