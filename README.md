@@ -65,7 +65,7 @@ while True:
     random_actions = [np.random.choice(admissible_commands[0])]
 
     # step
-    obs, score, dones, infos = env.step(random_actions)
+    obs, scores, dones, infos = env.step(random_actions)
     print("Action: {}, Obs: {}".format(random_actions[0], obs[0]))
 ```
 Run `python <script>.py configs/base_config.yaml`
