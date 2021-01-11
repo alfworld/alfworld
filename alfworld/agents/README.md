@@ -24,7 +24,7 @@ $ python scripts/train_dqn.py config/base_config.yaml
 Seq2Seq Training (no DAgger baseline):
 ```bash
 
-# collect dataset for offline training (not needed if sh download_data.sh extra)
+# collect dataset for offline training (not needed if python scripts/alfworld-download)
 # python scripts/collect_seq2seq_dataset.py config/base_config.yaml
 
 # train seq2seq model
