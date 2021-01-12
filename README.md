@@ -2,7 +2,8 @@
 
 [<b>Aligning Text and Embodied Environments for Interactive Learning</b>](https://arxiv.org/abs/2010.03768)  
 [Mohit Shridhar](https://mohitshridhar.com/), [Xingdi (Eric) Yuan](https://xingdi-eric-yuan.github.io/), [Marc-Alexandre Côté](https://www.microsoft.com/en-us/research/people/macote/),  
-[Yonatan Bisk](https://yonatanbisk.com/), [Adam Trischler](https://www.microsoft.com/en-us/research/people/adtrisch/), [Matthew Hausknecht](https://mhauskn.github.io/)
+[Yonatan Bisk](https://yonatanbisk.com/), [Adam Trischler](https://www.microsoft.com/en-us/research/people/adtrisch/), [Matthew Hausknecht](https://mhauskn.github.io/)  
+[ICLR 2021](https://openreview.net/forum?id=0IOX0YcCdTn)
 
 **ALFWorld** contains interactive TextWorld environments (Côté et. al) that parallel embodied worlds in the ALFRED dataset (Shridhar et. al). The aligned environments allow agents to reason and learn high-level policies in an abstract space before solving embodied tasks through low-level actuation.
 
@@ -236,8 +237,8 @@ Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/
   author={Mohit Shridhar and Xingdi Yuan and
           Marc-Alexandre C\^ot\'e and Yonatan Bisk and
           Adam Trischler and Matthew Hausknecht},
-  booktitle = {arXiv},
-  year = {2020},
+  booktitle = {Proceedings of the International Conference on Learning Representations},
+  year = {2021},
   url = {https://arxiv.org/abs/2010.03768}
 }
 ```
