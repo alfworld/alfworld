@@ -237,7 +237,7 @@ Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/
   author={Mohit Shridhar and Xingdi Yuan and
           Marc-Alexandre C\^ot\'e and Yonatan Bisk and
           Adam Trischler and Matthew Hausknecht},
-  booktitle = {Proceedings of the International Conference on Learning Representations},
+  booktitle = {Proceedings of the International Conference on Learning Representations (ICLR)},
   year = {2021},
   url = {https://arxiv.org/abs/2010.03768}
 }
