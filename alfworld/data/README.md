@@ -109,6 +109,8 @@ $ python scripts/augment_pddl_states.py --data_path $ALFWORLD_DATA/json_2.1.1/tr
 2. Set [`regen_game_files = True`](../../configs/base_config.yaml#L14) in your config file to generate `game.tw-pddl` files from the new `initial_state.pddl`s. This will use the expert to check if the text game is solvable and then dump a game file used by the text-engine. 
 3. Modify the demangler in [`misc.py`](../../alfworld/agents/utils/misc.py#L64) to display the attribute in Textworld, or modify the grammar in [`alfred.twl2`](https://github.com/alfworld/alfworld/blob/master/data/textworld_data/logic/alfred.twl2) to your needs.
 
+## Mask-RCNN Detector 
+
 #### Generating MaskRCNN training images from ALFRED
 
 To generate image and instance-segmentation pairs from ALFRED training scenes:
@@ -124,3 +126,6 @@ To fine-tune a COCO-trained MaskRCNN model:
 ```bash
 $ python scripts/train_mrcnn.py --data_path $ALFWORLD_DATA/raw_images --save_path $ALFWORLD_DATA/mrcnn --balance_scenes --object_types objects  --batch_size 32 
 ```
+
+#### Pre-trained Models
+The default pre-trained model provided in the repo is trained on 73 object classes without receptacles. We also provide [other models](https://drive.google.com/drive/folders/1eHzFw-a7IIX5iV-tQTu6fXKIuxxha6ag?usp=sharing) for receptacles (32 receptacle classes) and all objects (105 classes)
