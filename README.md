@@ -37,7 +37,7 @@ Play a Textworld game:
 $ alfworld-play-tw
 ```
 
-Play a THOR game:
+Play an Embodied-World (THOR) game:
 
 ```bash
 $ alfworld-play-thor
