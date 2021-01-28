@@ -95,6 +95,7 @@ $ python setup.py develop
 
 Download PDDL & Game Files and pre-trained MaskRCNN detector:
 ```bash
+$ export ALFWORLD_DATA=<storage_path>
 $ python scripts/alfworld-download
 ```
 Use `--extra` to download pre-trained checkpoints and seq2seq data.
