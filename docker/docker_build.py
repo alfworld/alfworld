@@ -19,7 +19,7 @@ if __name__=="__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--image", type=str,
-                        help="name for the newly created docker image", default=default_image_name)
+                        help="name for the newly created docker image", default=default_image_name.lower())
 
     parser.add_argument("-dr", "--dry_run", action='store_true', help="(optional) perform a dry_run, print the command that would have been executed but don't execute it.")
 

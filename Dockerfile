@@ -7,7 +7,7 @@ ARG USER_GID
 
 RUN apt-get update
 RUN apt install sudo
-RUN useradd -ms /bin/bash $USER_NAME
+RUN useradd -ms /bin/bash $USER_NAME --no-log-init
 RUN usermod -aG sudo $USER_NAME
 RUN yes $USER_PASSWORD | passwd $USER_NAME
 
