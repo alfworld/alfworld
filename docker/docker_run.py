@@ -16,7 +16,7 @@ if __name__=="__main__":
     default_image_name = user_name + '-alfworld'
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--image", type=str,
-                        help="(required) name of the image that this container is derived from", default=default_image_name)
+                        help="(required) name of the image that this container is derived from", default=default_image_name.lower())
 
     parser.add_argument("-c", "--container", type=str, default="alfworld", help="(optional) name of the container")
 
