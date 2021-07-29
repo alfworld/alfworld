@@ -49,6 +49,14 @@ and a dishsponge 3.
 You won!
 ```
 
+**Note**: When loading a TextWorld game, if you see the following error
+```
+  File "../python3.9/site-packages/textworld/logic/pddl_logic.py", line 123, in <listcomp>
+    arguments = [Variable(get_var_name(arg), name2type[arg]) for arg in args if arg]
+KeyError: 'val1'
+```
+it means the game is unsolvable or the PDDL problem is ill-defined. Some tasks from ALFRED like movable receptacle tasks are not used in ALFWorld, and will fail if you try to load them with `alfworld-play-tw`.
+
 ### THOR
 
 Interact with embodied games:
