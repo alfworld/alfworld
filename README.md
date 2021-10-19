@@ -166,8 +166,7 @@ $ python docker/docker_run.py --headless
   # inside docker
   tmux new -s startx  # start a new tmux session
 
-  # start nvidia-xconfig (might have to run this twice)
-  sudo nvidia-xconfig -a --use-display-device=None --virtual=1280x1024
+  # start nvidia-xconfig
   sudo nvidia-xconfig -a --use-display-device=None --virtual=1280x1024
 
   # start X server on DISPLAY 0
