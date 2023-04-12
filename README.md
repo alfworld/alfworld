@@ -20,7 +20,14 @@ Install with pip (python3.6 or higher):
 ```bash
 $ pip install https://github.com/MarcCote/downward/archive/faster_replan.zip
 $ pip install https://github.com/MarcCote/TextWorld/archive/handcoded_expert_integration.zip
-$ pip install alfworld
+
+$ git clone https://github.com/alfworld/alfworld.git alfworld
+$ cd alfworld
+$ pip install -r requirements.txt
+$ pip install .
+
+# PyPi install is broken for now :( See https://github.com/alfworld/alfworld/issues/27
+# $ pip install alfworld
 ```
 
 Download PDDL & Game files and pre-trained MaskRCNN detector:
@@ -116,8 +123,8 @@ Play around with [TextWorld and THOR demos](scripts/).
 ## Prerequisites
 
 - Python 3.6
-- PyTorch 1.2.0
-- Torchvision 0.4.0
+- PyTorch 1.2.0 (later versions might be ok)
+- Torchvision 0.4.0 (later versions might be ok)
 - AI2THOR 2.1.0
 
 See [requirements.txt](requirements.txt) for all prerequisites
