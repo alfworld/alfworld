@@ -15,7 +15,7 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
 
 ## Quickstart
 
-Install with pip (python3.6 or higher):
+Install with pip (python3.6 or higher, but >3.7 might require updating dependencies):
 
 ```bash
 $ pip install https://github.com/MarcCote/downward/archive/faster_replan.zip
