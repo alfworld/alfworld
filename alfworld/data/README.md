@@ -128,4 +128,4 @@ $ python scripts/train_mrcnn.py --data_path $ALFWORLD_DATA/raw_images --save_pat
 ```
 
 #### Pre-trained Models
-The default pre-trained model provided in the repo is trained on 73 object classes without receptacles. We also provide [other models](https://drive.google.com/drive/folders/1eHzFw-a7IIX5iV-tQTu6fXKIuxxha6ag?usp=sharing) for receptacles (32 receptacle classes) and all objects (105 classes).
+The default pre-trained model provided in the repo is trained on 73 object classes without receptacles. We also provide [other models](https://github.com/alfworld/alfworld/releases/tag/0.2.2) for receptacles (32 receptacle classes) and all objects (105 classes). These pre-trained models are named `mrcnn_*`.  
