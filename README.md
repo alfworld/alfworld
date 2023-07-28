@@ -140,6 +140,10 @@ Tested on:
 
 ## Docker Setup
 
+Pull [vzhong](https://github.com/vzhong)'s image: https://hub.docker.com/r/vzhong/alfworld  
+
+**OR**
+
 Install [Docker](https://docs.docker.com/engine/install/ubuntu/) and [NVIDIA Docker](https://github.com/NVIDIA/nvidia-docker#ubuntu-160418042004-debian-jessiestretchbuster).
 
 Modify [docker_build.py](docker/docker_build.py) and [docker_run.py](docker/docker_run.py) to your needs.
