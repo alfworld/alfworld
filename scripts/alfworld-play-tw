@@ -21,12 +21,58 @@ from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, clean
 
 class AlfredDemangler(textworld.core.Wrapper):
 
+    def _clean_alfred_facts(self, facts):
+        # def _clean_fact(fact: textworld.logic.Proposition):
+        #     args = [textworld.logic.Variable(self.demangler.demangle_alfred_name(arg.name), arg.type) for arg in fact.arguments]
+        #     return textworld.logic.Proposition(fact.name, args)
+
+        def _clean_fact_simple(fact: textworld.logic.Proposition):
+            args = [self.demangler.demangle_alfred_name(arg.name) for arg in fact.arguments]
+            return (fact.name, *args)
+
+        # facts = [_clean_fact(fact) for fact in facts if not fact.name.startswith("new-axiom@")]
+        facts = [_clean_fact_simple(fact) for fact in facts if not fact.name.startswith("new-axiom@")]
+        return facts
+
     def load(self, *args, **kwargs):
         super().load(*args, **kwargs)
 
-        demangler = Demangler(game_infos=self._game.infos)
+        self.demangler = Demangler(game_infos=self._game.infos)
         for info in self._game.infos.values():
-            info.name = demangler.demangle_alfred_name(info.id)
+            info.name = self.demangler.demangle_alfred_name(info.id)
+
+    def step(self, command: str):
+        result = super().step(command)
+
+        if self.infos.facts:
+            self.state["facts"] = self._clean_alfred_facts(self.state["_facts"])
+
+        if "goal" in self.infos.extras:
+            self.state["extra.goal"] = self.goal_conditions
+
+        return result
+
+    def reset(self):
+        result = super().reset()
+
+        if self.infos.facts:
+            self.state["facts"] = self._clean_alfred_facts(self.state["_facts"])
+
+        if "goal" in self.infos.extras:
+            task = self._game_progression.state.task
+            for axiom in task.axioms:
+                if axiom.name == task.goal.predicate:
+                    break
+            else:
+                axiom = None
+
+            assert axiom is not None, "Should never happen in ALFWorld."
+            assert not axiom.condition.has_disjunction(), "Should never happen in ALFWorld."
+
+            self.goal_conditions = [(atom.predicate, *atom.args) for atom in axiom.condition.parts]
+            self.state["extra.goal"] = self.goal_conditions
+
+        return result
 
 
 def main(args):
@@ -49,7 +95,7 @@ def main(args):
     json.dump(gamedata, open(gamefile, "w"))
 
     # register a new Gym environment.
-    infos = textworld.EnvInfos(won=True, admissible_commands=True)
+    infos = textworld.EnvInfos(won=True, admissible_commands=True, facts=True, extras=["goal"])
     env_id = textworld.gym.register_game(gamefile, infos,
                                          max_episode_steps=1000000,
                                          wrappers=[AlfredDemangler])

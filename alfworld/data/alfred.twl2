@@ -173,7 +173,8 @@ grammar :: """
 """;
 
 action GotoLocation {
-    template :: "go to [{r.name | receptacleatlocation(r:receptacle, lend:location)}]";
+    # template :: "go to [{r.name | receptacleatlocation(r:receptacle, lend:location)}]";
+    template :: "go to {r}";
     feedback :: "#GotoLocation.feedback#";
 }
 
