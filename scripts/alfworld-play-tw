@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import sys
 import json
 import glob
 import random
@@ -11,68 +10,11 @@ from os.path import join as pjoin
 import textworld
 from textworld.agents import HumanAgent
 
-import gym
 import textworld.gym
 
 from alfworld.info import ALFWORLD_DATA
-import alfworld.gen
-from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, clean_alfred_facts, add_task_to_grammar
-
-
-class AlfredDemangler(textworld.core.Wrapper):
-
-    def _clean_alfred_facts(self, facts):
-        # def _clean_fact(fact: textworld.logic.Proposition):
-        #     args = [textworld.logic.Variable(self.demangler.demangle_alfred_name(arg.name), arg.type) for arg in fact.arguments]
-        #     return textworld.logic.Proposition(fact.name, args)
-
-        def _clean_fact_simple(fact: textworld.logic.Proposition):
-            args = [self.demangler.demangle_alfred_name(arg.name) for arg in fact.arguments]
-            return (fact.name, *args)
-
-        # facts = [_clean_fact(fact) for fact in facts if not fact.name.startswith("new-axiom@")]
-        facts = [_clean_fact_simple(fact) for fact in facts if not fact.name.startswith("new-axiom@")]
-        return facts
-
-    def load(self, *args, **kwargs):
-        super().load(*args, **kwargs)
-
-        self.demangler = Demangler(game_infos=self._game.infos)
-        for info in self._game.infos.values():
-            info.name = self.demangler.demangle_alfred_name(info.id)
-
-    def step(self, command: str):
-        result = super().step(command)
-
-        if self.infos.facts:
-            self.state["facts"] = self._clean_alfred_facts(self.state["_facts"])
-
-        if "goal" in self.infos.extras:
-            self.state["extra.goal"] = self.goal_conditions
-
-        return result
-
-    def reset(self):
-        result = super().reset()
-
-        if self.infos.facts:
-            self.state["facts"] = self._clean_alfred_facts(self.state["_facts"])
-
-        if "goal" in self.infos.extras:
-            task = self._game_progression.state.task
-            for axiom in task.axioms:
-                if axiom.name == task.goal.predicate:
-                    break
-            else:
-                axiom = None
-
-            assert axiom is not None, "Should never happen in ALFWorld."
-            assert not axiom.condition.has_disjunction(), "Should never happen in ALFWorld."
-
-            self.goal_conditions = [(atom.predicate, *atom.args) for atom in axiom.condition.parts]
-            self.state["extra.goal"] = self.goal_conditions
-
-        return result
+from alfworld.agents.utils.misc import add_task_to_grammar
+from alfworld.agents.environment.alfred_tw_env import AlfredExpert, AlfredDemangler, AlfredExpertType
 
 
 def main(args):
@@ -94,18 +36,22 @@ def main(args):
     gamefile = os.path.join(os.path.dirname(pddl_file), 'game.tw-pddl')
     json.dump(gamedata, open(gamefile, "w"))
 
+
+    expert = AlfredExpert(expert_type=AlfredExpertType.PLANNER)
+    # expert = AlfredExpert(expert_type=AlfredExpertType.HANDCODED)
+
     # register a new Gym environment.
-    infos = textworld.EnvInfos(won=True, admissible_commands=True, facts=True, extras=["goal"])
-    env_id = textworld.gym.register_game(gamefile, infos,
+    request_infos = textworld.EnvInfos(won=True, admissible_commands=True, score=True, max_score=True, intermediate_reward=True, extras=["expert_plan"])
+    env_id = textworld.gym.register_game(gamefile, request_infos,
                                          max_episode_steps=1000000,
-                                         wrappers=[AlfredDemangler])
+                                         wrappers=[AlfredDemangler(), expert])
 
     # reset env
-    env = gym.make(env_id)
+    env = textworld.gym.make(env_id)
     obs, infos = env.reset()
 
     # human agent
-    agent = HumanAgent(True)
+    agent = HumanAgent(autocompletion=True, oracle=(expert.expert_type==AlfredExpertType.PLANNER))
     agent.reset(env)
 
     while True:

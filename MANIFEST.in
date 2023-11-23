@@ -1,7 +1,7 @@
 include requirements.txt
+include requirements-full.txt
 include README.md
 include LICENSE
-include setup.sh
 
 include alfworld/data/alfred.pddl
 include alfworld/data/alfred.twl2

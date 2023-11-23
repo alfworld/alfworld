@@ -1,8 +1,8 @@
 # ALFWorld
 
-[<b>Aligning Text and Embodied Environments for Interactive Learning</b>](https://arxiv.org/abs/2010.03768)  
-[Mohit Shridhar](https://mohitshridhar.com/), [Xingdi (Eric) Yuan](https://xingdi-eric-yuan.github.io/), [Marc-Alexandre Côté](https://www.microsoft.com/en-us/research/people/macote/),  
-[Yonatan Bisk](https://yonatanbisk.com/), [Adam Trischler](https://www.microsoft.com/en-us/research/people/adtrisch/), [Matthew Hausknecht](https://mhauskn.github.io/)  
+[<b>Aligning Text and Embodied Environments for Interactive Learning</b>](https://arxiv.org/abs/2010.03768)
+[Mohit Shridhar](https://mohitshridhar.com/), [Xingdi (Eric) Yuan](https://xingdi-eric-yuan.github.io/), [Marc-Alexandre Côté](https://www.microsoft.com/en-us/research/people/macote/),
+[Yonatan Bisk](https://yonatanbisk.com/), [Adam Trischler](https://www.microsoft.com/en-us/research/people/adtrisch/), [Matthew Hausknecht](https://mhauskn.github.io/)
 [ICLR 2021](https://openreview.net/forum?id=0IOX0YcCdTn)
 
 **ALFWorld** contains interactive TextWorld environments (Côté et. al) that parallel embodied worlds in the ALFRED dataset (Shridhar et. al). The aligned environments allow agents to reason and learn high-level policies in an abstract space before solving embodied tasks through low-level actuation.
@@ -15,19 +15,10 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
 
 ## Quickstart
 
-Install with pip (python3.6 or higher, but >3.7 might require updating dependencies):
+Install with pip (python3.9+):
 
 ```bash
-$ pip install https://github.com/MarcCote/downward/archive/faster_replan.zip
-$ pip install https://github.com/MarcCote/TextWorld/archive/handcoded_expert_integration.zip
-
-$ git clone https://github.com/alfworld/alfworld.git alfworld
-$ cd alfworld
-$ pip install -r requirements.txt
-$ pip install .
-
-# PyPi install is broken for now :( See https://github.com/alfworld/alfworld/issues/27
-# $ pip install alfworld
+$ pip install alfworld[full]
 ```
 
 Download PDDL & Game files and pre-trained MaskRCNN detector:
@@ -85,19 +76,16 @@ Installing from source is recommended for development.
 Clone repo:
 ```bash
 $ git clone https://github.com/alfworld/alfworld.git alfworld
+$ cd alfworld
 ```
 
 Install requirements:
 ```bash
-# Note: Requires python 3.6 or higher
-$ virtualenv -p $(which python3.6) --system-site-packages alfworld_env # or whichever package manager you prefer
+# Note: Requires python 3.9 or higher
+$ virtualenv -p $(which python3.9) --system-site-packages alfworld_env # or whichever package manager you prefer
 $ source alfworld_env/bin/activate
 
-$ pip install --upgrade pip
-$ pip install -r requirements.txt
-
-$ cd alfworld
-$ python setup.py develop
+$ pip install -e .[full]
 ```
 
 Download PDDL & Game Files and pre-trained MaskRCNN detector:
@@ -122,12 +110,13 @@ Play around with [TextWorld and THOR demos](scripts/).
 
 ## Prerequisites
 
-- Python 3.6
+- Python 3.9+
 - PyTorch 1.2.0 (later versions might be ok)
 - Torchvision 0.4.0 (later versions might be ok)
 - AI2THOR 2.1.0
 
-See [requirements.txt](requirements.txt) for all prerequisites
+See [requirements.txt](requirements.txt) for the prerequisites to run ALFWorld.
+See [requirements-full.txt](requirements-full.txt) for the prerequisites to run experiments.
 
 ## Hardware
 
@@ -140,7 +129,7 @@ Tested on:
 
 ## Docker Setup
 
-Pull [vzhong](https://github.com/vzhong)'s image: https://hub.docker.com/r/vzhong/alfworld  
+Pull [vzhong](https://github.com/vzhong)'s image: https://hub.docker.com/r/vzhong/alfworld
 
 **OR**
 

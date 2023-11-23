@@ -9,7 +9,6 @@ from tqdm import tqdm
 import textworld
 import textworld.agents
 import textworld.gym
-import gym
 
 from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
 from alfworld.agents.expert import HandCodedTWAgent, HandCodedAgentTimeout
@@ -32,8 +31,8 @@ class AlfredDemangler(textworld.core.Wrapper):
     def load(self, *args, **kwargs):
         super().load(*args, **kwargs)
 
-        demangler = Demangler(game_infos=self._game.infos, shuffle=self.shuffle)
-        for info in self._game.infos.values():
+        demangler = Demangler(game_infos=self._entity_infos, shuffle=self.shuffle)
+        for info in self._entity_infos.values():
             info.name = demangler.demangle_alfred_name(info.id)
 
 
@@ -61,7 +60,7 @@ class AlfredExpertType:
 
 class AlfredExpert(textworld.core.Wrapper):
 
-    def __init__(self, env, expert_type=AlfredExpertType.HANDCODED):
+    def __init__(self, env=None, expert_type=AlfredExpertType.HANDCODED):
         super().__init__(env=env)
 
         self.expert_type = expert_type
@@ -86,16 +85,16 @@ class AlfredExpert(textworld.core.Wrapper):
                         self.state["extra.expert_plan"] = [handcoded_expert_next_action]
             except HandCodedAgentTimeout:
                 raise Exception("Timeout")
-            except:
-                pass
         elif self.expert_type == AlfredExpertType.PLANNER:
             self.state["extra.expert_plan"] = self.state["policy_commands"]
         else:
             raise NotImplementedError("Unknown type of AlfredExpert: {}.".format(self.expert_type))
 
-    def load(self, *args, **kwargs):
-        super().load(*args, **kwargs)
-        self.infos.policy_commands = (self.expert_type == AlfredExpertType.PLANNER)
+    def load(self, gamefile):
+        super().load(gamefile)
+        self.gamefile = gamefile
+        self.request_infos.policy_commands = (self.expert_type == AlfredExpertType.PLANNER)
+        self.request_infos.facts = (self.expert_type == AlfredExpertType.HANDCODED)
         self._handcoded_expert = HandCodedTWAgent(max_steps=200)
 
     def step(self, command):
@@ -106,7 +105,7 @@ class AlfredExpert(textworld.core.Wrapper):
 
     def reset(self):
         self.state = super().reset()
-        self._handcoded_expert.reset(self.state["extra.gamefile"])
+        self._handcoded_expert.reset(self.gamefile)
         self.prev_command = ""
         self._gather_infos()
         return self.state
@@ -213,9 +212,9 @@ class AlfredTWEnv(object):
                 # Check if game is solvable (expensive) and save it in the gamedata
                 if not env:
                     alfred_demangler = AlfredDemangler(shuffle=False)
-                    infos = textworld.EnvInfos(admissible_commands=True, extras=["gamefile"])
+                    request_infos = textworld.EnvInfos(admissible_commands=True, extras=["gamefile"])
                     expert = AlfredExpert(env, expert_type=self.config["env"]["expert_type"])
-                    env = textworld.start(game_file_path, infos, wrappers=[alfred_demangler, AlfredInfos, expert])
+                    env = textworld.start(game_file_path, request_infos, wrappers=[alfred_demangler, AlfredInfos, expert])
 
                 log("Generating walkthrough for {}.".format(game_file_path))
                 trajectory = self.is_solvable(env, game_file_path)
@@ -236,7 +235,7 @@ class AlfredTWEnv(object):
                 expert_steps = len(gamedata['walkthrough'])
                 log("%s (%d steps), %d/%d solvable games" % (game_file_path, expert_steps, len(self.game_files), count))
 
-        print("Overall we have %s games" % (str(len(self.game_files))))
+        print(f"Overall we have {len(self.game_files)} games in split={self.train_eval}")
         self.num_games = len(self.game_files)
 
         if self.train_eval == "train":
@@ -295,32 +294,28 @@ class AlfredTWEnv(object):
         wrappers = [alfred_demangler, AlfredInfos]
 
         # Register a new Gym environment.
-        infos = textworld.EnvInfos(won=True, admissible_commands=True, extras=["gamefile"])
+        request_infos = textworld.EnvInfos(won=True, admissible_commands=True, extras=["gamefile"])
         expert_type = self.config["env"]["expert_type"]
         training_method = self.config["general"]["training_method"]
 
         if training_method == "dqn":
-            infos.policy_commands = False
             max_nb_steps_per_episode = self.config["rl"]["training"]["max_nb_steps_per_episode"]
         elif training_method == "dagger":
             max_nb_steps_per_episode = self.config["dagger"]["training"]["max_nb_steps_per_episode"]
 
             expert_plan = True if self.train_eval == "train" else False
             if expert_plan:
-                # if expert_type != "handcoded":
-                #     infos.policy_commands = True  # This will give the up-to-date winning policy at each time step.
-
                 wrappers.append(AlfredExpert(expert_type))
-                infos.extras.append("expert_plan")
+                request_infos.extras.append("expert_plan")
 
         else:
             raise NotImplementedError
 
-        env_id = textworld.gym.register_games(self.game_files, infos,
+        env_id = textworld.gym.register_games(self.game_files, request_infos,
                                               batch_size=batch_size,
                                               asynchronous=True,
                                               max_episode_steps=max_nb_steps_per_episode,
                                               wrappers=wrappers)
         # Launch Gym environment.
-        env = gym.make(env_id)
+        env = textworld.gym.make(env_id)
         return env

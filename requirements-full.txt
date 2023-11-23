@@ -1,8 +1,12 @@
 ai2thor==2.1.0
+h5py
 opencv-python
 pandas
+pycocotools
 textworld[pddl]>=1.6.1
 torch
 torchvision
 tqdm
+transformers
+visdom
 werkzeug==2.2.2
