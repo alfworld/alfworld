@@ -197,7 +197,7 @@ def load_config():
         keys = fqn_key.split(".")
         for k in keys[:-1]:
             entry_to_change = entry_to_change[k]
-        entry_to_change[keys[-1]] = yaml.load(value)
+        entry_to_change[keys[-1]] = value
     # print(config)
     return config
 
