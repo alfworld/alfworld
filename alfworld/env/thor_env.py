@@ -32,6 +32,7 @@ class ThorEnv(Controller):
                  save_frames_path="./",
                  smooth_nav=False):
 
+        self.smooth_nav = smooth_nav
         super().__init__(quality=quality)
         self.local_executable_path = build_path
         self.start(x_display=x_display,
@@ -46,7 +47,6 @@ class ThorEnv(Controller):
 
         # save frames settings
         self.save_frames_to_disk = save_frames_to_disk
-        self.smooth_nav = smooth_nav
         self.save_frames_path = save_frames_path
 
         print("ThorEnv started.")
