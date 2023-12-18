@@ -22,5 +22,8 @@ setup(
     license=open('LICENSE').read(),
     zip_safe=False,
     description="ALFWorld - Aligning Text and Embodied Environments for Interactive Learning.",
-    install_requires=[line for line in open('requirements.txt').readlines() if "@" not in line],
+    install_requires=open('requirements.txt').readlines(),
+    extras_require={
+        'full': open('requirements-full.txt').readlines(),
+    }
 )

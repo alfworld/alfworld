@@ -110,15 +110,7 @@ class BasePolicy(object):
         return subgoal_idx
 
     def get_facts(self, game_state):
-        facts = []
-        infos = game_state['_game_progression'].game.infos
-        for f in game_state["_facts"]:
-            fact = []
-            fact.append(f.name)
-            for args in f.arguments:
-                arg = args.name if args.name not in infos else infos[args.name]
-                fact.append(arg.name.strip())
-            facts.append(" ".join(fact))
+        facts = [f"{fact.name} " + " ".join(name.strip() for name in fact.names) for fact in game_state["facts"]]
         return facts
 
     def get_state_info(self, game_state):

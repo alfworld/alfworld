@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import sys
 import json
 import glob
 import random
@@ -11,22 +10,11 @@ from os.path import join as pjoin
 import textworld
 from textworld.agents import HumanAgent
 
-import gym
 import textworld.gym
 
 from alfworld.info import ALFWORLD_DATA
-import alfworld.gen
-from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, clean_alfred_facts, add_task_to_grammar
-
-
-class AlfredDemangler(textworld.core.Wrapper):
-
-    def load(self, *args, **kwargs):
-        super().load(*args, **kwargs)
-
-        demangler = Demangler(game_infos=self._game.infos)
-        for info in self._game.infos.values():
-            info.name = demangler.demangle_alfred_name(info.id)
+from alfworld.agents.utils.misc import add_task_to_grammar
+from alfworld.agents.environment.alfred_tw_env import AlfredExpert, AlfredDemangler, AlfredExpertType
 
 
 def main(args):
@@ -48,18 +36,22 @@ def main(args):
     gamefile = os.path.join(os.path.dirname(pddl_file), 'game.tw-pddl')
     json.dump(gamedata, open(gamefile, "w"))
 
+
+    expert = AlfredExpert(expert_type=AlfredExpertType.PLANNER)
+    # expert = AlfredExpert(expert_type=AlfredExpertType.HANDCODED)
+
     # register a new Gym environment.
-    infos = textworld.EnvInfos(won=True, admissible_commands=True)
-    env_id = textworld.gym.register_game(gamefile, infos,
+    request_infos = textworld.EnvInfos(won=True, admissible_commands=True, score=True, max_score=True, intermediate_reward=True, extras=["expert_plan"])
+    env_id = textworld.gym.register_game(gamefile, request_infos,
                                          max_episode_steps=1000000,
-                                         wrappers=[AlfredDemangler])
+                                         wrappers=[AlfredDemangler(), expert])
 
     # reset env
-    env = gym.make(env_id)
+    env = textworld.gym.make(env_id)
     obs, infos = env.reset()
 
     # human agent
-    agent = HumanAgent(True)
+    agent = HumanAgent(autocompletion=True, oracle=(expert.expert_type==AlfredExpertType.PLANNER))
     agent.reset(env)
 
     while True:

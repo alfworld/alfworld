@@ -363,7 +363,7 @@ class AlfredThorEnv(object):
                  'won': wons,
                  'goal_condition_success_rate': gc_srs,
                  'extra.gamefile': gamefiles,
-                 'expert_plan': expert_plans}
+                 'extra.expert_plan': expert_plans}
         return obs, dones, infos
 
     def get_frames(self):

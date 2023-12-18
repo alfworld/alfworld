@@ -145,8 +145,8 @@ def train():
 
             expert_actions, expert_indices = [], []
             for b in range(batch_size):
-                if "expert_plan" in infos and len(infos["expert_plan"][b]) > 0:
-                    next_action = infos["expert_plan"][b][0]
+                if "extra.expert_plan" in infos and len(infos["extra.expert_plan"][b]) > 0:
+                    next_action = infos["extra.expert_plan"][b][0]
                     expert_actions.append(next_action)
                     expert_indices.append(action_candidate_list[b].index(next_action) if agent.action_space in ["admissible", "exhaustive"] else -1)
                 else:

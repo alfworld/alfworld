@@ -28,7 +28,7 @@ def collect_data(task_types):
     config['general']['observation_pool_capacity'] = 5
     config['general']['training_method'] = 'dagger'
     config['env']['task_types'] = task_types
-    # config['env']['expert_type'] = "downward"
+    # config['env']['expert_type'] = "planner"
 
     if train_or_eval == "train":
         config['dataset']['data_path'] = pjoin(ALFWORLD_DATA, "json_2.1.1", "train")
@@ -84,8 +84,8 @@ def collect_data(task_types):
             most_recent_observation_strings = agent.observation_pool.get()
             expert_actions = []
             for b in range(batch_size):
-                if "expert_plan" in infos and len(infos["expert_plan"][b]) > 0:
-                    next_action = infos["expert_plan"][b][0]
+                if "extra.expert_plan" in infos and len(infos["extra.expert_plan"][b]) > 0:
+                    next_action = infos["extra.expert_plan"][b][0]
                     expert_actions.append(next_action)
                 else:
                     expert_actions.append("look")
