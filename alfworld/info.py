@@ -1,7 +1,6 @@
-__version__ = '0.3.0rc5'
+__version__ = '0.3.1'
 
 import os
-import shutil
 from os.path import join as pjoin
 
 from alfworld.utils import mkdirs
