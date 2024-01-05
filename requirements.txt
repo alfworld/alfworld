@@ -5,4 +5,4 @@ textworld[pddl]>=1.6.1
 torch
 torchvision
 tqdm
-werkzeug==2.2.2
+werkzeug==2.0.3
