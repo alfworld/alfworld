@@ -17,29 +17,23 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
 
 Install with pip (python3.9+):
 
-```bash
-$ pip install alfworld[full]
-```
+    pip install alfworld[full]
 
 Download PDDL & Game files and pre-trained MaskRCNN detector:
-
 ```bash
-$ export ALFWORLD_DATA=<storage_path>
-$ alfworld-download
+export ALFWORLD_DATA=<storage_path>
+alfworld-download
 ```
+
 Use `--extra` to download pre-trained checkpoints and seq2seq data.
 
 Play a Textworld game:
 
-```bash
-$ alfworld-play-tw
-```
+    alfworld-play-tw
 
 Play an Embodied-World (THOR) game:
 
-```bash
-$ alfworld-play-thor
-```
+    alfworld-play-thor
 
 Get started with a random agent:
 
@@ -74,31 +68,30 @@ Run `python <script>.py configs/base_config.yaml`
 Installing from source is recommended for development.
 
 Clone repo:
-```bash
-$ git clone https://github.com/alfworld/alfworld.git alfworld
-$ cd alfworld
-```
+
+    git clone https://github.com/alfworld/alfworld.git alfworld
+    cd alfworld
 
 Install requirements:
 ```bash
 # Note: Requires python 3.9 or higher
-$ virtualenv -p $(which python3.9) --system-site-packages alfworld_env # or whichever package manager you prefer
-$ source alfworld_env/bin/activate
+virtualenv -p $(which python3.9) --system-site-packages alfworld_env # or whichever package manager you prefer
+source alfworld_env/bin/activate
 
-$ pip install -e .[full]
+pip install -e .[full]
 ```
 
 Download PDDL & Game Files and pre-trained MaskRCNN detector:
 ```bash
-$ export ALFWORLD_DATA=<storage_path>
-$ python scripts/alfworld-download
+export ALFWORLD_DATA=<storage_path>
+python scripts/alfworld-download
 ```
 Use `--extra` to download pre-trained checkpoints and seq2seq data.
 
 Train models:
-```bash
-$ python scripts/train_dagger.py configs/base_config.yaml
-```
+
+    python scripts/train_dagger.py configs/base_config.yaml
+
 
 Play around with [TextWorld and THOR demos](scripts/).
 
@@ -141,53 +134,50 @@ Modify [docker_build.py](docker/docker_build.py) and [docker_run.py](docker/dock
 
 Build the image:
 
-```bash
-$ python docker/docker_build.py
-```
+    python docker/docker_build.py
 
 #### Run (Local)
 
 For local machines:
 
-```bash
-$ python docker/docker_run.py
+    python docker/docker_run.py
 
-  source ~/alfworld_env/bin/activate
-  cd ~/alfworld
-```
+    source ~/alfworld_env/bin/activate
+    cd ~/alfworld
+
 
 #### Run (Headless)
 
 For headless VMs and Cloud-Instances:
 
 ```bash
-$ python docker/docker_run.py --headless
+python docker/docker_run.py --headless
 
-  # inside docker
-  tmux new -s startx  # start a new tmux session
+# inside docker
+tmux new -s startx  # start a new tmux session
 
-  # start nvidia-xconfig
-  sudo nvidia-xconfig -a --use-display-device=None --virtual=1280x1024
+# start nvidia-xconfig
+sudo nvidia-xconfig -a --use-display-device=None --virtual=1280x1024
 
-  # start X server on DISPLAY 0
-  # single X server should be sufficient for multiple instances of THOR
-  sudo python ~/alfworld/docker/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
+# start X server on DISPLAY 0
+# single X server should be sufficient for multiple instances of THOR
+sudo python ~/alfworld/docker/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
-  # detach from tmux shell
-  # Ctrl+b then d
+# detach from tmux shell
+# Ctrl+b then d
 
-  # source env
-  source ~/alfworld_env/bin/activate
+# source env
+source ~/alfworld_env/bin/activate
 
-  # set DISPLAY variable to match X server
-  export DISPLAY=:0
+# set DISPLAY variable to match X server
+export DISPLAY=:0
 
-  # check THOR
-  python ~/alfworld/docker/check_thor.py
+# check THOR
+python ~/alfworld/docker/check_thor.py
 
-  ###############
-  ## (300, 300, 3)
-  ## Everything works!!!
+###############
+## (300, 300, 3)
+## Everything works!!!
 ```
 
 You might have to modify `X_DISPLAY` in [gen/constants.py](alfworld/gen/constants.py) depending on which display you use.
@@ -198,20 +188,20 @@ ALFWorld can be setup on headless machines like AWS or GoogleCloud instances.
 The main requirement is that you have access to a GPU machine that supports OpenGL rendering. Run [startx.py](docker/startx.py) in a tmux shell:
 ```bash
 # start tmux session
-$ tmux new -s startx
+tmux new -s startx
 
 # start X server on DISPLAY 0
 # single X server should be sufficient for multiple instances of THOR
-$ sudo python ~/alfworld/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
+sudo python ~/alfworld/scripts/startx.py 0  # if this throws errors e.g "(EE) Server terminated with error (1)" or "(EE) already running ..." try a display > 0
 
 # detach from tmux shell
 # Ctrl+b then d
 
 # set DISPLAY variable to match X server
-$ export DISPLAY=:0
+export DISPLAY=:0
 
 # check THOR
-$ python ~/alfworld/docker/check_thor.py
+python ~/alfworld/docker/check_thor.py
 
 ###############
 ## (300, 300, 3)
