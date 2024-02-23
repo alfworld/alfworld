@@ -180,24 +180,24 @@ class LinearSchedule(object):
             return self.schedule[step]
 
 
-def load_config():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("config_file", help="path to config file")
-    parser.add_argument("-p", "--params", nargs="+", metavar="my.setting=value", default=[],
-                        help="override params of the config file,"
-                             " e.g. -p 'training.gamma=0.95'")
-    args = parser.parse_args()
-    assert os.path.exists(args.config_file), "Invalid config file"
-    with open(args.config_file) as reader:
+def load_config(config_file):
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("config_file", help="path to config file")
+    # parser.add_argument("-p", "--params", nargs="+", metavar="my.setting=value", default=[],
+    #                     help="override params of the config file,"
+    #                          " e.g. -p 'training.gamma=0.95'")
+    # args = parser.parse_args()
+    # assert os.path.exists(args.config_file), "Invalid config file"
+    with open(config_file) as reader:
         config = yaml.safe_load(reader)
     # Parse overriden params.
-    for param in args.params:
-        fqn_key, value = param.split("=")
-        entry_to_change = config
-        keys = fqn_key.split(".")
-        for k in keys[:-1]:
-            entry_to_change = entry_to_change[k]
-        entry_to_change[keys[-1]] = value
+    # for param in args.params:
+        # fqn_key, value = param.split("=")
+        # entry_to_change = config
+        # keys = fqn_key.split(".")
+        # for k in keys[:-1]:
+            # entry_to_change = entry_to_change[k]
+        # entry_to_change[keys[-1]] = value
     # print(config)
     return config
 

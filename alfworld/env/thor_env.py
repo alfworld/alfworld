@@ -58,7 +58,8 @@ class ThorEnv(Controller):
               render_depth_image=constants.RENDER_DEPTH_IMAGE,
               render_class_image=constants.RENDER_CLASS_IMAGE,
               render_object_image=constants.RENDER_OBJECT_IMAGE,
-              visibility_distance=constants.VISIBILITY_DISTANCE):
+              visibility_distance=constants.VISIBILITY_DISTANCE,
+              make_agents_visible=False):
         '''
         reset scene and task states
         '''
@@ -79,7 +80,7 @@ class ThorEnv(Controller):
             renderClassImage=render_class_image,
             renderObjectImage=render_object_image,
             visibility_distance=visibility_distance,
-            makeAgentsVisible=False,
+            makeAgentsVisible=make_agents_visible,
         ))
 
         # reset task if specified
@@ -99,7 +100,7 @@ class ThorEnv(Controller):
         self.cooled_objects = set()
         self.heated_objects = set()
 
-    def restore_scene(self, object_poses, object_toggles, dirty_and_empty):
+    def restore_scene(self, object_poses, object_toggles, dirty_and_empty, make_agents_visible=False):
         '''
         restore object locations and states
         '''
@@ -112,7 +113,7 @@ class ThorEnv(Controller):
             renderClassImage=constants.RENDER_CLASS_IMAGE,
             renderObjectImage=constants.RENDER_OBJECT_IMAGE,
             visibility_distance=constants.VISIBILITY_DISTANCE,
-            makeAgentsVisible=False,
+            makeAgentsVisible=make_agents_visible,
         ))
         if len(object_toggles) > 0:
             super().step((dict(action='SetObjectToggles', objectToggles=object_toggles)))
