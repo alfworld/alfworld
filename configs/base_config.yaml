@@ -11,7 +11,7 @@ logic:
 
 env:
   type: 'AlfredTWEnv'                                          # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
-  regen_game_files: False                                      # check if game is solvable by expert and save to game.tw-pddl file
+  # regen_game_files: False                                    # [Deprecated] Use scripts/generate_tw_pddl.py instead.
   domain_randomization: False                                  # shuffle Textworld print order and object id nums
   task_types: [1, 2, 3, 4, 5, 6]                               # task-type ids: 1 - Pick & Place, 2 - Examine in Light, 3 - Clean & Place, 4 - Heat & Place, 5 - Cool & Place, 6 - Pick Two & Place
   expert_timeout_steps: 150                                    # max steps before timeout for expert to solve the task

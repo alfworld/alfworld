@@ -31,7 +31,7 @@ Seq2Seq Training (no DAgger baseline):
 $ python scripts/train_seq2seq.py config/base_config.yaml
 ```
 
-Run `python -m visdom.server` and set `visdom: True` in the [config file](../../configs/base_config.yaml) to plot training and evaluation curves.  
+Run `python -m visdom.server` and set `visdom: True` in the [config file](../../configs/base_config.yaml) to plot training and evaluation curves.
 
 ## Config
 
@@ -51,7 +51,7 @@ Environment:
 ```yaml
 env:
   type: 'AlfredTWEnv'                                       # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
-  regen_game_files: False                                   # check if game is solvable by expert and save to game.tw-pddl file
+  # regen_game_files: False                                   # [Deprecated] Use scripts/generate_tw_pddl.py instead.
   domain_randomization: False                               # shuffle Textworld print order and object id nums
   task_types: [1, 2, 3, 4, 5, 6]                            # task-type ids: 1 - Pick & Place, 2 - Examine in Light, 3 - Clean & Place, 4 - Heat & Place, 5 - Cool & Place, 6 - Pick Two & Place
   expert_timeout_steps: 150                                 # max steps before timeout for expert to solve the task
@@ -227,12 +227,12 @@ general:
 
   checkpoint:
     report_frequency: 10                                    # report eval results every N episode
-    load_pretrained: True                                  
+    load_pretrained: True
     load_from_tag: 'pretrained agent'                       # name of pre-trained model to load in save_path
 
 ```
 
-The script will sequentially evaluate all `envs`, `controllers`, and `eval_paths` in that nested order. 
+The script will sequentially evaluate all `envs`, `controllers`, and `eval_paths` in that nested order.
 
 
 ## Folder Structure
@@ -240,7 +240,7 @@ The script will sequentially evaluate all `envs`, `controllers`, and `eval_paths
 ```
 /configs
     base_config.yaml               (basic settings for all experiments)
-    eval_config.yaml               (settings for batch evaluations) 
+    eval_config.yaml               (settings for batch evaluations)
 /scripts
     train_dagger.py                (training script for TextDAgger agents)
     train_vision_dagger.py         (training script for VisionDAgger agents)
