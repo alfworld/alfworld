@@ -15,6 +15,7 @@ setup(
     packages=find_packages(),
     scripts=[
         "scripts/alfworld-download",
+        "scripts/alfworld-generate",
         "scripts/alfworld-play-tw",
         "scripts/alfworld-play-thor",
     ],

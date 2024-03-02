@@ -122,7 +122,7 @@ class AlfredTWEnv(object):
 
         if config["env"]["goal_desc_human_anns_prob"] > 0:
             msg = ("Warning! Changing `goal_desc_human_anns_prob` should be done with"
-                   " `scripts/generate_tw_pddl.py`. Ignoring it and loading games as they are.")
+                   " the script `alfworld-generate`. Ignoring it and loading games as they are.")
             print(colored(msg, "yellow"))
 
         self.collect_game_files()

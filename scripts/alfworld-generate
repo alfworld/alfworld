@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 import json
 import random
@@ -18,8 +20,7 @@ from textworld.envs import PddlEnv
 from alfworld.agents.environment.alfred_tw_env import AlfredInfos, AlfredDemangler, AlfredExpert, AlfredExpertType
 
 from alfworld.info import ALFWORLD_DATA
-from alfworld.agents.utils.misc import Demangler, add_task_to_grammar
-from alfworld.agents.expert import HandCodedTWAgent, HandCodedAgentTimeout
+from alfworld.agents.utils.misc import add_task_to_grammar
 
 
 TASK_TYPES = {
@@ -191,10 +192,11 @@ if __name__ == "__main__":
     description = "Generate the .tw-pddl files for each traj_data.json file."
 
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('--data_path',
-                        default=pjoin(ALFWORLD_DATA, "json_2.1.1"))
+
+    parser.add_argument('--data_path', default=pjoin(ALFWORLD_DATA, "json_2.1.1"),
+                        help="Path to ALFWorld data Default: `%(default)s`.")
     parser.add_argument('--save_path',
-                        help='Output directory for the .tw-pddl files. Default: same as `data_path`.')
+                        help='Output directory for the .tw-pddl files. Default: same as --data_path.')
 
     parser.add_argument("--domain",
                         default=pjoin(ALFWORLD_DATA, "logic", "alfred.pddl"),

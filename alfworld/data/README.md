@@ -106,13 +106,13 @@ python scripts/augment_pddl_states.py --data_path $ALFWORLD_DATA/json_2.1.1/trai
 #### Adding additional attributes to TextWorld games
 
 1. Use [augment_pddl_states.py](../../scripts/augment_pddl_states.py#L254) to dump additional attributes and properties from THOR into `initial_state.pddl`.
-2. Use [generate_tw_pddl.py](../../scripts/generate_tw_pddl.py) to generate `game.tw-pddl` files from the new `initial_state.pddl`s. This will use the expert to check if the text game is solvable and then dump a game file used by the text-engine.
+2. Use [alfworld-generate](../../scripts/alfworld-generate) to generate `game.tw-pddl` files from the new `initial_state.pddl`s. This will use the expert to check if the text game is solvable and then dump a game file used by the text-engine.
 3. Modify the demangler in [`misc.py`](../../alfworld/agents/utils/misc.py#L64) to display the attribute in Textworld, or modify the grammar in [`alfred.twl2`](https://github.com/alfworld/alfworld/blob/master/data/textworld_data/logic/alfred.twl2) to your needs.
 
 #### Generating TextWorld games that use human goal annotations.
 
 ```bash
-python scripts/generate_tw_pddl.py --data_path $ALFWORLD_DATA/json_2.1.1 --save_path custom_dataset/ --goal_desc_human_anns_prob 1
+alfworld-generate --data_path $ALFWORLD_DATA/json_2.1.1 --save_path custom_dataset/ --goal_desc_human_anns_prob 1
 ```
 
 ## Mask-RCNN Detector
