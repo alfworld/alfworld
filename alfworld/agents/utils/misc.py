@@ -104,16 +104,16 @@ def clean_alfred_facts(facts):
     return facts
 
 
-def add_task_to_grammar(grammar_str, traj_data, goal_desc_human_anns_prob=0.0):
-    if random.random() < goal_desc_human_anns_prob:
-        task_desc = get_human_anns_task_desc(traj_data)
+def add_task_to_grammar(grammar_str, traj_data, goal_desc_human_anns_prob=0.0, rng=random):
+    if rng.random() < goal_desc_human_anns_prob:
+        task_desc = get_human_anns_task_desc(traj_data, rng)
     else:
         task_desc = get_templated_task_desc(traj_data)
     return grammar_str.replace("UNKNOWN GOAL", task_desc)
 
 
-def get_human_anns_task_desc(traj_data):
-    return random.choice(traj_data['turk_annotations']['anns'])['task_desc']
+def get_human_anns_task_desc(traj_data, rng=random):
+    return rng.choice(traj_data['turk_annotations']['anns'])['task_desc']
 
 
 def parse_objects(desc):

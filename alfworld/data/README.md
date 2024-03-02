@@ -7,27 +7,27 @@ The ALFWorld dataset contains 3,553 training games, 140 seen and 134 unseen vali
 Download PDDL, Game Files and pre-trained MaskRCNN model:
 
 ```bash
-$ python scripts/alfworld-download
+python scripts/alfworld-download
 ```
 
 Additional Seq2Seq data and pre-trained BUTLER checkpoints (All Tasks):
 
 ```bash
-$ python scripts/alfworld-download --extra
+python scripts/alfworld-download --extra
 ```
 
 ## File Structure
 
 ```
-data/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/                   (trajectory root)
-data/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/traj_data.json     (trajectory metadata)
-data/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/initial_state.pddl (PDDL description of the initial state)
-data/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/game.tw-pddl       (textworld game file)
+$ALFWORLD_DATA/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/                   (trajectory root)
+$ALFWORLD_DATA/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/traj_data.json     (trajectory metadata)
+$ALFWORLD_DATA/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/initial_state.pddl (PDDL description of the initial state)
+$ALFWORLD_DATA/json_2.1.1/train/task_type-object-movableReceptacle-receptacle-sceneNum/trial_ID/game.tw-pddl       (textworld game file)
 ```
 
 ## JSON Structure
 
-Dictionary sturcture of `traj_data.json`:
+Dictionary structure of `traj_data.json`:
 
 Task Info:
 ```
@@ -52,8 +52,8 @@ Scene Info:
 
 Language Annotations:
 ```
-['turk_annotations']['anns'] =  
-             [{'task_desc': "Examine a clock using the light of a lamp.",                 (goal instruction) 
+['turk_annotations']['anns'] =
+             [{'task_desc': "Examine a clock using the light of a lamp.",                 (goal instruction)
                'high_descs': ["Turn to the left and move forward to the window ledge.",   (list of step-by-step instructions)
                               "Pick up the alarm clock on the table", ...],               (indexes aligned with high_idx)
                'votes': [1, 1, 1]                                                         (AMTurk languauge quality votes)
@@ -66,22 +66,22 @@ Expert Demonstration:
 ['plan'] = {'high_pddl':
                 ...,
                 ["high_idx": 4,                          (high-level subgoal index)
-                 "discrete_action":                    
+                 "discrete_action":
                      {"action": "PutObject",             (discrete high-level action)
                       "args": ["bread", "microwave"],    (discrete params)
                  "planner_action": <PDDL_ACTION> ],      (PDDL action)
                 ...],
-                 
-            'low_actions': 
+
+            'low_actions':
                 ...,
                 ["high_idx": 1,                          (high-level subgoal index)
                  "discrete_action":
                      {"action": "PickupObject",          (discrete low-level action)
-                      "args": 
+                      "args":
                           {"bbox": [180, 346, 332, 421]} (bounding box for interact action)
                            "mask": [0, 0, ... 1, 1]},    (compressed pixel mask for interact action)
                  "api_action": <API_CMD> ],              (THOR API command for replay)
-                ...], 
+                ...],
            }
 ```
 
@@ -100,32 +100,38 @@ Images:
 To generate `initial_state.pddl` from ALFRED `traj_data.json` files:
 
 ```bash
-$ python scripts/augment_pddl_states.py --data_path $ALFWORLD_DATA/json_2.1.1/train
+python scripts/augment_pddl_states.py --data_path $ALFWORLD_DATA/json_2.1.1/train
 ```
 
-#### Adding additional attributes to Textworld games
+#### Adding additional attributes to TextWorld games
 
-1. Use [augment_pddl_states.py](../../scripts/augment_pddl_states.py#L254) to dump additional attributes and properties from THOR into `initial_state.pddl`.  
-2. Set [`regen_game_files = True`](../../configs/base_config.yaml#L14) in your config file to generate `game.tw-pddl` files from the new `initial_state.pddl`s. This will use the expert to check if the text game is solvable and then dump a game file used by the text-engine. 
+1. Use [augment_pddl_states.py](../../scripts/augment_pddl_states.py#L254) to dump additional attributes and properties from THOR into `initial_state.pddl`.
+2. Use [alfworld-generate](../../scripts/alfworld-generate) to generate `game.tw-pddl` files from the new `initial_state.pddl`s. This will use the expert to check if the text game is solvable and then dump a game file used by the text-engine.
 3. Modify the demangler in [`misc.py`](../../alfworld/agents/utils/misc.py#L64) to display the attribute in Textworld, or modify the grammar in [`alfred.twl2`](https://github.com/alfworld/alfworld/blob/master/data/textworld_data/logic/alfred.twl2) to your needs.
 
-## Mask-RCNN Detector 
+#### Generating TextWorld games that use human goal annotations.
+
+```bash
+alfworld-generate --data_path $ALFWORLD_DATA/json_2.1.1 --save_path custom_dataset/ --goal_desc_human_anns_prob 1
+```
+
+## Mask-RCNN Detector
 
 #### Generating MaskRCNN training images from ALFRED
 
 To generate image and instance-segmentation pairs from ALFRED training scenes:
 
 ```bash
-$ python scripts/augment_trajectories.py --data_path $ALFWORLD_DATA/json_2.1.1/train --save_path $ALFWORLD_DATA/raw_images --num_threads 4 
+python scripts/augment_trajectories.py --data_path $ALFWORLD_DATA/json_2.1.1/train --save_path $ALFWORLD_DATA/raw_images --num_threads 4
 ```
 
-#### Fine-tuning MaskRCNN 
+#### Fine-tuning MaskRCNN
 
 To fine-tune a COCO-trained MaskRCNN model:
 
 ```bash
-$ python scripts/train_mrcnn.py --data_path $ALFWORLD_DATA/raw_images --save_path $ALFWORLD_DATA/mrcnn --balance_scenes --object_types objects  --batch_size 32 
+python scripts/train_mrcnn.py --data_path $ALFWORLD_DATA/raw_images --save_path $ALFWORLD_DATA/mrcnn --balance_scenes --object_types objects  --batch_size 32
 ```
 
 #### Pre-trained Models
-The default pre-trained model provided in the repo is trained on 73 object classes without receptacles. We also provide [other models](https://github.com/alfworld/alfworld/releases/tag/0.2.2) for receptacles (32 receptacle classes) and all objects (105 classes). These pre-trained models are named `mrcnn_*`.  
+The default pre-trained model provided in the repo is trained on 73 object classes without receptacles. We also provide [other models](https://github.com/alfworld/alfworld/releases/tag/0.2.2) for receptacles (32 receptacle classes) and all objects (105 classes). These pre-trained models are named `mrcnn_*`.
