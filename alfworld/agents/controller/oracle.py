@@ -193,8 +193,10 @@ class OracleAgent(BaseAgent):
                     event = self.env.step({'action': "PickupObject",
                                            'objectId': object['object_id'],
                                            'forceAction': True})
-                    self.inventory.append(object['num_id'])
-                    self.feedback = "You pick up the %s from the %s." % (obj, tar)
+
+                    if event.metadata['lastActionSuccess']:
+                        self.inventory.append(object['num_id'])
+                        self.feedback = "You pick up the %s from the %s." % (obj, tar)
 
             elif cmd['action'] == self.Action.PUT:
                 obj, rel, tar = cmd['obj'], cmd['rel'], cmd['tar']
@@ -329,6 +331,8 @@ class OracleAgent(BaseAgent):
 
         if event and not event.metadata['lastActionSuccess']:
             self.feedback = "Nothing happens."
+            if self.debug:
+                print(event.metadata['errorMessage'])
 
         if self.debug:
             print(self.feedback)

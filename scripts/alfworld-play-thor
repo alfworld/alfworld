@@ -14,6 +14,22 @@ from alfworld.env.thor_env import ThorEnv
 from alfworld.agents.detector.mrcnn import load_pretrained_model
 from alfworld.agents.controller import OracleAgent, OracleAStarAgent, MaskRCNNAgent, MaskRCNNAStarAgent
 
+prompt_toolkit_available = False
+try:
+    # For command line history and autocompletion.
+    from prompt_toolkit import prompt
+    from prompt_toolkit.completion import WordCompleter
+    from prompt_toolkit.history import InMemoryHistory
+    prompt_toolkit_available = sys.stdout.isatty()
+except ImportError:
+    pass
+
+try:
+    # For command line history when prompt_toolkit is not available.
+    import readline  # noqa: F401
+except ImportError:
+    pass
+
 
 def setup_scene(env, traj_data, r_idx, args, reward_type='dense'):
     # scene setup
@@ -73,9 +89,20 @@ def main(args):
     else:
         raise NotImplementedError()
 
+    history = None
+    if prompt_toolkit_available:
+        history = InMemoryHistory()
+
     print(agent.feedback)
     while True:
-        cmd = input()
+        if prompt_toolkit_available:
+            actions_completer = None
+            admissible_commands = agent.get_admissible_commands()
+            actions_completer = WordCompleter(admissible_commands, ignore_case=True, sentence=True)
+            cmd = prompt('> ', completer=actions_completer, history=history, enable_history_search=True)
+        else:
+            cmd = input('> ')
+
         if cmd == "ipdb":
             from ipdb import set_trace; set_trace()
             continue
@@ -104,9 +131,12 @@ if __name__ == "__main__":
 
     if args.problem is None:
         problems = glob.glob(pjoin(ALFWORLD_DATA, "**", "initial_state.pddl"), recursive=True)
+
+        # Remove problem which contains movable receptacles.
+        problems = [p for p in problems if "movable_recep" not in p]
         args.problem = os.path.dirname(random.choice(problems))
 
+    if "movable_recep" in args.problem:
+        raise ValueError("This problem contains movable receptacles, which is not supported by ALFWorld.")
+
     main(args)
-
-
-
