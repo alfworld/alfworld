@@ -1,4 +1,5 @@
-FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
+#FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
+FROM nvidia/cuda:11.3.1-devel-ubuntu20.04
 
 ARG USER_NAME
 ARG USER_PASSWORD
@@ -30,16 +31,17 @@ RUN apt-get update && \
   apt-get install -y software-properties-common && \
   add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update
-RUN apt-get install -y python3.6 python3.6-dev python3-pip python3.6-venv
+RUN apt-get install -y cmake
+RUN apt-get install -y python3.10 python3.10-dev python3-pip python3.10-venv
 
 # setup python environment
 RUN cd $WORKDIR
 ENV VIRTUAL_ENV=/home/$USER_NAME/alfworld_env
-RUN python3.6 -m virtualenv --python=/usr/bin/python3.6 $VIRTUAL_ENV
+RUN python3.10 -m virtualenv --python=/usr/bin/python3.10 $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # install python requirements
-RUN pip install --upgrade pip==19.3.1
+RUN pip install --upgrade pip
 RUN pip install -U setuptools
 COPY ./requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
