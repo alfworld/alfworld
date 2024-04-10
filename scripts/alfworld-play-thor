@@ -136,7 +136,7 @@ if __name__ == "__main__":
         problems = [p for p in problems if "movable_recep" not in p]
         args.problem = os.path.dirname(random.choice(problems))
 
-    if "movable_recep" in args.problem:
-        raise ValueError("This problem contains movable receptacles, which is not supported by ALFWorld.")
+    # if "movable_recep" in args.problem:
+    #     raise ValueError("This problem contains movable receptacles, which is not supported by ALFWorld.")
 
     main(args)

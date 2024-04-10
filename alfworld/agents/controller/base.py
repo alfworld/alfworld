@@ -124,7 +124,13 @@ class BaseAgent(object):
     # display initial observation and task text
     def print_intro(self):
         self.feedback = "-= Welcome to TextWorld, ALFRED! =-\n\nYou are in the middle of a room. Looking quickly around you, you see "
-        recep_list = ["a %s," % (recep['num_id']) for id, recep in self.receptacles.items()]
+        STATIC_RECEPTACLES_LOWER = list(map(str.lower, self.STATIC_RECEPTACLES))
+        recep_list = []
+        for id, recep in self.receptacles.items():
+            recep_int = recep['num_id']
+            recep_class = recep_int.split(' ')[0]
+            if recep_class.lower() in STATIC_RECEPTACLES_LOWER:
+                recep_list.append("a %s," % recep_int)
         self.feedback += self.fix_and_comma_in_the_end(" ".join(recep_list)) + "\n\n"
 
         if random.random() < self.goal_desc_human_anns_prob:

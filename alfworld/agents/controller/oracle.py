@@ -21,6 +21,7 @@ class OracleAgent(BaseAgent):
                  load_receps=False, debug=False,
                  goal_desc_human_anns_prob=0.0,
                  use_gt_relations=False):
+        self.frame_desc_oc = ""
         self.openable_points = self.get_openable_points(traj_data)
         self.use_gt_relations = use_gt_relations
         self.exploration_frames = []
@@ -52,7 +53,7 @@ class OracleAgent(BaseAgent):
     # use pre-computed openable points from ALFRED to store receptacle locations
     def explore_scene(self):
         agent_height = self.env.last_event.metadata['agent']['position']['y']
-        for object_id, point in self.openable_points.items():
+        for object_id_org, point in self.openable_points.items():
             action = {'action': 'TeleportFull',
                       'x': point[0],
                       'y': agent_height,
@@ -81,19 +82,62 @@ class OracleAgent(BaseAgent):
                         if "Basin" in object_id:
                             object_type += "Basin"
 
-                        if object_type in self.STATIC_RECEPTACLES:
-                            if object_id not in self.receptacles:
-                                self.receptacles[object_id] = {
-                                    'object_id': object_id,
-                                    'object_type': object_type,
-                                    'locs': action,
-                                    'num_pixels': num_pixels,
-                                    'num_id': "%s %d" % (object_type.lower(), self.get_next_num_id(object_type, self.receptacles)),
-                                    'closed': True if object_type in constants.OPENABLE_CLASS_LIST else None
-                                }
-                            elif object_id in self.receptacles and num_pixels > self.receptacles[object_id]['num_pixels']:
-                                self.receptacles[object_id]['locs'] = action  # .append(action)
-                                self.receptacles[object_id]['num_pixels'] = num_pixels
+                        # if object_type in self.STATIC_RECEPTACLES:
+                        if object_id not in self.receptacles:
+                            self.receptacles[object_id] = {
+                                'object_id': object_id,
+                                'object_type': object_type,
+                                'locs': action,
+                                'num_pixels': num_pixels,
+                                'num_id': "%s %d" % (object_type.lower(), self.get_next_num_id(object_type, self.receptacles)),
+                                'closed': True if object_type in constants.OPENABLE_CLASS_LIST else None
+                            }
+                        elif object_id in self.receptacles and num_pixels > self.receptacles[object_id]['num_pixels']:
+                            self.receptacles[object_id]['locs'] = action  # .append(action)
+                            self.receptacles[object_id]['num_pixels'] = num_pixels
+
+            event = self.env.step({'action': "OpenObject",
+                                   'objectId': object_id_org,
+                                   'forceAction': True})
+
+            if event.metadata['lastActionSuccess']:
+                self.exploration_frames.append(np.array(self.env.last_event.frame[:, :, ::-1]))
+                instance_segs = np.array(self.env.last_event.instance_segmentation_frame)
+                color_to_object_id = self.env.last_event.color_to_object_id
+
+                # find unique instance segs
+                color_count_new = Counter()
+                for x in range(instance_segs.shape[0]):
+                    for y in range(instance_segs.shape[1]):
+                        color = instance_segs[y, x]
+                        color_count_new[tuple(color)] += 1
+
+                for color, num_pixels in color_count_new.most_common():
+                    if color in color_to_object_id:
+                        object_id = color_to_object_id[color]
+                        object_type = object_id.split('|')[0]
+                        if "Basin" in object_id:
+                            object_type += "Basin"
+
+                        # if object_type in self.STATIC_RECEPTACLES:
+                        if object_id not in self.receptacles:
+                            self.receptacles[object_id] = {
+                                'object_id': object_id,
+                                'object_type': object_type,
+                                'locs': action,
+                                'num_pixels': num_pixels,
+                                'num_id': "%s %d" % (
+                                object_type.lower(), self.get_next_num_id(object_type, self.receptacles)),
+                                'closed': True if object_type in constants.OPENABLE_CLASS_LIST else None
+                            }
+                        elif object_id in self.receptacles and num_pixels > self.receptacles[object_id][
+                            'num_pixels']:
+                            self.receptacles[object_id]['locs'] = action  # .append(action)
+                            self.receptacles[object_id]['num_pixels'] = num_pixels
+
+            self.env.step({'action': "CloseObject",
+                           'objectId': object_id_org,
+                           'forceAction': True})
 
         # self.save_receps()
 
@@ -129,6 +173,7 @@ class OracleAgent(BaseAgent):
         # for each unique seg add to object dictionary if it's more visible than before
         visible_objects = []
         for color, num_pixels in inst_color_count.most_common():
+
             if color in inst_color_to_object_id:
                 object_id = inst_color_to_object_id[color]
                 object_type = object_id.split("|")[0]
@@ -136,15 +181,39 @@ class OracleAgent(BaseAgent):
                 is_obj_in_recep = (object_metadata and object_metadata['parentReceptacles'] and len(object_metadata['parentReceptacles']) > 0 and recep_object_id in object_metadata['parentReceptacles'])
                 if object_type in self.OBJECTS and object_metadata and (not self.use_gt_relations or is_obj_in_recep):
                     if object_id not in self.objects:
-                        self.objects[object_id] = {
-                            'object_id': object_id,
-                            'object_type': object_type,
-                            'parent': recep['object_id'],
-                            'loc': loc,
-                            'num_pixels': num_pixels,
-                            'num_id': "%s %d" % (object_type.lower() if "Sliced" not in object_id else "sliced-%s" % object_type.lower(),
-                                                 self.get_next_num_id(object_type, self.objects))
-                        }
+                        if "Sliced" in object_id:
+                            num_id_set = int(object_id.split("_")[1])
+                            self.objects[object_id] = {
+                                'object_id': object_id,
+                                'object_type': object_type,
+                                'parent': recep['object_id'],
+                                'loc': loc,
+                                'num_pixels': num_pixels,
+                                'num_id': "%s %d" % (
+                                object_type.lower() if "Sliced" not in object_id else "sliced-%s" % object_type.lower(),
+                                num_id_set)}
+                        elif "Cracked" in object_id:
+                            num_id_set = self.get_next_num_id(object_type, self.receptacles)
+                            self.objects[object_id] = {
+                                'object_id': object_id,
+                                'object_type': object_type,
+                                'parent': recep['object_id'],
+                                'loc': loc,
+                                'num_pixels': num_pixels,
+                                'num_id': "%s %d" % (object_type.lower(), num_id_set)}
+                        else:
+                            try:
+                                num_id_set = int(self.receptacles[object_id]['num_id'].split(" ")[1])
+                                self.objects[object_id] = {
+                                    'object_id': object_id,
+                                    'object_type': object_type,
+                                    'parent': recep['object_id'],
+                                    'loc': loc,
+                                    'num_pixels': num_pixels,
+                                    'num_id': "%s %d" % (object_type.lower(), num_id_set)}
+                            except:
+                                continue
+
                     elif object_id in self.objects and num_pixels > self.objects[object_id]['num_pixels']:
                         self.objects[object_id]['loc'] = loc
                         self.objects[object_id]['num_pixels'] = num_pixels
