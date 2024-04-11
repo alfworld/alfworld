@@ -13,6 +13,15 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
    <img src="https://github.com/alfworld/alfworld/blob/master/media/alfworld_teaser.png" width="500">
 </p>
 
+## *Notice***
+
+Currently, the problem with the task `playing thor-game with movable receptacle` **has been fixed**, **while ensuring that other tasks are not affected**.
+
+However, there is still a special error case:
+- If "object" has been placed on "Pan", it cannot move with "Pan". And you can only move "Pan" to the target position first, and then place "object" on "Pan".
+- The confused thing is :
+  - if "object" is sliced, “sliced-object” can be placed on "Pan", and "Pan" can carry "sliced-object" for movement (provided that "sliced-object" can be placed on "Pan").
+
 ## Quickstart
 
 Install with pip (python3.9+):
