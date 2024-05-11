@@ -92,8 +92,8 @@ class AlfredExpert(textworld.core.Wrapper):
     def load(self, gamefile):
         super().load(gamefile)
         self.gamefile = gamefile
-        self.request_infos.policy_commands = (self.expert_type == AlfredExpertType.PLANNER)
-        self.request_infos.facts = (self.expert_type == AlfredExpertType.HANDCODED)
+        self.request_infos.policy_commands = self.request_infos.policy_commands or (self.expert_type == AlfredExpertType.PLANNER)
+        self.request_infos.facts = self.request_infos.facts or (self.expert_type == AlfredExpertType.HANDCODED)
         self._handcoded_expert = HandCodedTWAgent(max_steps=200)
 
     def step(self, command):
