@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import os
 
 ########################################################################################################################
 # General Settings
@@ -85,7 +86,7 @@ data_dict = OrderedDict()  # dictionary for storing trajectory data to be dumped
 # Unity Hyperparameters
 
 BUILD_PATH = None
-X_DISPLAY = '0'
+X_DISPLAY = None
 
 AGENT_STEP_SIZE = 0.25
 AGENT_HORIZON_ADJ = 15
