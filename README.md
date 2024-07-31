@@ -15,6 +15,17 @@ For the latest updates, see: [**alfworld.github.io**](https://alfworld.github.io
 
 ## Quickstart
 
+Create a virtual environment (recommended)
+
+    conda create -n alfworld python=3.9
+    conda activate alfworld
+
+> [!WARNING]  
+> If you are using MacOS with an arm-based system, it is recommended to use
+> 
+    CONDA_SUBDIR=osx-64 conda create -n alfworld python=3.9
+    conda activate alfworld
+
 Install with pip (python3.9+):
 
     pip install alfworld[full]
