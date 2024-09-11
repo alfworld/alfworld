@@ -36,9 +36,12 @@ def main(args):
     gamefile = os.path.join(os.path.dirname(pddl_file), 'game.tw-pddl')
     json.dump(gamedata, open(gamefile, "w"))
 
-
-    expert = AlfredExpert(expert_type=AlfredExpertType.PLANNER)
-    # expert = AlfredExpert(expert_type=AlfredExpertType.HANDCODED)
+    if args.expert == "planner":
+        expert = AlfredExpert(expert_type=AlfredExpertType.PLANNER)
+    elif args.expert == "heuristic":
+        expert = AlfredExpert(expert_type=AlfredExpertType.HANDCODED)
+    else:
+        raise ValueError(f"Unknown expert type: {args.expert}")
 
     # register a new Gym environment.
     request_infos = textworld.EnvInfos(won=True, admissible_commands=True, score=True, max_score=True, intermediate_reward=True, extras=["expert_plan"])
@@ -83,6 +86,8 @@ if __name__ == "__main__":
                         default=pjoin(ALFWORLD_DATA, "logic", "alfred.twl2"),
                         help="Path to a TWL2 file defining the grammar used to generated text feedbacks."
                              " Default: `%(default)s`.")
+    parser.add_argument("--expert", default="heuristic", choices=["heuristic", "planner"],
+                        help="Expert to use to solve the task ('heuristic', 'planner'). Default: `%(default)s`.")
     args = parser.parse_args()
 
     if args.problem is None:
