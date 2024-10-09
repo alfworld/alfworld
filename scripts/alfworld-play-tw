@@ -90,6 +90,10 @@ if __name__ == "__main__":
 
         # Remove problem which contains movable receptacles.
         problems = [p for p in problems if "movable_recep" not in p]
+
+        if len(problems) == 0:
+            raise ValueError(f"Can't find problem files in {ALFWORLD_DATA}. Did you run alfworld-data?")
+        
         args.problem = os.path.dirname(random.choice(problems))
 
     if "movable_recep" in args.problem:
