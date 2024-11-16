@@ -1,0 +1,7 @@
+ai2thor==2.1.0
+opencv-python
+pandas
+torch
+torchvision
+tqdm
+werkzeug==2.0.3

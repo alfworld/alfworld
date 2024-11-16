@@ -20,9 +20,9 @@ Create a virtual environment (recommended)
     conda create -n alfworld python=3.9
     conda activate alfworld
 
-> [!WARNING]  
+> [!WARNING]
 > If you are using MacOS with an arm-based system, it is recommended to use
-> 
+>
     CONDA_SUBDIR=osx-64 conda create -n alfworld python=3.9
     conda activate alfworld
 
@@ -115,12 +115,10 @@ Play around with [TextWorld and THOR demos](scripts/).
 ## Prerequisites
 
 - Python 3.9+
-- PyTorch 1.2.0 (later versions might be ok)
-- Torchvision 0.4.0 (later versions might be ok)
-- AI2THOR 2.1.0
 
-See [requirements.txt](requirements.txt) for the prerequisites to run ALFWorld.
-See [requirements-full.txt](requirements-full.txt) for the prerequisites to run experiments.
+See [requirements.txt](requirements.txt) for the prerequisites to run ALFWorld text-only version.
+See [requirements-vis.txt](requirements.txt) for the prerequisites to run ALFWorld with both text and visual modalities.
+See [requirements-full.txt](requirements-full.txt) for the full prerequisites to run experiments.
 
 ## Hardware
 
