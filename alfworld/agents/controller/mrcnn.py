@@ -20,7 +20,10 @@ import alfworld.gen.constants as constants
 from alfworld.agents.controller.base import BaseAgent
 from alfworld.agents.utils.misc import extract_admissible_commands_with_heuristics
 
-import torchvision.transforms as T
+try:
+    import torchvision.transforms as T
+except ImportError:
+    raise ImportError("torchvision not found. Please install them via `pip install alfworld[full]`.")
 
 class MaskRCNNAgent(BaseAgent):
 

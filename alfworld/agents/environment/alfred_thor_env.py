@@ -1,17 +1,15 @@
 import os
 import json
-import glob
 import numpy as np
 
 import traceback
 import threading
 from queue import Queue
 from threading import Thread
-import sys
 import random
 
 import alfworld.agents
-from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
+from alfworld.agents.utils.misc import get_templated_task_desc
 from alfworld.env.thor_env import ThorEnv
 from alfworld.agents.expert import HandCodedThorAgent, HandCodedAgentTimeout
 from alfworld.agents.detector.mrcnn import load_pretrained_model

@@ -30,6 +30,8 @@ Install with pip (python3.9+):
 
     pip install alfworld[full]
 
+> **Note:** Without the `full` extra, it will only install the text version of ALFWorld. To enable visual modalities, use `pip install alfworld[vis]`.
+
 Download PDDL & Game files and pre-trained MaskRCNN detector:
 ```bash
 export ALFWORLD_DATA=<storage_path>
@@ -131,6 +133,9 @@ Tested on:
 
 ## Docker Setup
 
+> [!WARNING]
+> This docker setup has been tested for an older version of ALFWorld.
+
 Pull [vzhong](https://github.com/vzhong)'s image: https://hub.docker.com/r/vzhong/alfworld
 
 **OR**
@@ -221,10 +226,6 @@ You might have to modify `X_DISPLAY` in [gen/constants.py](alfworld/gen/constant
 
 Also, checkout this guide: [Setting up THOR on Google Cloud](https://medium.com/@etendue2013/how-to-run-ai2-thor-simulation-fast-with-google-cloud-platform-gcp-c9fcde213a4a)
 
-## Change Log
-
-18/12/2020:
-- PIP package version available. The repo was refactored.
 
 ## Citations
 

@@ -1,7 +1,7 @@
 import random
-import importlib
 
-import alfworld.agents.environment
+from alfworld.agents.environment.alfred_thor_env import AlfredThorEnv
+from alfworld.agents.environment.alfred_tw_env import AlfredTWEnv
 
 
 class AlfredHybrid(object):
@@ -28,12 +28,12 @@ class AlfredHybrid(object):
             return self.tw
 
     def init_env(self, batch_size):
-        AlfredTWEnv = getattr(alfworld.agents.environment, "AlfredTWEnv")(self.config, train_eval=self.train_eval)
-        AlfredThorEnv = getattr(alfworld.agents.environment, "AlfredThorEnv")(self.config, train_eval=self.train_eval)
+        alfred_tw_env = AlfredTWEnv(self.config, train_eval=self.train_eval)
+        alfred_thor_env = AlfredThorEnv(self.config, train_eval=self.train_eval)
 
         self.batch_size = batch_size
-        self.tw = AlfredTWEnv.init_env(batch_size)
-        self.thor = AlfredThorEnv.init_env(batch_size)
+        self.tw = alfred_tw_env.init_env(batch_size)
+        self.thor = alfred_thor_env.init_env(batch_size)
         return self
 
     def seed(self, num):

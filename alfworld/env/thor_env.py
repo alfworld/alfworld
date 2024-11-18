@@ -1,10 +1,14 @@
-import cv2
 import copy
 import os
 import glob
 import numpy as np
 from collections import Counter, OrderedDict
-from ai2thor.controller import Controller
+
+try:
+    from ai2thor.controller import Controller
+    import cv2
+except ImportError:
+    raise ImportError("ai2thor or cv2 not found. Please install them via `pip install alfworld[vis]`.")
 
 import alfworld.gen.constants as constants
 from alfworld.env.tasks import get_task

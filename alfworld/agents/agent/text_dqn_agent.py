@@ -4,8 +4,12 @@ import logging
 from queue import PriorityQueue
 
 import numpy as np
-import torch
-import torch.nn.functional as F
+
+try:
+    import torch
+    import torch.nn.functional as F
+except ImportError:
+    raise ImportError("torch not found. Please install them via `pip install alfworld[full]`.")
 logging.getLogger("transformers.tokenization_utils").setLevel(logging.ERROR)
 
 from alfworld.agents.agent import BaseAgent
