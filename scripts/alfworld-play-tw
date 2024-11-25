@@ -34,7 +34,7 @@ def main(args):
     # dump game file
     gamedata = dict(**GAME_LOGIC, pddl_problem=open(pddl_file).read())
     gamefile = os.path.join(os.path.dirname(pddl_file), 'game.tw-pddl')
-    #json.dump(gamedata, open(gamefile, "w"))
+    json.dump(gamedata, open(gamefile, "w"))
 
 
     expert = AlfredExpert(expert_type=AlfredExpertType.PLANNER)
