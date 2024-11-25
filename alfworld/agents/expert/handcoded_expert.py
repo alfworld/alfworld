@@ -236,7 +236,7 @@ class BasePolicy(object):
                 # if holding something irrelavant, then discard it from where it was pickedup
                 if len(self.inventory) > 0 and not self.is_agent_holding_right_object:
                     if self.curr_recep == self.got_inventory_from_recep:
-                        return "put {} in/on {}".format(self.inventory[0], self.got_inventory_from_recep)
+                        return "move {} to {}".format(self.inventory[0], self.got_inventory_from_recep)
                     else:
                         return "go to {}".format(self.got_inventory_from_recep)
 
@@ -276,7 +276,7 @@ class BasePolicy(object):
                 return "open {}".format(self.curr_recep)
             else:
                 obj = self.inventory[0]
-                return "put {} in/on {}".format(obj, self.curr_recep)
+                return "move {} to {}".format(obj, self.curr_recep)
 
         # OPEN
         if sub_action == 'open':
@@ -321,7 +321,7 @@ class BasePolicy(object):
         # if holding something irrelavant, then discard it from where it was pickedup
         if len(self.inventory) > 0 and not self.is_agent_holding_right_object:
             if self.curr_recep == self.got_inventory_from_recep:
-                return "put {} in/on {}".format(self.inventory[0], self.got_inventory_from_recep)
+                return "move {} to {}".format(self.inventory[0], self.got_inventory_from_recep)
             else:
                 return "go to {}".format(self.got_inventory_from_recep)
 
