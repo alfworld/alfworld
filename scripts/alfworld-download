@@ -17,7 +17,7 @@ from alfworld.info import ALFRED_PDDL_PATH, ALFRED_TWL2_PATH
 
 JSON_FILES_URL = "https://github.com/alfworld/alfworld/releases/download/0.2.2/json_2.1.1_json.zip"
 PDDL_FILES_URL = "https://github.com/alfworld/alfworld/releases/download/0.2.2/json_2.1.1_pddl.zip"
-TW_PDDL_FILES_URL = "https://github.com/alfworld/alfworld/releases/download/0.2.2/json_2.1.1_tw-pddl.zip"
+TW_PDDL_FILES_URL = "https://github.com/alfworld/alfworld/releases/download/0.4.0/json_2.1.2_tw-pddl.zip"
 MRCNN_URL = "https://github.com/alfworld/alfworld/releases/download/0.2.2/mrcnn_alfred_objects_sep13_004.pth"
 CHECKPOINTS_URL = "https://github.com/alfworld/alfworld/releases/download/0.2.2/pretrained_checkpoints.zip"
 SEQ2SEQ_DATA_URL = "https://github.com/alfworld/alfworld/releases/download/0.2.2/seq2seq_data.zip"

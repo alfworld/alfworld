@@ -252,7 +252,6 @@ class TextDAggerAgent(BaseAgent):
                     break
             res = [self.tokenizer.decode(item) for item in input_target_list]
             res = [item.replace("[CLS]", "").replace("[SEP]", "").strip() for item in res]
-            res = [item.replace(" in / on ", " in/on " ) for item in res]
             return res, current_dynamics
 
     def command_generation_beam_search_generation(self, observation_strings, task_desc_strings, previous_dynamics):
@@ -351,7 +350,6 @@ class TextDAggerAgent(BaseAgent):
                     utte_string = self.tokenizer.decode(utte)
                     utterances.append(utte_string)
                 utterances = [item.replace("[CLS]", "").replace("[SEP]", "").strip() for item in utterances]
-                utterances = [item.replace(" in / on ", " in/on " ) for item in utterances]
                 res.append(utterances)
             return res, current_dynamics
 

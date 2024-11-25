@@ -45,7 +45,7 @@ You heat the potato 1 using the microwave 1.
 You arrive at loc 8. On the sinkbasin 1, you see a knife 3, a egg 2,
 and a dishsponge 3.
 
-> put potato 1 in/on sinkbasin 1
+> move potato 1 to sinkbasin 1
 You won!
 ```
 

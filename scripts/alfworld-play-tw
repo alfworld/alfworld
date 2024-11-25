@@ -34,7 +34,7 @@ def main(args):
     # dump game file
     gamedata = dict(**GAME_LOGIC, pddl_problem=open(pddl_file).read())
     gamefile = os.path.join(os.path.dirname(pddl_file), 'game.tw-pddl')
-    json.dump(gamedata, open(gamefile, "w"))
+    #json.dump(gamedata, open(gamefile, "w"))
 
 
     expert = AlfredExpert(expert_type=AlfredExpertType.PLANNER)
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
         if len(problems) == 0:
             raise ValueError(f"Can't find problem files in {ALFWORLD_DATA}. Did you run alfworld-data?")
-        
+
         args.problem = os.path.dirname(random.choice(problems))
 
     if "movable_recep" in args.problem:

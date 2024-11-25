@@ -20,7 +20,7 @@ grammar :: """
 
         "GotoLocation.feedback": [
             {
-                "rhs": "You arrive at {lend.name}. #examineReceptacle.feedback#"
+                "rhs": "You arrive at {r.name}. #examineReceptacle.feedback#"
             }
         ],
 
@@ -62,7 +62,7 @@ grammar :: """
 
         "PutObject.feedback": [
             {
-                "rhs": "You put the {o.name} in/on the {r.name}."
+                "rhs": "You move the {o.name} to the {r.name}."
             }
         ],
 
@@ -208,7 +208,7 @@ action PickupFullReceptacleObject {
 }
 
 action PutObject {
-    template :: "put {o} in/on {r}";
+    template :: "move {o} to {r}";
     feedback :: "#PutObject.feedback#";
 }
 
@@ -218,7 +218,7 @@ action PutObjectInReceptacleObject {
 }
 
 action PutEmptyReceptacleObjectinReceptacle {
-    template :: "put {o} in/on {r}";
+    template :: "move {o} to {r}";
     feedback :: "#PutEmptyReceptacleObjectinReceptacle.feedback#";
 }
 
@@ -415,6 +415,21 @@ action look {
             "list_last_separator": [
                 {
                     "rhs": ", and "
+                }
+            ]
+        }
+    """;
+}
+
+action help {
+    template :: "help";
+    feedback :: "#help.feedback#";
+
+    grammar :: """
+        {
+            "help.feedback": [
+                {
+                    "rhs": "\nAvailable commands:\n  look:                             look around your current location\n  inventory:                        check your current inventory\n  go to (receptacle):               move to a receptacle\n  open (receptacle):                open a receptacle\n  close (receptacle):               close a receptacle\n  take (object) from (receptacle):  take an object from a receptacle\n  move (object) to (receptacle):  place an object in or on a receptacle\n  examine (something):              examine a receptacle or an object\n  use (object):                     use an object\n  heat (object) with (receptacle):  heat an object using a receptacle\n  clean (object) with (receptacle): clean an object using a receptacle\n  cool (object) with (receptacle):  cool an object using a receptacle\n  slice (object) with (object):     slice an object using a sharp object\n"
                 }
             ]
         }

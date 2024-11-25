@@ -265,7 +265,6 @@ class TextDQNAgent(BaseAgent):
                     utterances.append(utte_string)
 
                 utterances = [item.replace("[CLS]", "").replace("[SEP]", "").strip() for item in utterances]
-                utterances = [item.replace(" in / on ", " in/on " ) for item in utterances]
                 chosen_actions.append(utterances)
             return chosen_actions, current_dynamics, obs_mask, aggregated_obs_representation
 
@@ -306,7 +305,6 @@ class TextDQNAgent(BaseAgent):
                     break
             chosen_actions = [self.tokenizer.decode(item) for item in input_target_list]
             chosen_actions = [item.replace("[CLS]", "").replace("[SEP]", "").strip() for item in chosen_actions]
-            chosen_actions = [item.replace(" in / on ", " in/on " ) for item in chosen_actions]
             chosen_indices = [item[1:] for item in input_target_list]
             for i in range(len(chosen_indices)):
                 if chosen_indices[i][-1] == self.word2id["[SEP]"]:
@@ -404,7 +402,6 @@ class TextDQNAgent(BaseAgent):
                     indicies.append(utte)
 
                 utterances = [item.replace("[CLS]", "").replace("[SEP]", "").strip() for item in utterances]
-                utterances = [item.replace(" in / on ", " in/on " ) for item in utterances]
                 indicies = [item[1:] for item in indicies]
                 for i in range(len(indicies)):
                     if indicies[i][-1] == self.word2id["[SEP]"]:
