@@ -1,12 +1,7 @@
 import logging
 import numpy as np
-
-try:
-    import torch
-    from transformers import DistilBertModel, DistilBertTokenizer
-except ImportError:
-    raise ImportError("torch or transformers not found. Please install them via `pip install alfworld[full]`.")
-
+import torch
+from transformers import DistilBertModel, DistilBertTokenizer
 logging.getLogger("transformers.tokenization_utils").setLevel(logging.ERROR)
 
 import alfworld.agents.modules.memory as memory

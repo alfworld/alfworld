@@ -495,14 +495,4 @@
  )
 
 
-(:action help
-    :parameters (?a - agent)
-    :precondition
-        ()
-    :effect
-        (and
-            (checked ?a)
-        )
-)
-
 )

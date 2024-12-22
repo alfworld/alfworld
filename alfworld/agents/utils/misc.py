@@ -154,7 +154,7 @@ def extract_admissible_commands_with_heuristics(intro, frame_desc, feedback,
         "open {recep}",
         "close {recep}",
         "take {obj} from {recep}",
-        "move {obj} to {recep}",
+        "put {obj} in/on {recep}",
         "use {lamp}",
         "heat {obj} with {microwave}",
         "cool {obj} with {fridge}",
@@ -162,7 +162,6 @@ def extract_admissible_commands_with_heuristics(intro, frame_desc, feedback,
         "slice {obj} with {knife}",
         "inventory",
         "look",
-        "help",
         "examine {obj}",
         "examine {recep}"
     ]
@@ -183,7 +182,7 @@ def extract_admissible_commands_with_heuristics(intro, frame_desc, feedback,
                 for obj in objects:
                     if 'desklamp' not in obj and 'floorlamp' not in obj:
                         admissible_commands.append(t.format(recep=at_recep, obj=obj))
-        elif 'move {obj} to {recep}' in t:
+        elif 'put {obj} in/on {recep}' in t:
             if in_inv and at_recep:
                 admissible_commands.append(t.format(recep=at_recep, obj=in_inv))
         elif '{obj}' in t and '{microwave}' in t:
@@ -247,7 +246,7 @@ def extract_admissible_commands(intro, frame_desc):
         "open {recep}",
         "close {recep}",
         "take {obj} from {recep}",
-        "move {obj} to {recep}",
+        "put {obj} in/on {recep}",
         "use {lamp}",
         "heat {obj} with {microwave}",
         "cool {obj} with {fridge}",
@@ -255,7 +254,6 @@ def extract_admissible_commands(intro, frame_desc):
         "slice {obj} with {knife}",
         "inventory",
         "look",
-        "help",
         "examine {obj}",
         "examine {recep}"
     ]

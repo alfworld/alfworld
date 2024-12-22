@@ -1,5 +1,4 @@
 include requirements.txt
-include requirements-vis.txt
 include requirements-full.txt
 include README.md
 include LICENSE

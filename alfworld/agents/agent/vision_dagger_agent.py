@@ -1,11 +1,10 @@
+import os
+import sys
 import copy
 
 import numpy as np
-try:
-    import torch
-    import torch.nn.functional as F
-except ImportError:
-    raise ImportError("torch not found. Please install them via `pip install alfworld[full]`.")
+import torch
+import torch.nn.functional as F
 
 import alfworld.agents
 import alfworld.agents.modules.memory as memory

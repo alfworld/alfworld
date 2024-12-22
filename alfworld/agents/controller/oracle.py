@@ -100,6 +100,7 @@ class OracleAgent(BaseAgent):
     # ground-truth instance segemetations (with consistent object IDs) from THOR
     def get_instance_seg(self):
         instance_segs = np.array(self.env.last_event.instance_segmentation_frame)
+        # plt.imsave('output.png',instance_segs)
         inst_color_to_object_id = self.env.last_event.color_to_object_id
 
         # find unique instance segs
@@ -109,6 +110,10 @@ class OracleAgent(BaseAgent):
                 color = instance_segs[y, x]
                 inst_color_count[tuple(color)] += 1
         return inst_color_count, inst_color_to_object_id
+    
+    def get_instance_seg_interest(self):
+        ## TODO: filter segmentation with objects of interests.
+        print("decides later")
 
     # ground-truth object state info maintained by ThorEnv
     def get_object_state(self, object_id):

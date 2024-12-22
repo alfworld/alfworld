@@ -1,15 +1,17 @@
 import os
 import json
+import glob
 import numpy as np
 
 import traceback
 import threading
 from queue import Queue
 from threading import Thread
+import sys
 import random
 
 import alfworld.agents
-from alfworld.agents.utils.misc import get_templated_task_desc
+from alfworld.agents.utils.misc import Demangler, get_templated_task_desc, add_task_to_grammar
 from alfworld.env.thor_env import ThorEnv
 from alfworld.agents.expert import HandCodedThorAgent, HandCodedAgentTimeout
 from alfworld.agents.detector.mrcnn import load_pretrained_model
@@ -177,6 +179,7 @@ class AlfredThorEnv(object):
             pcs = self.env.get_goal_conditions_met()
             goal_condition_success_rate = pcs[0] / float(pcs[1])
             acs = self.controller.get_admissible_commands()
+            instance_segs = np.array(self.env.last_event.instance_segmentation_frame)
 
             # expert action
             if self.train_eval == "train":
@@ -209,7 +212,7 @@ class AlfredThorEnv(object):
             else:
                 raise NotImplementedError
             self._done = won or self.steps > max_nb_steps_per_episode
-            return (self._feedback, self._done, acs, won, goal_condition_success_rate, expert_actions)
+            return (self._feedback, self._done, acs, won, goal_condition_success_rate, expert_actions, instance_segs)
 
         def get_last_frame(self):
             return self.env.last_event.frame[:,:,::-1]
@@ -271,15 +274,15 @@ class AlfredThorEnv(object):
                 if not traj_data['task_type'] in task_types:
                     continue
 
-                self.json_file_list.append(json_path)
+                # self.json_file_list.append(json_path)
 
-                # # Only add solvable games
-                # if os.path.exists(game_file_path):
-                #     with open(game_file_path, 'r') as f:
-                #         gamedata = json.load(f)
-                #
-                #     if 'solvable' in gamedata and gamedata['solvable']:
-                #         self.json_file_list.append(json_path)
+                # Only add solvable games
+                if os.path.exists(game_file_path):
+                    with open(game_file_path, 'r') as f:
+                        gamedata = json.load(f)
+                
+                    if 'solvable' in gamedata and gamedata['solvable']:
+                        self.json_file_list.append(json_path)
 
         print("Overall we have %s games..." % (str(len(self.json_file_list))))
         self.num_games = len(self.json_file_list)
@@ -316,7 +319,11 @@ class AlfredThorEnv(object):
         # reset envs
 
         if self.train_eval == 'train':
-            tasks = random.sample(self.json_file_list, k=batch_size)
+            # tasks = random.sample(self.json_file_list, k=batch_size)
+            tasks = ['/projectnb/replearn/xfl/Retriever/src/envs/alf_world/data_storage/json_2.1.1/train/look_at_obj_in_light-Newspaper-None-DeskLamp-210/trial_T20190906_234442_978940/traj_data.json']
+            # tasks = [self.json_file_list.pop()]
+            # debug purpose
+            # tasks = ['/projectnb/replearn/xfl/Retriever/src/envs/alf_world/data_storage/json_2.1.1/train/pick_heat_then_place_in_recep-Egg-None-DiningTable-4/trial_T20190908_080003_104562/traj_data.json']
         else:
             if len(self.json_file_list)-batch_size > batch_size:
                 tasks = [self.json_file_list.pop(random.randrange(len(self.json_file_list))) for _ in range(batch_size)]
@@ -344,11 +351,11 @@ class AlfredThorEnv(object):
 
     def wait_and_get_info(self):
         obs, dones, admissible_commands, wons, gamefiles, expert_plans, gc_srs = [], [], [], [], [], [], []
-
+        iss = []
         # wait for all threads
         for n in range(self.batch_size):
             self.action_queues[n].join()
-            feedback, done, acs, won, gc_sr, expert_actions = self.envs[n].get_results()
+            feedback, done, acs, won, gc_sr, expert_actions, instance_segs = self.envs[n].get_results()
             obs.append(feedback)
             dones.append(done)
             admissible_commands.append(acs)
@@ -356,12 +363,14 @@ class AlfredThorEnv(object):
             gc_srs.append(gc_sr)
             gamefiles.append(self.envs[n].traj_root)
             expert_plans.append(expert_actions)
+            iss.append(instance_segs)
 
         infos = {'admissible_commands': admissible_commands,
                  'won': wons,
                  'goal_condition_success_rate': gc_srs,
                  'extra.gamefile': gamefiles,
-                 'extra.expert_plan': expert_plans}
+                 'extra.expert_plan': expert_plans,
+                 'instance_segs': iss}
         return obs, dones, infos
 
     def get_frames(self):

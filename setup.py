@@ -26,6 +26,5 @@ setup(
     install_requires=open('requirements.txt').readlines(),
     extras_require={
         'full': open('requirements-full.txt').readlines(),
-        'vis': open('requirements-vis.txt').readlines(),
     }
 )
