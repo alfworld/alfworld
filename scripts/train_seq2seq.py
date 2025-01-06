@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 import sys
 
-import alfworld.agents.environment
+from alfworld.agents.environment import get_environment
 import alfworld.agents.modules.generic as generic
 from alfworld.agents.agent import TextDAggerAgent
 from alfworld.agents.eval import evaluate_dagger
@@ -30,12 +30,12 @@ def train():
     if agent.run_eval:
         # in distribution
         if config['dataset']['eval_id_data_path'] is not None:
-            alfred_env = getattr(alfworld.agents.environment, config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_in_distribution")
+            alfred_env = get_environment(config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_in_distribution")
             id_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_id_eval_game = alfred_env.num_games
         # out of distribution
         if config['dataset']['eval_ood_data_path'] is not None:
-            alfred_env = getattr(alfworld.agents.environment, config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
+            alfred_env = get_environment(config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
             ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
             num_ood_eval_game = alfred_env.num_games
 

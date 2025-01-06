@@ -52,7 +52,7 @@ Get started with a random agent:
 
 ```python
 import numpy as np
-import alfworld.agents.environment as environment
+from alfworld.agents.environment import get_environment
 import alfworld.agents.modules.generic as generic
 
 # load config
@@ -60,7 +60,7 @@ config = generic.load_config()
 env_type = config['env']['type'] # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
 
 # setup environment
-env = getattr(environment, env_type)(config, train_eval='train')
+env = get_environment(env_type)(config, train_eval='train')
 env = env.init_env(batch_size=1)
 
 # interact
