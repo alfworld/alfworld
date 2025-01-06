@@ -11,7 +11,7 @@ from os.path import join as pjoin
 import numpy as np
 
 from alfworld.info import ALFWORLD_DATA
-import alfworld.agents.environment
+from alfworld.agents.environment import get_environment
 import alfworld.agents.modules.generic as generic
 from alfworld.agents.agent import TextDAggerAgent
 
@@ -36,7 +36,7 @@ def collect_data(task_types):
         config['dataset']['data_path'] = pjoin(ALFWORLD_DATA, "json_2.1.1", "valid_seen")
 
     agent = TextDAggerAgent(config)
-    alfred_env = getattr(alfworld.agents.environment, config["env"]["type"])(config, train_eval="train")
+    alfred_env = get_environment(config["env"]["type"])(config, train_eval="train")
     env = alfred_env.init_env(batch_size=agent.batch_size)
     num_game = alfred_env.num_games
     env.seed(42)

@@ -10,7 +10,7 @@ import numpy as np
 
 import sys
 
-import alfworld.agents.environment
+from alfworld.agents.environment import get_environment
 import alfworld.agents.modules.generic as generic
 from alfworld.agents.agent import TextDQNAgent
 from alfworld.agents.eval import evaluate_dqn
@@ -30,24 +30,24 @@ def train():
     id_eval_env, num_id_eval_game = None, 0
     ood_eval_env, num_ood_eval_game = None, 0
     if env_type == "Hybrid":
-        thor = getattr(alfworld.agents.environment, "AlfredThorEnv")(config)
-        tw = getattr(alfworld.agents.environment, "AlfredTWEnv")(config)
+        thor = get_environment("AlfredThorEnv")(config)
+        tw = get_environment("AlfredTWEnv")(config)
 
         thor_env = thor.init_env(batch_size=agent.batch_size)
         tw_env = tw.init_env(batch_size=agent.batch_size)
     else:
-        alfred_env = getattr(alfworld.agents.environment, config["env"]["type"])(config, train_eval="train")
+        alfred_env = get_environment(config["env"]["type"])(config, train_eval="train")
         env = alfred_env.init_env(batch_size=agent.batch_size)
 
         if agent.run_eval:
             # in distribution
             if config['dataset']['eval_id_data_path'] is not None:
-                alfred_env = getattr(alfworld.agents.environment, config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_in_distribution")
+                alfred_env = get_environment(config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_in_distribution")
                 id_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
                 num_id_eval_game = alfred_env.num_games
             # out of distribution
             if config['dataset']['eval_ood_data_path'] is not None:
-                alfred_env = getattr(alfworld.agents.environment, config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
+                alfred_env = get_environment(config["general"]["evaluate"]["env"]["type"])(config, train_eval="eval_out_of_distribution")
                 ood_eval_env = alfred_env.init_env(batch_size=agent.eval_batch_size)
                 num_ood_eval_game = alfred_env.num_games
 

@@ -32,9 +32,8 @@ Install with pip (python3.9+):
 
 > **Note:** Without the `full` extra, it will only install the text version of ALFWorld. To enable visual modalities, use `pip install alfworld[vis]`.
 
-Download PDDL & Game files and pre-trained MaskRCNN detector:
+Download PDDL & Game files and pre-trained MaskRCNN detector (will be stored in `~/.cache/alfworld/`):
 ```bash
-export ALFWORLD_DATA=<storage_path>
 alfworld-download
 ```
 
@@ -52,7 +51,7 @@ Get started with a random agent:
 
 ```python
 import numpy as np
-import alfworld.agents.environment as environment
+from alfworld.agents.environment import get_environment
 import alfworld.agents.modules.generic as generic
 
 # load config
@@ -60,7 +59,7 @@ config = generic.load_config()
 env_type = config['env']['type'] # 'AlfredTWEnv' or 'AlfredThorEnv' or 'AlfredHybrid'
 
 # setup environment
-env = getattr(environment, env_type)(config, train_eval='train')
+env = get_environment(env_type)(config, train_eval='train')
 env = env.init_env(batch_size=1)
 
 # interact
