@@ -32,9 +32,8 @@ Install with pip (python3.9+):
 
 > **Note:** Without the `full` extra, it will only install the text version of ALFWorld. To enable visual modalities, use `pip install alfworld[vis]`.
 
-Download PDDL & Game files and pre-trained MaskRCNN detector:
+Download PDDL & Game files and pre-trained MaskRCNN detector (will be stored in `~/.cache/alfworld/`):
 ```bash
-export ALFWORLD_DATA=<storage_path>
 alfworld-download
 ```
 

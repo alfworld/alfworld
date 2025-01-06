@@ -1,4 +1,4 @@
-__version__ = '0.4.2rc1'
+__version__ = '0.4.2rc2'
 
 import os
 from os.path import join as pjoin
