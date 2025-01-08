@@ -319,11 +319,7 @@ class AlfredThorEnv(object):
         # reset envs
 
         if self.train_eval == 'train':
-            # tasks = random.sample(self.json_file_list, k=batch_size)
-            tasks = ['/projectnb/replearn/xfl/Retriever/src/envs/alf_world/data_storage/json_2.1.1/train/look_at_obj_in_light-Newspaper-None-DeskLamp-210/trial_T20190906_234442_978940/traj_data.json']
-            # tasks = [self.json_file_list.pop()]
-            # debug purpose
-            # tasks = ['/projectnb/replearn/xfl/Retriever/src/envs/alf_world/data_storage/json_2.1.1/train/pick_heat_then_place_in_recep-Egg-None-DiningTable-4/trial_T20190908_080003_104562/traj_data.json']
+            tasks = random.sample(self.json_file_list, k=batch_size)
         else:
             if len(self.json_file_list)-batch_size > batch_size:
                 tasks = [self.json_file_list.pop(random.randrange(len(self.json_file_list))) for _ in range(batch_size)]
