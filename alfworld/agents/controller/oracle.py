@@ -111,9 +111,6 @@ class OracleAgent(BaseAgent):
                 inst_color_count[tuple(color)] += 1
         return inst_color_count, inst_color_to_object_id
     
-    def get_instance_seg_interest(self):
-        ## TODO: filter segmentation with objects of interests.
-        print("decides later")
 
     # ground-truth object state info maintained by ThorEnv
     def get_object_state(self, object_id):
@@ -165,6 +162,66 @@ class OracleAgent(BaseAgent):
             feedback = "On the %s, you see nothing." % (recep['num_id'])
 
         return visible_objects, feedback
+    
+
+    def print_frame_desc_oracle(self):
+        # iterate through all receptacles.
+        visible_recep = []
+        visible_obj = []
+        inst_color_count, inst_color_to_object_id = self.get_instance_seg()
+
+        # Collect visible receptacles and objects
+        for color, _ in inst_color_count.most_common():
+            if color in inst_color_to_object_id:
+                object_id = inst_color_to_object_id[color]
+                obj_metadata = self.get_obj_id_from_metadata(object_id)
+                if obj_metadata and obj_metadata['visible']:
+                    if object_id in self.receptacles:
+                        receptacle_name = self.receptacles[object_id]["num_id"]
+                        visible_recep.append((object_id, receptacle_name))
+                    elif object_id in self.objects:
+                        obj_name = self.objects[object_id]["num_id"]
+                        visible_obj.append((object_id, obj_name))
+
+        # Map objects to their parent receptacles
+        receptacle_contents = {receptacle_name: [] for _, receptacle_name in visible_recep}
+        for recep_id, recep_name in visible_recep:
+            recep_metadata = self.get_obj_id_from_metadata(recep_id)
+            if recep_metadata and "receptacleObjectIds" in recep_metadata:
+                for object_id in recep_metadata["receptacleObjectIds"]:
+                    if object_id in self.objects:
+                        obj_name = self.objects[object_id]["num_id"]
+                        if (object_id, obj_name) in visible_obj:
+                            receptacle_contents[recep_name].append("a %s," % obj_name)
+        
+        # check inventory objects
+        feedback = ""
+        if len(self.inventory) > 0:
+            feedback += "You are holding a %s. " % self.inventory[0]
+        else:
+            feedback += "You are not holding anything. "
+        # for every visible receptacle, check if it's open or closed
+        for recep_id, recep_name in visible_recep:
+            recep_metadata = self.get_obj_id_from_metadata(recep_id)
+            if recep_metadata and "openable" in recep_metadata:
+                if recep_metadata["openable"]:
+                    if recep_metadata["isOpen"]:
+                        feedback += "The %s is open. " % recep_name
+                        if len(receptacle_contents[recep_name]) > 0:
+                            feedback += "In the %s, you see %s. " % (recep_name, self.fix_and_comma_in_the_end(' '.join(receptacle_contents[recep_name])))
+                        else:
+                            feedback += "In the %s, you see nothing. " % recep_name
+                    else:
+                        feedback += "The %s is closed. " % recep_name
+                else:
+                    if len(receptacle_contents[recep_name]) > 0:
+                        feedback += "On the %s, you see %s" % (recep_name, self.fix_and_comma_in_the_end(' '.join(receptacle_contents[recep_name])))
+                    else:
+                        feedback += "On the %s, you see nothing." % recep_name
+        
+        return feedback
+                    
+
 
     def step(self, action_str):
         event = None
