@@ -116,7 +116,7 @@ class AlfredTWEnv(object):
     '''
 
     def __init__(self, config, train_eval="train"):
-        print("Initializing AlfredTWEnv...")
+        # print("Initializing AlfredTWEnv...")
         self.config = config
         self.train_eval = train_eval
 
@@ -192,7 +192,7 @@ class AlfredTWEnv(object):
                 # Add to game file list
                 self.game_files.append(game_file_path)
 
-        print(f"Overall we have {len(self.game_files)} games in split={self.train_eval}")
+        # print(f"Overall we have {len(self.game_files)} games in split={self.train_eval}")
         self.num_games = len(self.game_files)
 
         if self.train_eval == "train":
@@ -204,7 +204,7 @@ class AlfredTWEnv(object):
             num_eval_games = self.config['dataset']['num_eval_games'] if self.config['dataset']['num_eval_games'] > 0 else len(self.game_files)
             self.game_files = self.game_files[:num_eval_games]
             self.num_games = len(self.game_files)
-            print("Evaluating with %d games" % (len(self.game_files)))
+            # print("Evaluating with %d games" % (len(self.game_files)))
 
     def get_game_logic(self):
         self.game_logic = {
