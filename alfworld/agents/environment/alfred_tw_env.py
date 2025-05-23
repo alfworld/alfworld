@@ -140,6 +140,10 @@ class AlfredTWEnv(object):
             data_path = os.path.expandvars(self.config['dataset']['eval_id_data_path'])
         elif self.train_eval == "eval_out_of_distribution":
             data_path = os.path.expandvars(self.config['dataset']['eval_ood_data_path'])
+        elif self.train_eval == "eval":
+            data_path = os.path.expandvars(self.config['dataset']['eval_id_data_path'])
+            data_path_ood = os.path.expandvars(self.config['dataset']['eval_ood_data_path'])
+            
 
         log("Collecting solvable games...")
 
@@ -151,46 +155,53 @@ class AlfredTWEnv(object):
                 task_types.append(TASK_TYPES[tt_id])
 
         count = 0
-        for root, dirs, files in tqdm(list(os.walk(data_path, topdown=False))):
-            if 'traj_data.json' in files:
-                count += 1
 
-                # Filenames
-                json_path = os.path.join(root, 'traj_data.json')
-                game_file_path = os.path.join(root, "game.tw-pddl")
+        def _process_game_files(count, data_path):
 
-                if 'movable' in root or 'Sliced' in root:
-                    log("Movable & slice trajs not supported %s" % (root))
-                    continue
+            for root, dirs, files in tqdm(list(os.walk(data_path, topdown=False))):
+                if 'traj_data.json' in files:
+                    count += 1
 
-                # Get goal description
-                with open(json_path, 'r') as f:
-                    traj_data = json.load(f)
+                    # Filenames
+                    json_path = os.path.join(root, 'traj_data.json')
+                    game_file_path = os.path.join(root, "game.tw-pddl")
 
-                # Check for any task_type constraints
-                if not traj_data['task_type'] in task_types:
-                    log("Skipping task type")
-                    continue
+                    if 'movable' in root or 'Sliced' in root:
+                        log("Movable & slice trajs not supported %s" % (root))
+                        continue
 
-                # Check if a game file exists
-                if not os.path.exists(game_file_path):
-                    log(f"Skipping missing game! {game_file_path}")
-                    continue
+                    # Get goal description
+                    with open(json_path, 'r') as f:
+                        traj_data = json.load(f)
 
-                with open(game_file_path, 'r') as f:
-                    gamedata = json.load(f)
+                    # Check for any task_type constraints
+                    if not traj_data['task_type'] in task_types:
+                        log("Skipping task type")
+                        continue
 
-                # Check if previously checked if solvable
-                if 'solvable' not in gamedata:
-                    print(f"-> Skipping missing solvable key! {game_file_path}")
-                    continue
+                    # Check if a game file exists
+                    if not os.path.exists(game_file_path):
+                        log(f"Skipping missing game! {game_file_path}")
+                        continue
 
-                if not gamedata['solvable']:
-                    log("Skipping known %s, unsolvable game!" % game_file_path)
-                    continue
+                    with open(game_file_path, 'r') as f:
+                        gamedata = json.load(f)
 
-                # Add to game file list
-                self.game_files.append(game_file_path)
+                    # Check if previously checked if solvable
+                    if 'solvable' not in gamedata:
+                        print(f"-> Skipping missing solvable key! {game_file_path}")
+                        continue
+
+                    if not gamedata['solvable']:
+                        log("Skipping known %s, unsolvable game!" % game_file_path)
+                        continue
+
+                    # Add to game file list
+                    self.game_files.append(game_file_path)
+
+        _process_game_files(count, data_path)
+        if data_path_ood:
+            _process_game_files(count, data_path_ood)
 
         # print(f"Overall we have {len(self.game_files)} games in split={self.train_eval}")
         self.num_games = len(self.game_files)
