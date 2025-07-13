@@ -15,7 +15,7 @@ class BaseAgent(object):
     '''
 
     # constants
-    RECEPTACLES = set(constants.RECEPTACLES) | {'Sink', 'Bathtub'}
+    RECEPTACLES = set(constants.RECEPTACLES)  # | {'Sink', 'Bathtub'}  # Thor doesn't consider these as receptacles.
     OBJECTS = (set(constants.OBJECTS_WSLICED) - set(RECEPTACLES)) | set(constants.MOVABLE_RECEPTACLES)
     OBJECTS -= {'Blinds', 'Boots', 'Cart', 'Chair', 'Curtains', 'Footstool', 'Mirror', 'LightSwtich', 'Painting', 'Poster', 'ShowerGlass', 'Window'}
     STATIC_RECEPTACLES = set(RECEPTACLES) - set(constants.MOVABLE_RECEPTACLES)
@@ -229,3 +229,6 @@ class BaseAgent(object):
     def step(self, action_str):
         self.feedback = "Nothing happens."
         return self.feedback
+
+
+
