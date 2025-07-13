@@ -189,6 +189,9 @@ class BaseAgent(object):
         elif "put " in action_str:
             obj, rel, tar = get_triplet(action_str, "put ")
             return {'action': self.Action.PUT, 'obj': obj, 'rel': rel, 'tar': tar}
+        elif "move " in action_str:
+            obj, rel, tar = get_triplet(action_str, "move ")
+            return {'action': self.Action.PUT, 'obj': obj, 'rel': rel, 'tar': tar}
         elif "open " in action_str:
             tar = action_str.replace("open ", "")
             return {'action': self.Action.OPEN, 'tar': tar}
@@ -226,6 +229,3 @@ class BaseAgent(object):
     def step(self, action_str):
         self.feedback = "Nothing happens."
         return self.feedback
-
-
-
