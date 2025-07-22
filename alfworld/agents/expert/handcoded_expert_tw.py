@@ -50,9 +50,10 @@ class LookAtObjInLightTWPolicy(LookAtObjInLightPolicy):
         self.is_agent_holding_right_object = "holds agent {}".format(obj) in facts_wo_num_ids
         obs_at_curr_recep = self.obs_at_recep[self.curr_recep] if self.curr_recep in self.obs_at_recep else ""
         is_obj_in_obs = "you see" in obs_at_curr_recep and " {} ".format(obj) in obs_at_curr_recep
+        is_lamp_in_obs = "you see" in obs_at_curr_recep and " {} ".format(toggle) in obs_at_curr_recep
         can_toggle_lamp = "use {}".format(toggle) in admissible_commands_wo_num_ids
         can_take_object = any("take {}".format(obj) in ac for ac in admissible_commands_wo_num_ids)
-        return can_take_object, can_toggle_lamp, is_obj_in_obs
+        return can_take_object, can_toggle_lamp and is_lamp_in_obs, is_obj_in_obs,
 
 
 class PickHeatThenPlaceInRecepTWPolicy(PickHeatThenPlaceInRecepPolicy):
