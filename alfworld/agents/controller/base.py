@@ -15,7 +15,7 @@ class BaseAgent(object):
     '''
 
     # constants
-    RECEPTACLES = set(constants.RECEPTACLES) | {'Sink', 'Bathtub'}
+    RECEPTACLES = set(constants.RECEPTACLES)  # | {'Sink', 'Bathtub'}  # Thor doesn't consider these as receptacles.
     OBJECTS = (set(constants.OBJECTS_WSLICED) - set(RECEPTACLES)) | set(constants.MOVABLE_RECEPTACLES)
     OBJECTS -= {'Blinds', 'Boots', 'Cart', 'Chair', 'Curtains', 'Footstool', 'Mirror', 'LightSwtich', 'Painting', 'Poster', 'ShowerGlass', 'Window'}
     STATIC_RECEPTACLES = set(RECEPTACLES) - set(constants.MOVABLE_RECEPTACLES)
@@ -188,6 +188,9 @@ class BaseAgent(object):
             return {'action': self.Action.PICK, 'obj': obj, 'rel': rel, 'tar': tar}
         elif "put " in action_str:
             obj, rel, tar = get_triplet(action_str, "put ")
+            return {'action': self.Action.PUT, 'obj': obj, 'rel': rel, 'tar': tar}
+        elif "move " in action_str:
+            obj, rel, tar = get_triplet(action_str, "move ")
             return {'action': self.Action.PUT, 'obj': obj, 'rel': rel, 'tar': tar}
         elif "open " in action_str:
             tar = action_str.replace("open ", "")
