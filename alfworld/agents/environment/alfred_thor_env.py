@@ -221,7 +221,7 @@ class AlfredThorEnv(object):
         print("Initialize AlfredThorEnv...")
         self.config = config
         self.train_eval = train_eval
-        self.random_seed = 123
+        self.seed(config['general']['random_seed'])
         self.batch_size = 1
         self.envs = []
         self.action_queues = []
@@ -233,6 +233,10 @@ class AlfredThorEnv(object):
 
     def seed(self, seed):
         self.random_seed = seed
+        # Dedicated RNG for task sampling, so the task order is reproducible.
+        self.rng = random.Random(seed)
+        # The templated goal descriptions and human-annotation sampling use the global RNG.
+        random.seed(seed)
 
     def get_env_paths(self):
         self.json_file_list = []
@@ -281,6 +285,8 @@ class AlfredThorEnv(object):
                 #     if 'solvable' in gamedata and gamedata['solvable']:
                 #         self.json_file_list.append(json_path)
 
+        # os.walk order depends on the filesystem; sort so a given seed picks the same tasks everywhere.
+        self.json_file_list.sort()
         print("Overall we have %s games..." % (str(len(self.json_file_list))))
         self.num_games = len(self.json_file_list)
 
@@ -316,12 +322,12 @@ class AlfredThorEnv(object):
         # reset envs
 
         if self.train_eval == 'train':
-            tasks = random.sample(self.json_file_list, k=batch_size)
+            tasks = self.rng.sample(self.json_file_list, k=batch_size)
         else:
             if len(self.json_file_list)-batch_size > batch_size:
-                tasks = [self.json_file_list.pop(random.randrange(len(self.json_file_list))) for _ in range(batch_size)]
+                tasks = [self.json_file_list.pop(self.rng.randrange(len(self.json_file_list))) for _ in range(batch_size)]
             else:
-                tasks = random.sample(self.json_file_list, k=batch_size)
+                tasks = self.rng.sample(self.json_file_list, k=batch_size)
                 self.get_env_paths()
 
         for n in range(batch_size):
