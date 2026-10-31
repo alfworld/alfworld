@@ -128,7 +128,10 @@ def parse_objects(desc):
         obj_str = obj_str.partition("your task is to:")[0]
         for s in obj_str.split(","):
             item = s.translate(str.maketrans('', '', string.punctuation))
-            item = item.strip().replace("a ", "")
+            item = item.strip()
+            # Only drop the leading article; replace("a ", "") also broke names like "sofa 1" -> "sof1".
+            if item.startswith("a "):
+                item = item[2:]
             if item:
                 objs.append(item)
     return objs
