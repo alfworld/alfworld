@@ -304,8 +304,9 @@ def get_obj_of_type_closest_to_obj(object_type, ref_object_id, metadata):
 
 
 def get_objects_with_name_and_prop(name, prop, metadata):
+    # objectId identifies an instance and can contain other type names.
     return [obj for obj in metadata['objects']
-            if name in obj['objectId'] and obj[prop]]
+            if obj['objectType'] == name and obj[prop]]
 
 
 def get_visible_objs(objs):
